@@ -8,7 +8,7 @@ interface User {
   username: string;
   email: string;
   profilePicture: string;
-  accessToken?: string;
+  accessToken: string;
 }
 
 export const loginUserThunk = createAsyncThunk(
@@ -37,7 +37,7 @@ export const registerUserThunk = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response: User = await registerUser(data);
+      const response: Omit<User, "accessToken"> = await registerUser(data);
       return response;
     } catch (error) {
       if (error instanceof AxiosError) {

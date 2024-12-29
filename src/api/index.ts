@@ -1,12 +1,18 @@
-import { ApiResponseSuccess, FriendRequestResponse } from "@/type";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import {
+  ExcludedFriendsUsersResponse,
+  SentFriendRequestResponse,
+} from "@/types/ApiResponse.types";
+import { LoginUserResponse, RegisterUserResponse } from "@/types/auth.types";
+import axios, { AxiosResponse } from "axios";
 
+// Create an instance of axios with a base URL, credentials, and timeout.
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URI,
-  // withCredentials: true,
+  withCredentials: true,
   timeout: 12000,
 });
 
+// Add an interceptor to the request to add the Authorization header with the token.
 apiClient.interceptors.request.use(
   function (config) {
     const token = localStorage.getItem("token");
@@ -19,47 +25,7 @@ apiClient.interceptors.request.use(
   }
 );
 
-interface ApiResponseBase {
-  message: string;
-  success: boolean;
-  statusCode: number;
-}
-
-interface User {
-  _id: string;
-  username: string;
-  email: string;
-  profilePicture: string;
-  accessToken?: string;
-}
-
-interface LoginUserResponse extends ApiResponseBase {
-  data: {
-    user: User;
-  };
-}
-
-const loginUser = async (data: {
-  email: string;
-  password: string;
-}): Promise<User> => {
-  try {
-    const response: AxiosResponse<LoginUserResponse> = await apiClient.post(
-      "/user/login-user",
-      data
-    );
-    return response.data.data.user;
-  } catch (error) {
-    throw error;
-  }
-};
-
-interface RegisterUserResponse extends ApiResponseBase {
-  data: {
-    user: User;
-  };
-}
-
+// REGISTER USER API
 const registerUser = async (data: {
   username: string;
   email: string;
@@ -76,17 +42,42 @@ const registerUser = async (data: {
   }
 };
 
-const getUsersExcludingFriendsBasedOnQuery = (query: string) => {
-  return apiClient.get(`/user/excluding-friends-search?search=${query}`);
+// LOGIN USER API
+const loginUser = async (data: { email: string; password: string }) => {
+  try {
+    const response: AxiosResponse<LoginUserResponse> = await apiClient.post(
+      "/user/login-user",
+      data
+    );
+    return response.data.data.user;
+  } catch (error) {
+    throw error;
+  }
 };
 
-const sendFriendRequest = async (
-  _id: string
-): Promise<FriendRequestResponse> => {
-  const response = await apiClient.post(`/friendrequest/send-friend-request`, {
-    receiverId: _id,
-  });
-  return response.data;
+// GET USERS EXCLUDING FRIENDS API
+const getUsersExcludingFriendsBasedOnQuery = async (query: string) => {
+  try {
+    const response: AxiosResponse<ExcludedFriendsUsersResponse> =
+      await apiClient.get(`/user/excluding-friends-search?search=${query}`);
+
+    return response.data.data.users;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// SEND FRIEND REQUEST API
+const sendFriendRequest = async (_id: string) => {
+  try {
+    const response: AxiosResponse<SentFriendRequestResponse> =
+      await apiClient.post(`/friendrequest/send-friend-request`, {
+        receiverId: _id,
+      });
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getAllFriendRequests = async () => {
@@ -105,10 +96,10 @@ const acceptFriendRequest = async (_id: string) => {
 };
 
 export {
-  loginUser,
-  registerUser,
-  getUsersExcludingFriendsBasedOnQuery,
-  sendFriendRequest,
   acceptFriendRequest,
   getAllFriendRequests,
+  getUsersExcludingFriendsBasedOnQuery,
+  loginUser,
+  registerUser,
+  sendFriendRequest,
 };

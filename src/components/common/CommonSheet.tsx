@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 const CommonSheet = ({
   name,
   content,
-  position = "bottom", // Default position is right
+  position = "bottom",
 }: {
   name: string;
   content: JSX.Element;

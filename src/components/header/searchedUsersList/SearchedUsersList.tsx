@@ -1,4 +1,6 @@
-import { User } from "@/type";
+import { memo, useEffect, useState } from "react";
+import { AxiosError } from "axios";
+import { UserProfile } from "@/types/ApiResponse.types";
 import { getUsersExcludingFriendsBasedOnQuery } from "@/api";
 import {
   Dialog,
@@ -7,34 +9,48 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Handshake } from "lucide-react";
-import useDebounce from "@/hooks/useDebounce";
 import { Input } from "@/components/ui/input";
-import { memo, useEffect, useState } from "react";
+import { Search, Loader } from "lucide-react";
 import SearchedUser from "./SearchedUser";
+import useDebounce from "@/hooks/useDebounce";
 
 const SearchedUsersList = () => {
   const [query, setQuery] = useState<string>("");
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const debouncedQuery = useDebounce({ query, debounceTime: 1000 });
 
+  // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setQuery(e.target.value);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const { data } = await getUsersExcludingFriendsBasedOnQuery(
-          debouncedQuery
-        );
-        setUsers(data.statusCode === 200 ? data.data.users : []);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        setUsers([]);
-      }
-    };
+  // Fetch users based on query
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const response: UserProfile[] =
+        await getUsersExcludingFriendsBasedOnQuery(debouncedQuery);
+      setUsers(response);
+    } catch (error) {
+      handleError(error);
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // Handle errors
+  const handleError = (error: unknown) => {
+    if (error instanceof AxiosError) {
+      console.error("Error during API call:", error.response?.data.message);
+    } else {
+      console.error("Unexpected error:", error);
+    }
+  };
+
+  // Effect to trigger user fetching when the query changes
+  useEffect(() => {
     if (debouncedQuery) {
       fetchUsers();
     } else {
@@ -45,7 +61,7 @@ const SearchedUsersList = () => {
   return (
     <Dialog>
       <DialogTrigger>
-        <Handshake />
+        <Search size={24} />
       </DialogTrigger>
       <DialogContent className="w-[400px]">
         <DialogHeader>
@@ -57,21 +73,47 @@ const SearchedUsersList = () => {
           onChange={handleChange}
           placeholder="Search for users..."
         />
-        <div className="w-full mt-4 flex flex-col gap-4">
-          {users.length
-            ? users.map((user) => (
-                <SearchedUser
-                  key={user._id}
-                  imgSrc={user.profilePicture}
-                  name={user.username}
-                  _id={user._id}
-                />
-              ))
-            : query && <p>No users found</p>}
-        </div>
+        <UserList users={users} loading={loading} query={query} />
       </DialogContent>
     </Dialog>
   );
+};
+
+// Component to render the list of users or loading/error states
+const UserList = ({
+  users,
+  loading,
+  query,
+}: {
+  users: UserProfile[];
+  loading: boolean;
+  query: string;
+}) => {
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center">
+        <Loader className="animate-spin" size={24} />
+        <p className="ml-2">Loading...</p>
+      </div>
+    );
+  }
+
+  if (users.length) {
+    return (
+      <div className="w-full mt-4 flex flex-col gap-4">
+        {users.map((user) => (
+          <SearchedUser
+            key={user._id}
+            imgSrc={user.profilePicture}
+            name={user.username}
+            _id={user._id}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  return query ? <p>No users found</p> : null;
 };
 
 export default memo(SearchedUsersList);

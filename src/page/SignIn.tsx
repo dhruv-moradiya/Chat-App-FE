@@ -5,6 +5,7 @@ import { loginUserThunk } from "@/store/auth/AuthThunks";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { Key, Mail, User } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type FormData = {
   username: string;
@@ -13,10 +14,9 @@ type FormData = {
 };
 
 const SignIn = () => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { isLoading, error } = useAppSelector((state) => state.auth);
-
-  console.log("error errorerror :>> ", error);
 
   const [formData, setFormData] = useState<FormData>({
     username: "",
@@ -79,6 +79,14 @@ const SignIn = () => {
 
         <Button className="rounded-xl" type="submit" disabled={isLoading}>
           {isLoading ? "Loading..." : "Sign In"}
+        </Button>
+        <p>OR</p>
+        <Button
+          className="rounded-xl"
+          type="button"
+          onClick={() => navigate("/signup")}
+        >
+          Sign Up
         </Button>
       </form>
     </div>

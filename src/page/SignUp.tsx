@@ -5,6 +5,7 @@ import { registerUserThunk } from "@/store/auth/AuthThunks";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { Key, Mail, User } from "lucide-react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type FormData = {
   username: string;
@@ -14,7 +15,7 @@ type FormData = {
 };
 
 const SignUp = () => {
-  console.log(React.version);
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((state) => state.auth);
 
@@ -49,8 +50,6 @@ const SignUp = () => {
     }
 
     const { confirmPassword, ...dataToSubmit } = formData;
-
-    console.log("formData :>> ", dataToSubmit);
 
     dispatch(registerUserThunk(dataToSubmit));
   };
@@ -94,6 +93,16 @@ const SignUp = () => {
 
         <Button className="rounded-xl" type="submit" disabled={isLoading}>
           {isLoading ? "Loading..." : "Sign Up"}
+        </Button>
+
+        <p>OR</p>
+
+        <Button
+          className="rounded-xl"
+          type="button"
+          onClick={() => navigate("/signin")}
+        >
+          Sign In
         </Button>
       </form>
     </div>

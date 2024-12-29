@@ -1,8 +1,9 @@
+import { memo } from "react";
+import { AxiosError } from "axios";
+import { SentFriendRequestData } from "@/types/ApiResponse.types";
 import { sendFriendRequest } from "@/api";
 import { Button } from "@/components/ui/button";
-import { FriendRequestResponse } from "@/type";
 import { Handshake } from "lucide-react";
-import { memo } from "react";
 
 type SearchedUserProps = {
   imgSrc: string;
@@ -12,9 +13,15 @@ type SearchedUserProps = {
 
 const SearchedUser = ({ imgSrc, name, _id }: SearchedUserProps) => {
   const sendFriendRequestFun = async () => {
-    const data: FriendRequestResponse = await sendFriendRequest(_id);
-
-    console.log("data :>> ", data);
+    try {
+      const data: SentFriendRequestData = await sendFriendRequest(_id);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error("Error during login:", error.response?.data.message);
+      } else {
+        console.error("Unexpected error:", error);
+      }
+    }
   };
 
   return (

@@ -1,6 +1,6 @@
 import React from "react";
-import { Bell, Check, CircleX, Info, Loader, OctagonAlert } from "lucide-react";
 import { Toaster, toast } from "react-hot-toast";
+import { Bell, Check, CircleX, Info, Loader, OctagonAlert } from "lucide-react";
 
 const ToastProvider: React.FC = () => {
   return (

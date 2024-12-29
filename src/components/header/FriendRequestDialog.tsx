@@ -1,20 +1,19 @@
+import { Check, UserPlus, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "../ui/button";
-import { Check, SmilePlus, X } from "lucide-react";
 
 const FriendRequestDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <SmilePlus />
+        <UserPlus size={24} />
       </DialogTrigger>
       <DialogContent className="scrollbar sm:max-w-[600px] max-h-[90vh] overflow-y-scroll">
         <DialogHeader>

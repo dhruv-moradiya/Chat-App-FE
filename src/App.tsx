@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { isUserLoggedIn, logout } from "./store/auth/AuthSlice";
 import { useAppDispatch, useAppSelector } from "./store/store";
@@ -47,6 +47,7 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 function App() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [notification, setNotification] = useState("");
   const [initialLoading, setInitialLoading] = useState(true);
 
@@ -59,7 +60,7 @@ function App() {
       return true;
     }
   };
-
+  console.log("location :>> ", location);
   // Handle token expiration
   useEffect(() => {
     const token =
@@ -68,7 +69,10 @@ function App() {
     if (isTokenExpired(token)) {
       setNotification("Your session has expired. Please sign in again.");
       dispatch(logout());
-      navigate("/signup");
+
+      if (location.pathname === "/") {
+        navigate("/signin");
+      }
     } else {
       // Set a timeout to handle future token expiration
       const payload = JSON.parse(atob(token.split(".")[1]));
@@ -80,7 +84,10 @@ function App() {
       const timer = setTimeout(() => {
         setNotification("Your session has expired. Please sign in again.");
         dispatch(logout());
-        navigate("/signin");
+
+        if (location.pathname === "/") {
+          navigate("/signin");
+        }
       }, expirationTime);
 
       return () => clearTimeout(timer);
