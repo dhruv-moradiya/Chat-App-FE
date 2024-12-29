@@ -9,6 +9,7 @@ import SignUp from "./page/SignUp";
 import { Navigate } from "react-router-dom";
 import Layout from "./layout/Layout";
 import { Loader } from "lucide-react";
+import ToastProvider from "./components/common/ToastProvider";
 
 const Notification = ({
   message,
@@ -40,7 +41,7 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
     return <div className="loader">Loading...</div>;
   }
 
-  return isUserAuthenticated ? children : <Navigate to="/signin" />;
+  return isUserAuthenticated ? children : <Navigate to="/signup" />;
 };
 
 function App() {
@@ -67,7 +68,7 @@ function App() {
     if (isTokenExpired(token)) {
       setNotification("Your session has expired. Please sign in again.");
       dispatch(logout());
-      navigate("/signin");
+      navigate("/signup");
     } else {
       // Set a timeout to handle future token expiration
       const payload = JSON.parse(atob(token.split(".")[1]));
@@ -133,6 +134,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
       </Routes>
+      <ToastProvider />
     </>
   );
 }

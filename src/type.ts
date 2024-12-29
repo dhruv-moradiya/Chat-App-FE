@@ -1,8 +1,9 @@
 // LOG IN USER
 
-interface ApiResponseSuccess {
+interface ApiResponseSuccess<T = any> {
   message: string;
   success: boolean;
+  data: T;
 }
 
 interface User {

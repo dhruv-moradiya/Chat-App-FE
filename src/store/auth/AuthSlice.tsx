@@ -1,3 +1,4 @@
+import { showErrorToast } from "@/components/common/ToastProvider";
 import { createSlice } from "@reduxjs/toolkit";
 import { loginUserThunk, registerUserThunk } from "./AuthThunks";
 
@@ -48,15 +49,20 @@ const authSlice = createSlice({
       .addCase(loginUserThunk.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = true;
-        state.user = action.payload.user;
+        state.user = action.payload;
 
-        localStorage.setItem("token", action.payload.user.accessToken);
-        // window.location.href = "/";
+        if (action.payload.accessToken) {
+          localStorage.setItem("token", action.payload.accessToken);
+          window.location.href = "/";
+        }
       })
       .addCase(loginUserThunk.rejected, (state, action) => {
         state.isLoading = false;
         state.error =
           typeof action.payload === "string" ? action.payload : "Login failed.";
+        showErrorToast(
+          typeof action.payload === "string" ? action.payload : "Login failed."
+        );
       });
 
     // REGISTER THUNK
@@ -73,7 +79,15 @@ const authSlice = createSlice({
       .addCase(registerUserThunk.rejected, (state, action) => {
         state.isLoading = false;
         state.error =
-          typeof action.payload === "string" ? action.payload : "Login failed.";
+          typeof action.payload === "string"
+            ? action.payload
+            : "Registration failed.";
+
+        showErrorToast(
+          typeof action.payload === "string"
+            ? action.payload
+            : "Registration failed."
+        );
       });
   },
 });

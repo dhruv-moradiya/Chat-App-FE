@@ -1,3 +1,4 @@
+import { showErrorToast } from "@/components/common/ToastProvider";
 import { Button } from "@/components/ui/button";
 import { IconInput } from "@/components/ui/icon-input";
 import { registerUserThunk } from "@/store/auth/AuthThunks";
@@ -38,12 +39,12 @@ const SignUp = () => {
     e.preventDefault();
 
     if (!validateForm()) {
-      alert("Please fill out all the fields");
+      showErrorToast("Please fill out all the fields");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      showErrorToast("Passwords do not match");
       return;
     }
 

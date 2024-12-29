@@ -162,6 +162,41 @@ button {
 }
 
 
+/* TOAST */
+
+/* styles.css or your CSS module */
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToRight {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.toast {
+  animation: slideInFromRight 0.3s ease-out, slideOutToRight 0.3s ease-in forwards;
+}
+
+.toast-exit {
+  animation: slideOutToRight 0.3s ease-in forwards;
+}
+
+
+
 /* #131313
 #2e333d
 #6b8afd

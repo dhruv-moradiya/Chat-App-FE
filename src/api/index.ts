@@ -1,9 +1,9 @@
 import { ApiResponseSuccess, FriendRequestResponse } from "@/type";
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URI,
-  withCredentials: true,
+  // withCredentials: true,
   timeout: 12000,
 });
 
@@ -19,32 +19,61 @@ apiClient.interceptors.request.use(
   }
 );
 
-interface LoginUserResponse extends ApiResponseSuccess {
-  user: {
-    _id: string;
-    username: string;
-    email: string;
-    profilePicture: string;
-    accessToken: string;
-  };
+interface ApiResponseBase {
+  message: string;
+  success: boolean;
   statusCode: number;
+}
+
+interface User {
+  _id: string;
+  username: string;
+  email: string;
+  profilePicture: string;
+  accessToken?: string;
+}
+
+interface LoginUserResponse extends ApiResponseBase {
+  data: {
+    user: User;
+  };
 }
 
 const loginUser = async (data: {
   email: string;
   password: string;
-}): Promise<LoginUserResponse> => {
-  const response = await apiClient.post("/user/login-user", data);
-  return response.data;
+}): Promise<User> => {
+  try {
+    const response: AxiosResponse<LoginUserResponse> = await apiClient.post(
+      "/user/login-user",
+      data
+    );
+    return response.data.data.user;
+  } catch (error) {
+    throw error;
+  }
 };
+
+interface RegisterUserResponse extends ApiResponseBase {
+  data: {
+    user: User;
+  };
+}
 
 const registerUser = async (data: {
   username: string;
   email: string;
   password: string;
 }) => {
-  const response = await apiClient.post("/user/create-user", data);
-  return response;
+  try {
+    const response: AxiosResponse<RegisterUserResponse> = await apiClient.post(
+      "/user/create-user",
+      data
+    );
+    return response.data.data.user;
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getUsersExcludingFriendsBasedOnQuery = (query: string) => {

@@ -1,3 +1,4 @@
+import { showErrorToast } from "@/components/common/ToastProvider";
 import { Button } from "@/components/ui/button";
 import { IconInput } from "@/components/ui/icon-input";
 import { loginUserThunk } from "@/store/auth/AuthThunks";
@@ -15,7 +16,7 @@ const SignIn = () => {
   const dispatch = useAppDispatch();
   const { isLoading, error } = useAppSelector((state) => state.auth);
 
-  console.log("error :>> ", error);
+  console.log("error errorerror :>> ", error);
 
   const [formData, setFormData] = useState<FormData>({
     username: "",
@@ -37,11 +38,9 @@ const SignIn = () => {
     e.preventDefault();
 
     if (!validateForm()) {
-      alert("Please fill out all the fields");
+      showErrorToast("Please fill out all the fields");
       return;
     }
-
-    console.log("formData :>> ", formData);
 
     const { username, ...dataToSubmit } = formData;
 
