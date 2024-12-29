@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ... */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%; /* #ffffff */
+    --foreground: 222.2 84% 4.9%; /* #1e1e1e */
+    --card: 0 0% 100%; /* #ffffff */
+    --card-foreground: 222.2 84% 4.9%; /* #1e1e1e */
+    --popover: 0 0% 100%; /* #ffffff */
+    --popover-foreground: 222.2 84% 4.9%; /* #1e1e1e */
+    --primary: 227 69.6% 63.9%; /* #6b8afd */
+    --primary-foreground: 210 40% 98%; /* #e8f3ff */
+    --secondary: 210 40% 96.1%; /* #f3f9ff */
+    --secondary-foreground: 222.2 47.4% 11.2%; /* #2b2b2b */
+    --muted: 210 40% 96.1%; /* #f3f9ff */
+    --muted-foreground: 215.4 16.3% 46.9%; /* #8b8c93 */
+    --accent: 210 40% 96.1%; /* #f3f9ff */
+    --accent-foreground: 222.2 47.4% 11.2%; /* #2b2b2b */
+    --destructive: 0 84.2% 60.2%; /* #ff6161 */
+    --destructive-foreground: 210 40% 98%; /* #e8f3ff */
+    --border: 214.3 31.8% 91.4%; /* #d3e1f1 */
+    --input: 214.3 31.8% 91.4%; /* #d3e1f1 */
+    --ring: 227 69.6% 63.9%; /* #6b8afd */
+    --radius: 0.3rem;
+    --chart-1: 12 76% 61%; /* #e85430 */
+    --chart-2: 173 58% 39%; /* #4fa57f */
+    --chart-3: 197 37% 24%; /* #26608f */
+    --chart-4: 43 74% 66%; /* #b4dd65 */
+    --chart-5: 27 87% 67%; /* #f8d94f */
+  }
+
+  .dark {
+    --background: 0 0% 7.5%; /* #131313 */
+    --foreground: 210 40% 98%; /* #e8f3ff */
+    --card: 222.2 84% 4.9%; /* #1e1e1e */
+    --card-foreground: 210 40% 98%; /* #e8f3ff */
+    --popover: 222.2 84% 4.9%; /* #1e1e1e */
+    --popover-foreground: 210 40% 98%; /* #e8f3ff */
+    --primary: 227 69.6% 63.9%; /* #6b8afd */
+    --primary-foreground: 222.2 47.4% 11.2%; /* #2b2b2b */
+    --secondary: 7.8% 8.2% 10.6%; /* #14151b */
+    --secondary-foreground: 210 40% 98%; /* #e8f3ff */
+    --muted: 7.8% 8.2% 10.6%; /* #14151b */
+    --muted-foreground: 215 20.2% 65.1%; /* #a0a7b6 */
+    --accent: 7.8% 8.2% 10.6%; /* #14151b */
+    --accent-foreground: 210 40% 98%; /* #e8f3ff */
+    --destructive: 0 62.8% 30.6%; /* #993a3a */
+    --destructive-foreground: 210 40% 98%; /* #e8f3ff */
+    --border: 7.8% 8.2% 10.6%; /* #14151b */
+    --input: 7.8% 8.2% 10.6%; /* #14151b */
+    --ring: 227 69.6% 63.9%; /* #6b8afd */
+    --chart-1: 220 70% 50%; /* #3389ff */
+    --chart-2: 160 60% 45%; /* #45a97f */
+    --chart-3: 30 80% 55%; /* #ffd966 */
+    --chart-4: 280 65% 60%; /* #a366cc */
+    --chart-5: 340 75% 55%; /* #d44a6f */
+    --epr-emoji-size: 20px,
+    --epr-emoji-gap: 10px,
+    --epr-hover-bg-color: yellow,
+    --epr-bg-color: transplant,
+    --epr-text-color: black,
+    --epr-text-color-hover: yellow
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  width: 4px;
+  background-color: #2e333d;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background-color: #131313;
+}
+
+
+.ql-mention{
+  background-color: #2e333d;
+  color: #ffffff;
+  padding: 5px 10px;
+}
+
+.list-group{
+  background-color: #2e333d;
+  color: #ffffff;
+  border-radius: 10px;
+}
+
+.list-group-item{
+  background-color: #6b8afd;
+  color: #ffffff;
+  border-radius: 10px;
+}
+
+.mention{
+  background-color: #6b8afd !important;
+  color: #ffffff !important;
+}
+
+.selected{
+  background-color: #6b8afd !important;
+  color: #ffffff !important;
+}
+
+.notification-container {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+  animation: slideDown 0.5s ease-out;
+}
+
+.notification {
+  background-color: black;
+  color: white;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 400px;
+  width: 100%;
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateX(-50%) translateY(-100%);
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+
+/* #131313
+#2e333d
+#6b8afd
+#ffffff */
