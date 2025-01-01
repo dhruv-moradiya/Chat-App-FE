@@ -1,13 +1,25 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, Middleware } from "@reduxjs/toolkit";
 import { chatDetailReducer } from "./chatDetail/ChatDetailSlice";
 import { authReducer } from "./auth/AuthSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import { socketReducer } from "./socket/SocketSlice";
+import socketMiddleware from "./socket/SocketMiddleware";
+
+const customMiddleware: Middleware = (storeAPI) => (next) => (action) => {
+  console.log("Dispatching action:", action);
+  const result = next(action);
+  console.log("State after action:", storeAPI.getState());
+  return result;
+};
 
 const store = configureStore({
   reducer: {
     chatDetail: chatDetailReducer,
     auth: authReducer,
+    socket: socketReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(customMiddleware),
 });
 
 export type AppDispatch = typeof store.dispatch; // Typed dispatch
