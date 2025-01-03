@@ -34,10 +34,25 @@ interface SentFriendRequestResponse extends ApiResponseBase {
   data: SentFriendRequestData;
 }
 
+interface FriendRequestData {
+  _id: string;
+  from: UserProfile;
+  to: Omit<UserProfile, "friends" | "mutedChats">;
+  status: "pending" | "accepted" | "rejected";
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface FriendRequestResponse extends ApiResponseBase {
+  data: FriendRequestData[];
+}
+
 export type {
   ApiResponseBase,
   UserProfile,
   ExcludedFriendsUsersResponse,
   SentFriendRequestData,
   SentFriendRequestResponse,
+  FriendRequestData,
+  FriendRequestResponse,
 };

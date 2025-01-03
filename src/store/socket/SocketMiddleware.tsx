@@ -1,40 +1,79 @@
+import { ChatEventEnum, SocketActionType } from "@/lib/constants";
 import { Middleware } from "@reduxjs/toolkit";
-// import { connected, disconnected } from "./socketSlice";
-import socketio from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
-const socketMiddleware = (): Middleware => {
-  const socket = socketio("http://localhost:3000", {
-    withCredentials: true,
-    autoConnect: true, // Automatically attempt to connect
-    auth: () => ({ token: localStorage.getItem("token") }), // Dynamically retrieve the token
-  });
+interface SocketEmitAction {
+  type: `socket/${string}`;
+  payload: {
+    event: string;
+    data: any;
+  };
+}
 
-  console.log("Socket middleware initialized");
+const isSocketEmitAction = (action: unknown): action is SocketEmitAction =>
+  typeof action === "object" &&
+  action !== null &&
+  typeof (action as SocketEmitAction).type === "string" &&
+  (action as SocketEmitAction).type.startsWith("socket/emit") &&
+  typeof (action as SocketEmitAction).payload === "object";
 
-  // Attach event listeners once
-  socket.on("connect", () => {
-    console.log("Socket connected");
-  });
+let socket: Socket | null = null;
 
-  socket.on("connected", () => {
-    console.log("Connected event received from server");
-  });
+const socketMiddleware: Middleware = (storeAPI) => {
+  return (next) => (action: any) => {
+    const state = storeAPI.getState();
+    const token = state.auth?.token || localStorage.getItem("token");
 
-  socket.on("disconnect", () => {
-    console.log("Socket disconnected");
-  });
+    switch (action.type) {
+      case SocketActionType.CREATE_CONNECTION:
+        if (!socket && token) {
+          console.log("Connecting socket...");
+          socket = io("http://localhost:3000", {
+            withCredentials: true,
+            autoConnect: true,
+            auth: { token },
+          });
 
-  return (storeAPI) => (next) => (action: any) => {
-    if (action.type.startsWith("socket/emit")) {
-      console.log("Emitting socket event:", action.type);
+          socket.on(ChatEventEnum.CONNECTED_EVENT, (data) => {
+            console.log("Connected to server:", data);
+            storeAPI.dispatch({
+              type: SocketActionType.CREATE_CONNECTION,
+              payload: data,
+            });
+          });
 
-      const { event, data } = action.payload;
+          socket.on(ChatEventEnum.DISCONNECT_EVENT, () => {
+            console.log("Socket disconnected");
+            storeAPI.dispatch({ type: SocketActionType.DISCONNECTED });
+            socket = null;
+          });
+        } else {
+          console.log("Socket is already connected or token is missing.");
+        }
+        break;
 
-      // Emit events from the middleware
-      socket.emit(event, data);
+      case SocketActionType.DISCONNECTED:
+        if (socket) {
+          console.log("Disconnecting socket...");
+          socket.disconnect();
+          socket = null;
+          storeAPI.dispatch({ type: SocketActionType.DISCONNECTED });
+        } else {
+          console.log("Socket is not connected.");
+        }
+        break;
+
+      default:
+        // Handle socket emission actions
+        if (isSocketEmitAction(action) && socket) {
+          const { event, data } = action.payload;
+          socket.emit(event, data);
+          console.log("Emitting socket event:", { event, data });
+        }
+        break;
     }
 
-    next(action);
+    return next(action);
   };
 };
 

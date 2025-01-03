@@ -1,6 +1,7 @@
 import { configureStore, Middleware } from "@reduxjs/toolkit";
 import { chatDetailReducer } from "./chatDetail/ChatDetailSlice";
 import { authReducer } from "./auth/AuthSlice";
+import { friendRequestReducer } from "./friendRequest/FriendRequestSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { socketReducer } from "./socket/SocketSlice";
 import socketMiddleware from "./socket/SocketMiddleware";
@@ -17,9 +18,10 @@ const store = configureStore({
     chatDetail: chatDetailReducer,
     auth: authReducer,
     socket: socketReducer,
+    friendRequest: friendRequestReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(customMiddleware),
+    getDefaultMiddleware().concat(customMiddleware).concat(socketMiddleware),
 });
 
 export type AppDispatch = typeof store.dispatch; // Typed dispatch

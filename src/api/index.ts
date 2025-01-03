@@ -1,8 +1,9 @@
 import {
   ExcludedFriendsUsersResponse,
   SentFriendRequestResponse,
+  FriendRequestResponse,
 } from "@/types/ApiResponse.types";
-import { LoginUserResponse, RegisterUserResponse } from "@/types/auth.types";
+import { LoginUserResponse, RegisterUserResponse } from "@/types/Auth.types";
 import axios, { AxiosResponse } from "axios";
 
 // Create an instance of axios with a base URL, credentials, and timeout.
@@ -81,9 +82,14 @@ const sendFriendRequest = async (_id: string) => {
 };
 
 const getAllFriendRequests = async () => {
-  const response = await apiClient.get("/friendrequest/get-friend-requests");
-
-  return response.data;
+  try {
+    const response: AxiosResponse<FriendRequestResponse> = await apiClient.get(
+      "/friendrequest/get-friend-requests"
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 const acceptFriendRequest = async (_id: string) => {

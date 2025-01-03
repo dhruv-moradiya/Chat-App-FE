@@ -1,5 +1,4 @@
 import { loginUser, registerUser } from "@/api";
-import { requestHandler } from "@/lib/utils";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 

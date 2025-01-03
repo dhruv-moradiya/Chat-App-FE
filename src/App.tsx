@@ -60,7 +60,7 @@ function App() {
       return true;
     }
   };
-  console.log("location :>> ", location);
+
   // Handle token expiration
   useEffect(() => {
     const token =
@@ -76,10 +76,10 @@ function App() {
     } else {
       // Set a timeout to handle future token expiration
       const payload = JSON.parse(atob(token.split(".")[1]));
-      console.log("payload :>> ", payload);
+      // console.log("payload :>> ", payload);
       const expirationTime = payload.exp * 1000 - Date.now();
 
-      console.log("MIN", ((expirationTime / 1000) * 1) / 60);
+      // console.log("MIN", ((expirationTime / 1000) * 1) / 60);
 
       const timer = setTimeout(() => {
         setNotification("Your session has expired. Please sign in again.");
