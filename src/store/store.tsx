@@ -7,9 +7,9 @@ import { socketReducer } from "./socket/SocketSlice";
 import socketMiddleware from "./socket/SocketMiddleware";
 
 const customMiddleware: Middleware = (storeAPI) => (next) => (action) => {
-  console.log("Dispatching action:", action);
+  // console.log("Dispatching action:", action);
   const result = next(action);
-  console.log("State after action:", storeAPI.getState());
+  // console.log("State after action:", storeAPI.getState());
   return result;
 };
 

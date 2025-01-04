@@ -12,10 +12,8 @@ interface FriendRequestStatus {
 const fetchFriendRequests = createAsyncThunk(
   "friendRequest/fetchFriendRequests",
   async (_args: void, { rejectWithValue }) => {
-    console.log("FETCH FRIEND REQUESTS");
     try {
       const response = await getAllFriendRequests();
-      console.log("FRIEND REQUEST RESPONSE :>> ", response);
       return response;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -41,7 +39,11 @@ const initialState: FriendRequestStatus = {
 const friendRequestSlice = createSlice({
   name: "friendRequest",
   initialState,
-  reducers: {},
+  reducers: {
+    newFriendRequestReceive: (state, action) => {
+      state.requests.push(action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchFriendRequests.pending, (state) => {
       state.isLoading = true;
@@ -63,4 +65,5 @@ const friendRequestSlice = createSlice({
 
 export { fetchFriendRequests };
 export const friendRequestSelector = (state: any) => state.friendRequest;
+export const { newFriendRequestReceive } = friendRequestSlice.actions;
 export const friendRequestReducer = friendRequestSlice.reducer;

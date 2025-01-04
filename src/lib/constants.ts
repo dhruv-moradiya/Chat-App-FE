@@ -45,13 +45,15 @@ const ChatEventEnum = Object.freeze({
 
   // Friend requests
   FRIEND_REQUEST_SEND_EVENT: "friendRequestSent",
+  FRIEND_REQUEST_RECEIVE_EVENT: "friendRequestReceived",
   FRIEND_REQUEST_ACCEPT_EVENT: "friendRequestAccepted",
   FRIEND_REQUEST_DECLINE_EVENT: "friendRequestDeclined",
 });
 
-const SocketActionType = Object.freeze({
+const ActionType = Object.freeze({
   CREATE_CONNECTION: "socket/createConnection",
   DISCONNECTED: "socket/disconnected",
+  NEW_FRIEND_REQUEST_RECEIVE: "friendRequest/newFriendRequestReceive",
 });
 
-export { ChatEventEnum, SocketActionType };
+export { ChatEventEnum, ActionType };

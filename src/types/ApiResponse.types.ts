@@ -36,8 +36,7 @@ interface SentFriendRequestResponse extends ApiResponseBase {
 
 interface FriendRequestData {
   _id: string;
-  from: UserProfile;
-  to: Omit<UserProfile, "friends" | "mutedChats">;
+  from: Omit<UserProfile, "friends" | "mutedChats" | "createdAt" | "updatedAt">;
   status: "pending" | "accepted" | "rejected";
   createdAt: string;
   updatedAt: string;

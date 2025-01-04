@@ -7,13 +7,13 @@ import { useEffect } from "react";
 const HomePage = () => {
   const dispatch = useAppDispatch();
 
-  // useEffect(() => {
-  //   dispatch(createConnection());
+  useEffect(() => {
+    dispatch(createConnection());
 
-  //   return () => {
-  //     dispatch(disconnected());
-  //   };
-  // }, []);
+    return () => {
+      dispatch(disconnected());
+    };
+  }, []);
 
   return (
     <div className="w-full h-full flex gap-2">

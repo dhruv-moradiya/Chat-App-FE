@@ -1,6 +1,8 @@
-import { ChatEventEnum, SocketActionType } from "@/lib/constants";
+import { ChatEventEnum, ActionType } from "@/lib/constants";
 import { Middleware } from "@reduxjs/toolkit";
 import { io, Socket } from "socket.io-client";
+import { newFriendRequestReceive } from "../friendRequest/FriendRequestSlice";
+import { FriendRequestData } from "@/types/ApiResponse.types";
 
 interface SocketEmitAction {
   type: `socket/${string}`;
@@ -8,6 +10,11 @@ interface SocketEmitAction {
     event: string;
     data: any;
   };
+}
+
+interface NewFriendRequestReceiveType {
+  data: FriendRequestData;
+  message: string;
 }
 
 const isSocketEmitAction = (action: unknown): action is SocketEmitAction =>
@@ -25,41 +32,60 @@ const socketMiddleware: Middleware = (storeAPI) => {
     const token = state.auth?.token || localStorage.getItem("token");
 
     switch (action.type) {
-      case SocketActionType.CREATE_CONNECTION:
+      case ActionType.CREATE_CONNECTION:
         if (!socket && token) {
-          console.log("Connecting socket...");
-          socket = io("http://localhost:3000", {
+          console.log("😖 Connecting socket...");
+          socket = io(import.meta.env.VITE_SOCKET_SERVER_URI, {
             withCredentials: true,
             autoConnect: true,
             auth: { token },
           });
 
           socket.on(ChatEventEnum.CONNECTED_EVENT, (data) => {
-            console.log("Connected to server:", data);
+            console.log("😍 Connected to server:", data);
             storeAPI.dispatch({
-              type: SocketActionType.CREATE_CONNECTION,
+              type: ActionType.CREATE_CONNECTION,
               payload: data,
             });
           });
 
+          socket.on("TEST_EVENT", (data) => {
+            console.log("TEST EVENT DATA :>> ", data);
+          });
+
+          socket.on(
+            ChatEventEnum.FRIEND_REQUEST_RECEIVE_EVENT,
+            (data: NewFriendRequestReceiveType) => {
+              console.log("🌹 Friend request received:", data);
+              storeAPI.dispatch(newFriendRequestReceive(data.data));
+            }
+          );
+
           socket.on(ChatEventEnum.DISCONNECT_EVENT, () => {
-            console.log("Socket disconnected");
-            storeAPI.dispatch({ type: SocketActionType.DISCONNECTED });
+            console.log("💔 Socket disconnected");
+            storeAPI.dispatch({ type: ActionType.DISCONNECTED });
             socket = null;
           });
+
+          socket.on(ChatEventEnum.SOCKET_ERROR_EVENT, (data) => {
+            console.log(
+              "😱 Error occur while connecting to the socket :",
+              data
+            );
+          });
         } else {
-          console.log("Socket is already connected or token is missing.");
+          console.log("🙏 Socket is already connected or token is missing.");
         }
         break;
 
-      case SocketActionType.DISCONNECTED:
+      case ActionType.DISCONNECTED:
         if (socket) {
-          console.log("Disconnecting socket...");
+          console.log("💔 Disconnecting socket...");
           socket.disconnect();
           socket = null;
-          storeAPI.dispatch({ type: SocketActionType.DISCONNECTED });
+          storeAPI.dispatch({ type: ActionType.DISCONNECTED });
         } else {
-          console.log("Socket is not connected.");
+          console.log("🤷‍♀️ Socket is not connected.");
         }
         break;
 
