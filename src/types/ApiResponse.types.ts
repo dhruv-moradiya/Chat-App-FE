@@ -1,9 +1,11 @@
+// Base Response structure
 interface ApiResponseBase {
   message: string;
   success: boolean;
   statusCode: number;
 }
 
+// User Profile
 interface UserProfile {
   _id: string;
   username: string;
@@ -21,6 +23,7 @@ interface ExcludedFriendsUsersResponse extends ApiResponseBase {
   };
 }
 
+// When user send a friend request
 interface SentFriendRequestData {
   from: string;
   to: string;
@@ -34,6 +37,7 @@ interface SentFriendRequestResponse extends ApiResponseBase {
   data: SentFriendRequestData;
 }
 
+// When user receive a friend request
 interface FriendRequestData {
   _id: string;
   from: Omit<UserProfile, "friends" | "mutedChats" | "createdAt" | "updatedAt">;
@@ -46,6 +50,7 @@ interface FriendRequestResponse extends ApiResponseBase {
   data: FriendRequestData[];
 }
 
+// Chats
 interface ChatDetails {
   _id: string;
   name: { isGroup: true; name: string } | { isGroup: false; name?: never };
@@ -61,6 +66,24 @@ interface ChatDetailResponse extends ApiResponseBase {
   data: ChatDetails[];
 }
 
+interface AcceptFriendRequest {
+  acceptorDetails: Omit<
+    UserProfile,
+    "friends" | "mutedChats" | "createdAt" | "updatedAt"
+  >;
+  chatDetails: ChatDetails;
+}
+
+interface AcceptFriendRequestResponse extends ApiResponseBase {
+  data: {
+    acceptorDetails: Omit<
+      UserProfile,
+      "friends" | "mutedChats" | "createdAt" | "updatedAt"
+    >;
+    chatDetails: ChatDetails;
+  };
+}
+
 export type {
   ApiResponseBase,
   UserProfile,
@@ -71,4 +94,6 @@ export type {
   FriendRequestResponse,
   ChatDetails,
   ChatDetailResponse,
+  AcceptFriendRequest,
+  AcceptFriendRequestResponse,
 };

@@ -27,7 +27,7 @@ const Sidebar = () => {
         </>
       ) : (
         <>
-          {myChats.map((chat, i) => {
+          {myChats?.map((chat, i) => {
             return <ChatEntry key={i} chat={chat} />;
           })}
         </>

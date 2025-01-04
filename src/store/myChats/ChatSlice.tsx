@@ -40,7 +40,11 @@ const initialState: MyChatsStatus = {
 const myChatsSlice = createSlice({
   name: "myChats",
   initialState,
-  reducers: {},
+  reducers: {
+    addNewChat: (state, action) => {
+      state.myChats.push(action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchMyChats.pending, (state) => {
       state.isLoading = true;
@@ -48,7 +52,7 @@ const myChatsSlice = createSlice({
     });
     builder.addCase(fetchMyChats.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.myChats = action.payload.data;
+      state.myChats = action.payload;
     });
     builder.addCase(fetchMyChats.rejected, (state, action) => {
       state.isLoading = false;
@@ -61,5 +65,5 @@ const myChatsSlice = createSlice({
 });
 
 export const myChatsReducer = myChatsSlice.reducer;
-export const {} = myChatsSlice.actions;
+export const { addNewChat } = myChatsSlice.actions;
 export { fetchMyChats };

@@ -13,7 +13,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const requestHandler = async (
+const requestHandler = async (
   api: () => Promise<AxiosResponse<ChatAppResponse, any>>,
   setLoading?: ((loading: boolean) => void) | null
 ): Promise<ChatAppResponse> => {
@@ -24,7 +24,7 @@ export const requestHandler = async (
     const { data } = response;
 
     if (data?.success) {
-      return data; // Return the data directly
+      return data; // Return the data directly`
     } else {
       throw new Error(data?.message || "Request failed");
     }
@@ -48,3 +48,9 @@ export const requestHandler = async (
     setLoading && setLoading(false);
   }
 };
+
+const capitalizeFirstLetter = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+export { requestHandler, capitalizeFirstLetter };

@@ -1,7 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { FriendRequestData } from "@/types/ApiResponse.types";
-import { Check, X } from "lucide-react";
 import { memo } from "react";
+import { AxiosError } from "axios";
+import { Check, X } from "lucide-react";
+import { acceptFriendRequest } from "@/api";
+import { Button } from "@/components/ui/button";
+import { useAppDispatch } from "@/store/store";
+import { addNewChat } from "@/store/myChats/ChatSlice";
+import { FriendRequestData } from "@/types/ApiResponse.types";
 
 interface FriendRequestsListProps {
   friendRequests: FriendRequestData[];
@@ -14,6 +18,8 @@ const FriendRequestsList = ({
   isLoading,
   error,
 }: FriendRequestsListProps) => {
+  const dispatch = useAppDispatch();
+
   if (isLoading && !error) {
     return <div>Loading...</div>;
   }
@@ -25,6 +31,22 @@ const FriendRequestsList = ({
   if (!friendRequests || friendRequests.length === 0) {
     return <div>No friend requests</div>;
   }
+
+  const handleAcceptFriendRequest = async (_id: string) => {
+    try {
+      const response = await acceptFriendRequest(_id);
+      dispatch(addNewChat(response.chatDetails));
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.log("error.response?.data :>> ", error.response?.data.message);
+      } else {
+        console.log(
+          "An unknown error occurred while accepting friend request :>> ",
+          error
+        );
+      }
+    }
+  };
 
   return friendRequests.map((request, index) => (
     <div key={index} className="py-2 flex items-center gap-2">
@@ -47,6 +69,7 @@ const FriendRequestsList = ({
         <Button
           variant="outline"
           className="p-0 px-4 text-green-500 transition-colors duration-150 hover:bg-green-500"
+          onClick={() => handleAcceptFriendRequest(request._id)}
         >
           <Check />
         </Button>

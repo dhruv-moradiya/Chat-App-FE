@@ -1,3 +1,8 @@
+import { memo, useEffect } from "react";
+import { UserPlus } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { fetchFriendRequests } from "@/store/friendRequest/FriendRequestSlice";
+import FriendRequestsList from "./FriendRequestsList";
 import {
   Dialog,
   DialogContent,
@@ -6,22 +11,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { fetchFriendRequests } from "@/store/friendRequest/FriendRequestSlice";
-import { useAppDispatch, useAppSelector } from "@/store/store";
-import { UserPlus } from "lucide-react";
-import { memo, useEffect } from "react";
-import FriendRequestsList from "./FriendRequestsList";
 
 const FriendRequestDialog = () => {
+  const dispatch = useAppDispatch();
+
   const {
     requests: friendRequests,
     isLoading: isFriendRequestLoading,
     isError: friendRequestError,
   } = useAppSelector((state) => state.friendRequest);
-
-  console.log("friendRequests :>> ", friendRequests);
-
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchFriendRequests());

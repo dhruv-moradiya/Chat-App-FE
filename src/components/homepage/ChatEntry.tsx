@@ -2,6 +2,7 @@ import { Pin } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { ChatDetails } from "@/types/ApiResponse.types";
 import { useAppSelector } from "@/store/store";
+import { capitalizeFirstLetter } from "@/lib/utils";
 
 interface ChatEntryProps {
   chat: ChatDetails;
@@ -27,7 +28,9 @@ const ChatEntry = ({ chat }: ChatEntryProps) => {
 
       {/* Chat Text */}
       <div className="flex-1 overflow-hidden">
-        <h3 className="mb-1">{friend?.username}</h3>
+        <h3 className="mb-1">
+          {capitalizeFirstLetter(friend?.username as string)}
+        </h3>
         <p className="whitespace-nowrap text-ellipsis overflow-hidden text-[12px] text-muted-foreground">
           Lorem ipsum dolor sit, amet consectetur adipisicing elit.
           Reprehenderit, voluptatum!

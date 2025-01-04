@@ -1,11 +1,12 @@
 import {
-  ExcludedFriendsUsersResponse,
-  SentFriendRequestResponse,
-  FriendRequestResponse,
+  AcceptFriendRequestResponse,
   ChatDetailResponse,
+  ExcludedFriendsUsersResponse,
+  FriendRequestResponse,
+  SentFriendRequestResponse,
 } from "@/types/ApiResponse.types";
-import { LoginUserResponse, RegisterUserResponse } from "@/types/Auth.types";
 import axios, { AxiosResponse } from "axios";
+import { LoginUserResponse, RegisterUserResponse } from "@/types/Auth.types";
 
 // Create an instance of axios with a base URL, credentials, and timeout.
 const apiClient = axios.create({
@@ -96,12 +97,16 @@ const getAllFriendRequests = async () => {
 
 // ACCEPT FRIEND REQUEST API
 const acceptFriendRequest = async (_id: string) => {
-  const response = await apiClient.post(
-    "/friendrequest/accept-friend-request",
-    { friendRequestId: _id }
-  );
-
-  return response.data;
+  try {
+    const response: AxiosResponse<AcceptFriendRequestResponse> =
+      await apiClient.post("/friendrequest/accept-friend-request", {
+        friendRequestId: _id,
+      });
+    console.log("response :>> ", response);
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getAllChats = async () => {
@@ -110,7 +115,7 @@ const getAllChats = async () => {
       "/chat/my-chats"
     );
 
-    return response.data;
+    return response.data.data;
   } catch (error) {
     throw error;
   }
@@ -118,10 +123,10 @@ const getAllChats = async () => {
 
 export {
   acceptFriendRequest,
+  getAllChats,
   getAllFriendRequests,
   getUsersExcludingFriendsBasedOnQuery,
   loginUser,
   registerUser,
   sendFriendRequest,
-  getAllChats,
 };

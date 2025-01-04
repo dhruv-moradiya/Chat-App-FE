@@ -3,6 +3,8 @@ import { Middleware } from "@reduxjs/toolkit";
 import { io, Socket } from "socket.io-client";
 import { newFriendRequestReceive } from "../friendRequest/FriendRequestSlice";
 import { FriendRequestData } from "@/types/ApiResponse.types";
+import { addNewChat } from "../myChats/ChatSlice";
+import { showNotificationToast } from "@/components/common/ToastProvider";
 
 interface SocketEmitAction {
   type: `socket/${string}`;
@@ -16,6 +18,17 @@ interface NewFriendRequestReceiveType {
   data: FriendRequestData;
   message: string;
 }
+
+const removeSocketListeners = () => {
+  if (socket) {
+    console.log("🧹 Removing socket event listeners...");
+    socket.off(ChatEventEnum.CONNECTED_EVENT);
+    socket.off(ChatEventEnum.FRIEND_REQUEST_RECEIVE_EVENT);
+    socket.off(ChatEventEnum.FRIEND_REQUEST_ACCEPT_EVENT);
+    socket.off(ChatEventEnum.DISCONNECT_EVENT);
+    socket.off(ChatEventEnum.SOCKET_ERROR_EVENT);
+  }
+};
 
 const isSocketEmitAction = (action: unknown): action is SocketEmitAction =>
   typeof action === "object" &&
@@ -49,9 +62,9 @@ const socketMiddleware: Middleware = (storeAPI) => {
             });
           });
 
-          socket.on("TEST_EVENT", (data) => {
-            console.log("TEST EVENT DATA :>> ", data);
-          });
+          // socket.on("TEST_EVENT", (data) => {
+          //   console.log("TEST EVENT DATA :>> ", data);
+          // });
 
           socket.on(
             ChatEventEnum.FRIEND_REQUEST_RECEIVE_EVENT,
@@ -61,8 +74,17 @@ const socketMiddleware: Middleware = (storeAPI) => {
             }
           );
 
+          socket.on(ChatEventEnum.FRIEND_REQUEST_ACCEPT_EVENT, (data) => {
+            console.log("😍 Friend request accepted:", data);
+            showNotificationToast(
+              `${data.acceptorDetails.username} accepted your friend request!`
+            );
+            storeAPI.dispatch(addNewChat(data.chatDetails));
+          });
+
           socket.on(ChatEventEnum.DISCONNECT_EVENT, () => {
             console.log("💔 Socket disconnected");
+            removeSocketListeners();
             storeAPI.dispatch({ type: ActionType.DISCONNECTED });
             socket = null;
           });
@@ -81,6 +103,7 @@ const socketMiddleware: Middleware = (storeAPI) => {
       case ActionType.DISCONNECTED:
         if (socket) {
           console.log("💔 Disconnecting socket...");
+          removeSocketListeners();
           socket.disconnect();
           socket = null;
           storeAPI.dispatch({ type: ActionType.DISCONNECTED });
