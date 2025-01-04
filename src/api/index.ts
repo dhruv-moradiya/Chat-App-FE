@@ -2,6 +2,7 @@ import {
   ExcludedFriendsUsersResponse,
   SentFriendRequestResponse,
   FriendRequestResponse,
+  ChatDetailResponse,
 } from "@/types/ApiResponse.types";
 import { LoginUserResponse, RegisterUserResponse } from "@/types/Auth.types";
 import axios, { AxiosResponse } from "axios";
@@ -81,6 +82,7 @@ const sendFriendRequest = async (_id: string) => {
   }
 };
 
+// GET FRIEND REQUEST API
 const getAllFriendRequests = async () => {
   try {
     const response: AxiosResponse<FriendRequestResponse> = await apiClient.get(
@@ -92,6 +94,7 @@ const getAllFriendRequests = async () => {
   }
 };
 
+// ACCEPT FRIEND REQUEST API
 const acceptFriendRequest = async (_id: string) => {
   const response = await apiClient.post(
     "/friendrequest/accept-friend-request",
@@ -101,6 +104,18 @@ const acceptFriendRequest = async (_id: string) => {
   return response.data;
 };
 
+const getAllChats = async () => {
+  try {
+    const response: AxiosResponse<ChatDetailResponse> = await apiClient.get(
+      "/chat/my-chats"
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export {
   acceptFriendRequest,
   getAllFriendRequests,
@@ -108,4 +123,5 @@ export {
   loginUser,
   registerUser,
   sendFriendRequest,
+  getAllChats,
 };

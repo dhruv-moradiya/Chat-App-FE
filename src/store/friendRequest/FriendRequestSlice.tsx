@@ -1,4 +1,5 @@
 import { getAllFriendRequests } from "@/api";
+import { showNotificationToast } from "@/components/common/ToastProvider";
 import { FriendRequestData } from "@/types/ApiResponse.types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
@@ -42,6 +43,9 @@ const friendRequestSlice = createSlice({
   reducers: {
     newFriendRequestReceive: (state, action) => {
       state.requests.push(action.payload);
+      showNotificationToast(
+        action.payload.from.username + " " + " sent you a friend request."
+      );
     },
   },
   extraReducers: (builder) => {

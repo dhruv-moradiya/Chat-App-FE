@@ -1,22 +1,33 @@
-import React from "react";
-import { Badge } from "../ui/badge";
 import { Pin } from "lucide-react";
+import { Badge } from "../ui/badge";
+import { ChatDetails } from "@/types/ApiResponse.types";
+import { useAppSelector } from "@/store/store";
 
-const ChatEntry = () => {
+interface ChatEntryProps {
+  chat: ChatDetails;
+}
+
+const ChatEntry = ({ chat }: ChatEntryProps) => {
+  const { user } = useAppSelector((state) => state.auth);
+
+  const friend = chat.participants.find(
+    (participant) => participant._id !== user._id
+  );
+
   return (
     <div className="flex items-center gap-3 px-4 py-3 hover:bg-accent-foreground/5 rounded-lg transition-colors duration-200 cursor-pointer">
       {/* Profile Picture */}
       <div className="w-12 h-12 rounded-lg overflow-hidden">
         <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWGHQiByv8_VMiPuPmrYP1OWf0r_saNhsZv9fqATM8wmyXO00Id69j&usqp=CAE&s"
-          alt="User Profile"
+          src={friend?.profilePicture}
+          alt={friend?.username}
           className="w-full h-full object-cover"
         />
       </div>
 
       {/* Chat Text */}
       <div className="flex-1 overflow-hidden">
-        <h3 className="mb-1">Office Work</h3>
+        <h3 className="mb-1">{friend?.username}</h3>
         <p className="whitespace-nowrap text-ellipsis overflow-hidden text-[12px] text-muted-foreground">
           Lorem ipsum dolor sit, amet consectetur adipisicing elit.
           Reprehenderit, voluptatum!
@@ -24,12 +35,11 @@ const ChatEntry = () => {
       </div>
 
       {/* Time and Pin Icon */}
-      <div className="min-w-[40px] flex gap-2 text-white">
-        <Badge variant={"custom"} className="self-end border-none">
+      <div className="min-w-[40px] self-end flex items-center gap-2 text-white">
+        <Badge className="self-end border-none w-5 h-5 flex items-center justify-center rounded-full bg-primary/60 text-white">
           12
         </Badge>
         <div className="flex flex-col items-center gap-2">
-          <h4 className="text-[12px]">4 min</h4>
           <Pin fill="white" size={16} className="rotate-45" />
         </div>
       </div>

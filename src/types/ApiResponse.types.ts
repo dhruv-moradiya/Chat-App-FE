@@ -46,6 +46,21 @@ interface FriendRequestResponse extends ApiResponseBase {
   data: FriendRequestData[];
 }
 
+interface ChatDetails {
+  _id: string;
+  name: { isGroup: true; name: string } | { isGroup: false; name?: never };
+  createdAt: string;
+  updatedAt: string;
+  participants: Omit<
+    UserProfile,
+    "friends" | "mutedChats" | "createdAt" | "updatedAt"
+  >[];
+}
+
+interface ChatDetailResponse extends ApiResponseBase {
+  data: ChatDetails[];
+}
+
 export type {
   ApiResponseBase,
   UserProfile,
@@ -54,4 +69,6 @@ export type {
   SentFriendRequestResponse,
   FriendRequestData,
   FriendRequestResponse,
+  ChatDetails,
+  ChatDetailResponse,
 };
