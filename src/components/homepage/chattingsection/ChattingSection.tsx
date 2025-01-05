@@ -1,16 +1,10 @@
-import { useSelector } from "react-redux";
+import React from "react";
 import SkeletonLoader from "./ChatSkeletonLoader ";
 import Header from "./Header";
-import InputSection from "./InputSection";
 import Message from "./Message";
-import { chatDetailSelector } from "@/store/chatDetail/ChatDetailSlice";
-import React from "react";
+import CustomInput from "@/components/common/cutomInput/CustomInput";
 
 const ChattingSection = () => {
-  const { isOpen: isChatDetailOpen } = useSelector((state) =>
-    chatDetailSelector(state)
-  );
-
   const messageData = [
     {
       avatarSrc:
@@ -161,9 +155,9 @@ const ChattingSection = () => {
   ];
 
   return (
-    <div className="flex flex-col w-[calc(100%-384px)] h-full relative">
+    <div className=" h-full flex flex-col w-[calc(100%-384px)] relative">
       <Header />
-      <div className="scrollbar w-full h-[calc(100%-159px)] px-2 overflow-y-scroll flex flex-col items-center gap-2">
+      <div className="scrollbar w-full h-[calc(100%-180px)] px-2 overflow-y-scroll flex flex-col items-center gap-2 mb-2">
         {messageData.map((message, index) => {
           const isNewDate =
             index === 0 || message.date !== messageData[index - 1]?.date;
@@ -190,7 +184,7 @@ const ChattingSection = () => {
         })}
         <SkeletonLoader numberOfSkeletons={12} />
       </div>
-      <InputSection />
+      <CustomInput />
     </div>
   );
 };

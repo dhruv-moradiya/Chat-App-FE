@@ -2,21 +2,34 @@ import { Pin } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { ChatDetails } from "@/types/ApiResponse.types";
 import { useAppSelector } from "@/store/store";
-import { capitalizeFirstLetter } from "@/lib/utils";
+import { capitalizeFirstLetter, cn } from "@/lib/utils";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 interface ChatEntryProps {
   chat: ChatDetails;
 }
 
 const ChatEntry = ({ chat }: ChatEntryProps) => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAppSelector((state) => state.auth);
 
   const friend = chat.participants.find(
     (participant) => participant._id !== user._id
   );
 
+  const handleCurrentChat = () => {
+    navigate(`/?chatId=${chat._id}`);
+  };
+
   return (
-    <div className="flex items-center gap-3 px-4 py-3 hover:bg-accent-foreground/5 rounded-lg transition-colors duration-200 cursor-pointer">
+    <div
+      className={cn(
+        "flex items-center gap-3 px-4 py-3 hover:bg-accent-foreground/5 rounded-lg transition-colors duration-200 cursor-pointer",
+        { "bg-accent-foreground/5": searchParams.get("chatId") === chat._id }
+      )}
+      onClick={handleCurrentChat}
+    >
       {/* Profile Picture */}
       <div className="w-12 h-12 rounded-lg overflow-hidden">
         <img

@@ -1,10 +1,9 @@
-import { useEffect, useRef } from "react";
+import React from "react";
 import Quill from "quill";
-import "quill/dist/quill.snow.css";
 import { Mention, MentionBlot } from "quill-mention";
 import "quill-mention/dist/quill.mention.css";
-import { useAppDispatch, useAppSelector } from "./store/store";
-import { isUserLoggedIn, logout } from "./store/auth/AuthSlice";
+import "quill/dist/quill.snow.css";
+import { useEffect, useRef } from "react";
 
 // Register Mention module and blot
 Quill.register({ "blots/mention": MentionBlot, "modules/mention": Mention });
@@ -75,7 +74,6 @@ const InputSection: React.FC = () => {
       key="editor"
       ref={editorRef}
       style={{
-        minHeight: "200px",
         backgroundColor: "black",
         color: "white",
         border: "1px solid #ccc",
@@ -84,3 +82,5 @@ const InputSection: React.FC = () => {
     ></div>
   );
 };
+
+export default InputSection;

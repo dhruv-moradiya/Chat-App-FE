@@ -1,0 +1,128 @@
+.scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  width: 4px;
+  background-color: #2e333d;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background-color: #131313;
+}
+
+/* Quill */
+.ql-container.ql-snow {
+  border: none !important;
+}
+
+.ql-editor {
+  max-height: 64px;
+  overflow: auto;
+  border: none;
+}
+
+.ql-editor::-webkit-scrollbar {
+  width: 4px;
+  background-color: #2e333d;
+}
+
+.ql-editor::-webkit-scrollbar-thumb {
+  width: 4px;
+  background-color: #2e333d;
+}
+
+.ql-editor::-webkit-scrollbar-track {
+  background-color: #131313;
+}
+
+.ql-mention {
+  background-color: #2e333d;
+  color: #ffffff;
+  padding: 5px 10px;
+}
+
+.ql-picker-options {
+  background-color: #2e333d !important;
+  color: #ffffff;
+}
+
+.list-group {
+  background-color: #2e333d;
+  color: #ffffff;
+  border-radius: 10px;
+}
+
+.list-group-item {
+  background-color: #6b8afd;
+  color: #ffffff;
+  border-radius: 10px;
+}
+
+.mention {
+  background-color: #6b8afd !important;
+  color: #ffffff !important;
+}
+
+.selected {
+  background-color: #6b8afd !important;
+  color: #ffffff !important;
+}
+
+/* Toast */
+@keyframes slideDown {
+  from {
+    transform: translateX(-50%) translateY(-100%);
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToRight {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.toast {
+  animation: slideInFromRight 0.3s ease-out,
+    slideOutToRight 0.3s ease-in forwards;
+}
+
+.toast-exit {
+  animation: slideOutToRight 0.3s ease-in forwards;
+}
+
+@keyframes open-menu {
+  0% {
+    transform-origin: bottom left;
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform-origin: bottom left;
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-open-menu {
+  animation: open-menu 0.3s ease-out forwards;
+}
