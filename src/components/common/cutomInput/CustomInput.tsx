@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 const CustomInput = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuStyle, setMenuStyle] = useState({});
+  const [inputValue, setInputValue] = useState("");
   const plusButtonRef = useRef<HTMLDivElement | null>(null);
 
   const toggleMenu = () => {
@@ -16,6 +17,16 @@ const CustomInput = () => {
       });
     }
     setMenuOpen((prev) => !prev);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleSendMessage = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      console.log("object");
+    }
   };
 
   return (

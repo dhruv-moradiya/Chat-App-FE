@@ -53,4 +53,12 @@ const capitalizeFirstLetter = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-export { requestHandler, capitalizeFirstLetter };
+const playNotificationSound = (soundUrl = "/to_the_point.mp3") => {
+  const audio = new Audio(soundUrl); // Create a new Audio instance
+  audio.currentTime = 0; // Reset to the start for replay
+  audio.play().catch((error) => {
+    console.error("Failed to play the notification sound:", error);
+  });
+};
+
+export { requestHandler, capitalizeFirstLetter, playNotificationSound };

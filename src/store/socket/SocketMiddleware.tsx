@@ -5,6 +5,9 @@ import { newFriendRequestReceive } from "../friendRequest/FriendRequestSlice";
 import { FriendRequestData } from "@/types/ApiResponse.types";
 import { addNewChat } from "../myChats/ChatSlice";
 import { showNotificationToast } from "@/components/common/ToastProvider";
+import { playNotificationSound } from "@/lib/utils";
+
+// const playNotificationSound = useNotificationSound("/to_the_point.mp3");
 
 interface SocketEmitAction {
   type: `socket/${string}`;
@@ -70,6 +73,7 @@ const socketMiddleware: Middleware = (storeAPI) => {
             ChatEventEnum.FRIEND_REQUEST_RECEIVE_EVENT,
             (data: NewFriendRequestReceiveType) => {
               console.log("🌹 Friend request received:", data);
+              playNotificationSound();
               storeAPI.dispatch(newFriendRequestReceive(data.data));
             }
           );
@@ -79,6 +83,7 @@ const socketMiddleware: Middleware = (storeAPI) => {
             showNotificationToast(
               `${data.acceptorDetails.username} accepted your friend request!`
             );
+            playNotificationSound();
             storeAPI.dispatch(addNewChat(data.chatDetails));
           });
 
