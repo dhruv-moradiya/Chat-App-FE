@@ -32,6 +32,10 @@ const ChatEventEnum = Object.freeze({
   CHAT_UNPIN_EVENT: "chatUnpinned",
   CHAT_MUTE_EVENT: "chatMuted",
   CHAT_UNMUTE_EVENT: "chatUnmuted",
+  CURRENT_ACTIVE_CHAT_EVENT: "currentActiveChat",
+
+  // Room event
+  ROOM_CREATED_EVENT: "roomCreated",
 
   // Media
   MEDIA_SEND_EVENT: "mediaSent",
@@ -53,7 +57,10 @@ const ChatEventEnum = Object.freeze({
 const ActionType = Object.freeze({
   CREATE_CONNECTION: "socket/createConnection",
   DISCONNECTED: "socket/disconnected",
+
   NEW_FRIEND_REQUEST_RECEIVE: "friendRequest/newFriendRequestReceive",
+
+  CURRENT_ACTIVE_CHAT: "myChats/setCurrentActiveChat",
 });
 
 export { ChatEventEnum, ActionType };

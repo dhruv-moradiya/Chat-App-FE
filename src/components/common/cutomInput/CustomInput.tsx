@@ -1,5 +1,5 @@
 import { Mic, Plus, Smile, X } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, memo } from "react";
 
 const CustomInput = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -23,9 +23,9 @@ const CustomInput = () => {
     setInputValue(e.target.value);
   };
 
-  const handleSendMessage = (e: React.KeyboardEvent) => {
+  const handleSendMessage = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      console.log("object");
+      console.log(inputValue);
     }
   };
 
@@ -54,6 +54,10 @@ const CustomInput = () => {
         <input
           type="text"
           className="w-full h-10 px-2 rounded-lg bg-primary-foreground"
+          value={inputValue}
+          onChange={handleInputChange}
+          onKeyDown={handleSendMessage}
+          placeholder="Type your message..."
         />
       </div>
       <AudioRecorder />
@@ -78,7 +82,7 @@ const ExtraMenu = ({ menuStyle }: any) => {
   );
 };
 
-export default CustomInput;
+export default memo(CustomInput);
 
 const AudioRecorder = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -122,8 +126,6 @@ const AudioRecorder = () => {
       setIsRecording(false);
     }
   };
-
-  console.log("audioUrl :>> ", audioUrl);
 
   return (
     <div className="audio-recorder">

@@ -1,9 +1,10 @@
-import { Pin } from "lucide-react";
-import { Badge } from "../ui/badge";
-import { ChatDetails } from "@/types/ApiResponse.types";
-import { useAppSelector } from "@/store/store";
 import { capitalizeFirstLetter, cn } from "@/lib/utils";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { ChatDetails } from "@/types/ApiResponse.types";
+import { Pin } from "lucide-react";
+import { memo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { Badge } from "../ui/badge";
 
 interface ChatEntryProps {
   chat: ChatDetails;
@@ -11,13 +12,15 @@ interface ChatEntryProps {
 
 const ChatEntry = ({ chat }: ChatEntryProps) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
   const [searchParams] = useSearchParams();
   const { user } = useAppSelector((state) => state.auth);
 
   const friend = chat.participants.find(
     (participant) => participant._id !== user._id
   );
-
+  // console.log("🚀 ~ file: ChatEntry.tsx:ChatEntry ~ chat", chat);
   const handleCurrentChat = () => {
     navigate(`/?chatId=${chat._id}`);
   };
@@ -63,4 +66,4 @@ const ChatEntry = ({ chat }: ChatEntryProps) => {
   );
 };
 
-export default ChatEntry;
+export default memo(ChatEntry);

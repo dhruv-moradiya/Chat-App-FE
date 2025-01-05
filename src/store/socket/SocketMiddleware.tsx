@@ -48,15 +48,25 @@ const socketMiddleware: Middleware = (storeAPI) => {
     const token = state.auth?.token || localStorage.getItem("token");
 
     switch (action.type) {
+      // Create socket connection and listen for events
       case ActionType.CREATE_CONNECTION:
         if (!socket && token) {
           console.log("😖 Connecting socket...");
-          socket = io(import.meta.env.VITE_SOCKET_SERVER_URI, {
+
+          const socketServerUri = import.meta.env.VITE_SOCKET_SERVER_URI;
+          if (!socketServerUri) {
+            throw new Error(
+              "VITE_SOCKET_SERVER_URI is not defined in the environment variables."
+            );
+          }
+
+          socket = io(socketServerUri, {
             withCredentials: true,
             autoConnect: true,
             auth: { token },
           });
 
+          // Listen socket connected successfully event
           socket.on(ChatEventEnum.CONNECTED_EVENT, (data) => {
             console.log("😍 Connected to server:", data);
             storeAPI.dispatch({
@@ -65,10 +75,7 @@ const socketMiddleware: Middleware = (storeAPI) => {
             });
           });
 
-          // socket.on("TEST_EVENT", (data) => {
-          //   console.log("TEST EVENT DATA :>> ", data);
-          // });
-
+          // Listen for friend request received event
           socket.on(
             ChatEventEnum.FRIEND_REQUEST_RECEIVE_EVENT,
             (data: NewFriendRequestReceiveType) => {
@@ -78,6 +85,7 @@ const socketMiddleware: Middleware = (storeAPI) => {
             }
           );
 
+          // Listen for friend request accepted event
           socket.on(ChatEventEnum.FRIEND_REQUEST_ACCEPT_EVENT, (data) => {
             console.log("😍 Friend request accepted:", data);
             showNotificationToast(
@@ -87,6 +95,7 @@ const socketMiddleware: Middleware = (storeAPI) => {
             storeAPI.dispatch(addNewChat(data.chatDetails));
           });
 
+          // Listen for socket disconnection
           socket.on(ChatEventEnum.DISCONNECT_EVENT, () => {
             console.log("💔 Socket disconnected");
             removeSocketListeners();
@@ -94,10 +103,18 @@ const socketMiddleware: Middleware = (storeAPI) => {
             socket = null;
           });
 
+          // Listen for socket error
           socket.on(ChatEventEnum.SOCKET_ERROR_EVENT, (data) => {
             console.log(
               "😱 Error occur while connecting to the socket :",
               data
+            );
+          });
+
+          socket.on(ChatEventEnum.ROOM_CREATED_EVENT, (data) => {
+            console.log("🌹 Room created:", data);
+            showNotificationToast(
+              "Room created successfully!" + " " + data.chatId
             );
           });
         } else {
@@ -105,6 +122,7 @@ const socketMiddleware: Middleware = (storeAPI) => {
         }
         break;
 
+      // Disconnect socket
       case ActionType.DISCONNECTED:
         if (socket) {
           console.log("💔 Disconnecting socket...");
@@ -114,6 +132,13 @@ const socketMiddleware: Middleware = (storeAPI) => {
           storeAPI.dispatch({ type: ActionType.DISCONNECTED });
         } else {
           console.log("🤷‍♀️ Socket is not connected.");
+        }
+        break;
+
+      case ActionType.CURRENT_ACTIVE_CHAT:
+        if (socket) {
+          console.log("FROM CURRENT_ACTIVE_CHAT :- ", action.payload);
+          socket.emit(ChatEventEnum.CURRENT_ACTIVE_CHAT_EVENT, action.payload);
         }
         break;
 

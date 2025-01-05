@@ -1,10 +1,21 @@
 import { getAllChats } from "@/api";
 import { ChatDetails } from "@/types/ApiResponse.types";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
+
+interface Participant {
+  _id: string;
+  username: string;
+  profilePicture: string;
+  email: string;
+}
 
 interface MyChatsStatus {
   myChats: ChatDetails[];
+  currentActiveChat: {
+    chatId: string;
+    participants: Participant[] | [];
+  } | null;
   isLoading: boolean;
   isError: string | null;
 }
@@ -33,6 +44,7 @@ const fetchMyChats = createAsyncThunk(
 
 const initialState: MyChatsStatus = {
   myChats: [],
+  currentActiveChat: null,
   isLoading: false,
   isError: null,
 };
@@ -43,6 +55,16 @@ const myChatsSlice = createSlice({
   reducers: {
     addNewChat: (state, action) => {
       state.myChats.push(action.payload);
+    },
+
+    setCurrentActiveChat: (
+      state,
+      action: PayloadAction<{
+        chatId: string;
+        participants: Participant[];
+      }>
+    ) => {
+      state.currentActiveChat = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -65,5 +87,5 @@ const myChatsSlice = createSlice({
 });
 
 export const myChatsReducer = myChatsSlice.reducer;
-export const { addNewChat } = myChatsSlice.actions;
+export const { addNewChat, setCurrentActiveChat } = myChatsSlice.actions;
 export { fetchMyChats };
