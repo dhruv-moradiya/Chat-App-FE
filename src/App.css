@@ -126,3 +126,12 @@
 .animate-open-menu {
   animation: open-menu 0.3s ease-out forwards;
 }
+
+.chip {
+  background-color: #134dc069;
+  color: white;
+  font-size: 14px;
+  padding: 2px 6px 4px 6px;
+  border-radius: 10px;
+  cursor: pointer;
+}
