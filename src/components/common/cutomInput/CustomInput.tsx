@@ -77,14 +77,6 @@ function CustomInput() {
     const chip = document.createElement("span");
     chip.textContent = `@${name}`;
     chip.className = "chip";
-    // chip.style.display = "inline-block";
-    // chip.style.padding = "4px 8px";
-    // chip.style.margin = "0 4px";
-    // chip.style.backgroundColor = "#007bff";
-    // chip.style.color = "white";
-    // chip.style.fontSize = "14px";
-    // chip.style.borderRadius = "8px";
-    // chip.style.cursor = "pointer";
     chip.contentEditable = "false";
 
     range.insertNode(chip);
@@ -131,6 +123,19 @@ function CustomInput() {
     }
   };
 
+  const handleSentMessage = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (
+      e.key === "Enter" &&
+      !e.shiftKey &&
+      !e.ctrlKey &&
+      !e.altKey &&
+      !e.metaKey
+    ) {
+      e.preventDefault();
+      console.log("Message :- ", divRef.current?.textContent);
+    }
+  };
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleKeyDown);
@@ -170,19 +175,15 @@ function CustomInput() {
           />
         </div>
       </button>
+
       <div
-        className=" flex-1 main_container scrollbar bg-black "
+        className="flex-1 scrollbar min-h-12 max-h-20 overflow-auto bg-primary-foreground text-white rounded-lg p-3"
         ref={divRef}
         contentEditable
         onInput={handleOnInput}
         onMouseUp={handleCursorChange}
         onKeyUp={handleCursorChange}
-        style={{
-          border: "1px solid #ccc",
-          minHeight: "50px",
-          maxHeight: "100px",
-          overflowY: "auto",
-        }}
+        onKeyDown={handleSentMessage}
       ></div>
       <AudioRecorder />
       {menuOpen && <ExtraMenu menuStyle={menuStyle} />}
@@ -223,12 +224,25 @@ function CustomInput() {
 }
 
 const ExtraMenu = ({ menuStyle }: any) => {
+  const handleMenuOptionsClick = (
+    e: React.MouseEvent<HTMLUListElement, MouseEvent>
+  ) => {
+    const target = e.target as HTMLElement;
+
+    if (target.tagName === "LI") {
+      console.log(`Option clicked: ${target.textContent}`);
+    }
+  };
+
   return (
     <div
       className="bg-black rounded p-4 transition-transform duration-300 ease-in-out transform scale-0 opacity-0 animate-open-menu"
       style={menuStyle}
     >
-      <ul className="flex flex-col items-center gap-2 text-white">
+      <ul
+        onClick={handleMenuOptionsClick}
+        className="flex flex-col items-center gap-2 text-white"
+      >
         <li>Photos</li>
         <li>Videos</li>
         <li>Documents</li>

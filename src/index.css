@@ -4,6 +4,13 @@
 
 /* ... */
 
+/* #E9C46A (soft gold)
+#8AB17D (muted green)
+#4CC9F0 – A bright icy blue to add freshness.
+#2A9D8F – A teal that complements the blues and adds a touch of vibrancy.
+#94D2BD – A soft mint green for a subtle, cold accent.
+#5E60CE – A deep lavender blue for harmony with #637FE3. */
+
 @layer base {
   :root {
     --background: 0 0% 100%; /* #ffffff */
@@ -25,6 +32,12 @@
     --border: 214.3 31.8% 91.4%; /* #d3e1f1 */
     --input: 214.3 31.8% 91.4%; /* #d3e1f1 */
     --ring: 227 69.6% 63.9%; /* #6b8afd */
+    --soft-gold: 39 70% 64%; /* #E9C46A (soft gold) */
+    --muted-green: 134 24% 61%; /* #8AB17D (muted green) */
+    --bright-icy-blue: 198 85% 72%; /* #4CC9F0 – A bright icy blue to add freshness */
+    --teal: 174 65% 46%; /* #2A9D8F – A teal that complements the blues and adds a touch of vibrancy */
+    --soft-mint-green: 152 38% 73%; /* #94D2BD – A soft mint green for a subtle, cold accent */
+    --deep-lavender-blue: 244 54% 60%; /* #5E60CE – A deep lavender blue for harmony with #637FE3 */
     --radius: 0.3rem;
     --chart-1: 12 76% 61%; /* #e85430 */
     --chart-2: 173 58% 39%; /* #4fa57f */
@@ -53,17 +66,23 @@
     --border: 7.8% 8.2% 10.6%; /* #14151b */
     --input: 7.8% 8.2% 10.6%; /* #14151b */
     --ring: 227 69.6% 63.9%; /* #6b8afd */
+    --soft-gold: 39 70% 64%; /* #E9C46A (soft gold) */
+    --muted-green: 134 24% 61%; /* #8AB17D (muted green) */
+    --bright-icy-blue: 198 85% 72%; /* #4CC9F0 – A bright icy blue to add freshness */
+    --teal: 174 65% 46%; /* #2A9D8F – A teal that complements the blues and adds a touch of vibrancy */
+    --soft-mint-green: 152 38% 73%; /* #94D2BD – A soft mint green for a subtle, cold accent */
+    --deep-lavender-blue: 244 54% 60%; /* #5E60CE – A deep lavender blue for harmony with #637FE3 */
     --chart-1: 220 70% 50%; /* #3389ff */
     --chart-2: 160 60% 45%; /* #45a97f */
     --chart-3: 30 80% 55%; /* #ffd966 */
     --chart-4: 280 65% 60%; /* #a366cc */
     --chart-5: 340 75% 55%; /* #d44a6f */
-    --epr-emoji-size: 20px,
-    --epr-emoji-gap: 10px,
-    --epr-hover-bg-color: yellow,
-    --epr-bg-color: transplant,
-    --epr-text-color: black,
-    --epr-text-color-hover: yellow
+    --epr-emoji-size: 20px;
+    --epr-emoji-gap: 10px;
+    --epr-hover-bg-color: yellow;
+    --epr-bg-color: transplant;
+    --epr-text-color: black;
+    --epr-text-color-hover: yellow;
   }
 }
 

@@ -3,14 +3,17 @@ import Sidebar from "@/components/homepage/Sidebar";
 import { setCurrentActiveChat } from "@/store/myChats/ChatSlice";
 import { createConnection, disconnected } from "@/store/socket/SocketSlice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 
 const HomePage = () => {
   const dispatch = useAppDispatch();
+
+  const { user } = useAppSelector((state) => state.auth);
   const { myChats } = useAppSelector((state) => state.myChats);
   const [searchParams] = useSearchParams();
   const paramValue = searchParams.get("chatId");
+  const prevParamValue = useRef<string | null>(null);
 
   useEffect(() => {
     dispatch(createConnection());
@@ -21,17 +24,25 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
+    console.log("Previous paramValue:", prevParamValue.current);
+
+    if (prevParamValue.current && prevParamValue.current !== paramValue) {
+    }
+
     if (paramValue) {
-      const participants =
-        myChats.find((chat) => chat._id === paramValue)?.participants || [];
-      console.log("participants :>> ", participants);
       dispatch(
         setCurrentActiveChat({
           chatId: paramValue,
-          participants: participants?.length < 0 ? [] : participants,
+          userData: {
+            _id: user._id,
+            username: user.username,
+          },
+          prevChatId: prevParamValue.current,
         })
       );
     }
+
+    prevParamValue.current = paramValue;
   }, [paramValue]);
 
   return (

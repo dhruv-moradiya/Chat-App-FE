@@ -3,21 +3,20 @@ import { ChatDetails } from "@/types/ApiResponse.types";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
-interface Participant {
-  _id: string;
-  username: string;
-  profilePicture: string;
-  email: string;
-}
-
 interface MyChatsStatus {
   myChats: ChatDetails[];
-  currentActiveChat: {
-    chatId: string;
-    participants: Participant[] | [];
-  } | null;
+  currentActiveChat: string | null;
   isLoading: boolean;
   isError: string | null;
+}
+
+interface SetCurrentActiveChat {
+  chatId: string;
+  userData: {
+    _id: string;
+    username: string;
+  };
+  prevChatId: string | null; // The previous chat ID before switching to the new one to emit leave event
 }
 
 const fetchMyChats = createAsyncThunk(
@@ -59,12 +58,9 @@ const myChatsSlice = createSlice({
 
     setCurrentActiveChat: (
       state,
-      action: PayloadAction<{
-        chatId: string;
-        participants: Participant[];
-      }>
+      action: PayloadAction<SetCurrentActiveChat>
     ) => {
-      state.currentActiveChat = action.payload;
+      state.currentActiveChat = action.payload.chatId;
     },
   },
   extraReducers: (builder) => {

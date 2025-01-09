@@ -138,6 +138,12 @@ const socketMiddleware: Middleware = (storeAPI) => {
       case ActionType.CURRENT_ACTIVE_CHAT:
         if (socket) {
           console.log("FROM CURRENT_ACTIVE_CHAT :- ", action.payload);
+
+          socket.emit(
+            ChatEventEnum.LEAVE_CHAT_EVENT,
+            action.payload.prevChatId
+          );
+
           socket.emit(ChatEventEnum.CURRENT_ACTIVE_CHAT_EVENT, action.payload);
         }
         break;
