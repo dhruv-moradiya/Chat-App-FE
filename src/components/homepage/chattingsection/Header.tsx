@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { openChatDetail } from "@/store/chatDetail/ChatDetailSlice";
+import { openChatDetail } from "@/store/chatDetailSidebar/ChatDetailSlice";
 import { Search, Phone, Sidebar, EllipsisVertical } from "lucide-react";
 import { useDispatch } from "react-redux";
 

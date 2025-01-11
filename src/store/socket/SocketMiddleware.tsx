@@ -6,6 +6,7 @@ import { FriendRequestData } from "@/types/ApiResponse.types";
 import { addNewChat } from "../myChats/ChatSlice";
 import { showNotificationToast } from "@/components/common/ToastProvider";
 import { playNotificationSound } from "@/lib/utils";
+import { newMessageReceived } from "../activeChat/ActiveChatSlice";
 
 // const playNotificationSound = useNotificationSound("/to_the_point.mp3");
 
@@ -95,6 +96,11 @@ const socketMiddleware: Middleware = (storeAPI) => {
             storeAPI.dispatch(addNewChat(data.chatDetails));
           });
 
+          socket.on(ChatEventEnum.MESSAGE_RECEIVED_EVENT, (data) => {
+            console.log("📨 Message received:", data);
+            storeAPI.dispatch(newMessageReceived(data.message));
+          });
+
           // Listen for socket disconnection
           socket.on(ChatEventEnum.DISCONNECT_EVENT, () => {
             console.log("💔 Socket disconnected");
@@ -112,7 +118,6 @@ const socketMiddleware: Middleware = (storeAPI) => {
           });
 
           socket.on(ChatEventEnum.ROOM_CREATED_EVENT, (data) => {
-            console.log("🌹 Room created:", data);
             showNotificationToast(
               "Room created successfully!" + " " + data.chatId
             );
@@ -137,14 +142,14 @@ const socketMiddleware: Middleware = (storeAPI) => {
 
       case ActionType.CURRENT_ACTIVE_CHAT:
         if (socket) {
-          console.log("FROM CURRENT_ACTIVE_CHAT :- ", action.payload);
+          const { activeChatId: chatId, prevChatId } = action.payload;
 
-          socket.emit(
-            ChatEventEnum.LEAVE_CHAT_EVENT,
-            action.payload.prevChatId
-          );
+          socket.emit(ChatEventEnum.LEAVE_CHAT_EVENT, prevChatId);
 
-          socket.emit(ChatEventEnum.CURRENT_ACTIVE_CHAT_EVENT, action.payload);
+          socket.emit(ChatEventEnum.CURRENT_ACTIVE_CHAT_EVENT, {
+            chatId,
+            userData: state.auth.user,
+          });
         }
         break;
 

@@ -1,3 +1,4 @@
+import { sendMessage } from "@/api";
 import { Mic, Plus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -123,7 +124,7 @@ function CustomInput() {
     }
   };
 
-  const handleSentMessage = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleSentMessage = async (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (
       e.key === "Enter" &&
       !e.shiftKey &&
@@ -133,6 +134,12 @@ function CustomInput() {
     ) {
       e.preventDefault();
       console.log("Message :- ", divRef.current?.textContent);
+
+      const response = await sendMessage({
+        chatId: "67790f72d99a6265d176643e",
+        content: divRef.current?.textContent as string,
+      });
+      console.log("response :>> ", response);
     }
   };
 

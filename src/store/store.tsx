@@ -1,11 +1,12 @@
 import { configureStore, Middleware } from "@reduxjs/toolkit";
-import { chatDetailReducer } from "./chatDetail/ChatDetailSlice";
+import { chatDetailReducer } from "./chatDetailSidebar/ChatDetailSlice";
 import { authReducer } from "./auth/AuthSlice";
 import { friendRequestReducer } from "./friendRequest/FriendRequestSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { socketReducer } from "./socket/SocketSlice";
 import socketMiddleware from "./socket/SocketMiddleware";
 import { myChatsReducer } from "./myChats/ChatSlice";
+import { activeChatReducer } from "./activeChat/ActiveChatSlice";
 
 const customMiddleware: Middleware = (storeAPI) => (next) => (action) => {
   // console.log("Dispatching action:", action);
@@ -21,6 +22,7 @@ const store = configureStore({
     socket: socketReducer,
     friendRequest: friendRequestReducer,
     myChats: myChatsReducer,
+    activeChat: activeChatReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(customMiddleware).concat(socketMiddleware),

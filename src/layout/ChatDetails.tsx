@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import {
   chatDetailSelector,
   closeChatDetail,
-} from "@/store/chatDetail/ChatDetailSlice";
+} from "@/store/chatDetailSidebar/ChatDetailSlice";
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 

@@ -1,17 +1,16 @@
 import ChattingSection from "@/components/homepage/chattingsection/ChattingSection";
 import Sidebar from "@/components/homepage/Sidebar";
-import { setCurrentActiveChat } from "@/store/myChats/ChatSlice";
+import { setActiveChat } from "@/store/activeChat/ActiveChatSlice";
+import fetchActiveChatMessages from "@/store/activeChat/ActiveChatThunk";
 import { createConnection, disconnected } from "@/store/socket/SocketSlice";
-import { useAppDispatch, useAppSelector } from "@/store/store";
+import { useAppDispatch } from "@/store/store";
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 
 const HomePage = () => {
   const dispatch = useAppDispatch();
-
-  const { user } = useAppSelector((state) => state.auth);
-  const { myChats } = useAppSelector((state) => state.myChats);
   const [searchParams] = useSearchParams();
+
   const paramValue = searchParams.get("chatId");
   const prevParamValue = useRef<string | null>(null);
 
@@ -24,19 +23,14 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Previous paramValue:", prevParamValue.current);
-
     if (prevParamValue.current && prevParamValue.current !== paramValue) {
     }
 
     if (paramValue) {
+      dispatch(fetchActiveChatMessages({ chatId: paramValue }));
       dispatch(
-        setCurrentActiveChat({
-          chatId: paramValue,
-          userData: {
-            _id: user._id,
-            username: user.username,
-          },
+        setActiveChat({
+          activeChatId: paramValue,
           prevChatId: prevParamValue.current,
         })
       );

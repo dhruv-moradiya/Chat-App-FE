@@ -3,6 +3,8 @@ import {
   ChatDetailResponse,
   ExcludedFriendsUsersResponse,
   FriendRequestResponse,
+  MessageResponse,
+  SendMessageResponse,
   SentFriendRequestResponse,
 } from "@/types/ApiResponse.types";
 import axios, { AxiosResponse } from "axios";
@@ -121,6 +123,29 @@ const getAllChats = async () => {
   }
 };
 
+const sendMessage = async (data: { chatId: string; content: string }) => {
+  try {
+    const response: AxiosResponse<SendMessageResponse> = await apiClient.post(
+      "/message/send-message",
+      { ...data }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getChatMessagesBasedOnChatId = async (chatId: string) => {
+  try {
+    const response: AxiosResponse<MessageResponse> = await apiClient.get(
+      `/message/get-messages-by-chat/${chatId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export {
   acceptFriendRequest,
   getAllChats,
@@ -129,4 +154,6 @@ export {
   loginUser,
   registerUser,
   sendFriendRequest,
+  sendMessage,
+  getChatMessagesBasedOnChatId,
 };

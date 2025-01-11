@@ -84,6 +84,45 @@ interface AcceptFriendRequestResponse extends ApiResponseBase {
   };
 }
 
+interface SendMessageResponse extends ApiResponseBase {
+  data: {
+    _id: string;
+  };
+}
+
+interface Attachment {
+  url: string;
+  fileName: string;
+  publicId: string;
+  _id: string;
+}
+
+interface ChatMessage {
+  _id: string;
+  sender: string;
+  content: string;
+  replyTo?: string;
+  deletedBy: string[];
+  isDeletedForAll: boolean;
+  chat: string;
+  attachments: Attachment[];
+  reactions: any[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface ChatMessagesSummary {
+  messages: ChatMessage[];
+  totalMessages: number;
+  totalPages: number;
+  currentPage: number;
+  limit: number;
+}
+
+interface MessageResponse extends ApiResponseBase {
+  data: ChatMessagesSummary;
+}
+
 export type {
   ApiResponseBase,
   UserProfile,
@@ -96,4 +135,9 @@ export type {
   ChatDetailResponse,
   AcceptFriendRequest,
   AcceptFriendRequestResponse,
+  SendMessageResponse,
+  Attachment,
+  ChatMessage,
+  ChatMessagesSummary,
+  MessageResponse,
 };

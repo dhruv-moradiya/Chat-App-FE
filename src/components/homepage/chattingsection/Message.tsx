@@ -10,86 +10,32 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ChatMessage } from "@/types/ApiResponse.types";
+import moment from "moment";
 
-interface MessageProps {
-  avatarSrc: string;
-  name: string;
-  time: string;
-  date: string;
-  text: string;
-  isSender: boolean;
+interface MessageProps extends ChatMessage {
   isSeen: boolean;
-  attachments: string[];
+  isSender: boolean;
+  isPrevMessageFromSameUser: boolean;
 }
 
 const Message = ({
-  avatarSrc,
-  name,
-  time,
-  date,
-  text,
+  _id,
+  sender,
+  content,
+  replyTo,
+  deletedBy,
+  isDeletedForAll,
+  chat,
+  reactions,
+  createdAt,
+  updatedAt,
   isSender,
   isSeen,
   attachments,
+  isPrevMessageFromSameUser,
 }: MessageProps) => {
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [inputValue, setInputValue] = useState(text);
-  const [openImageDrawer, setOpenImageDrawer] = useState(false);
-
-  const handleEmojiClick = (emojiData: { emoji: string }) => {
-    setInputValue(inputValue + emojiData.emoji);
-    setShowEmojiPicker(false); // Hide picker after selecting an emoji
-  };
-
-  const toggleEmojiPicker = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent closing any parent listeners
-    setShowEmojiPicker(!showEmojiPicker);
-  };
-
-  const renderAttachments = () => {
-    const visibleAttachments =
-      attachments.length > 3 ? attachments.slice(0, 3) : attachments;
-
-    const attachmentElements = visibleAttachments.map(
-      (attachmentUrl, index) => (
-        <Dialog key={index}>
-          <DialogTrigger>
-            <div className="w-20 h-20 overflow-hidden rounded-lg flex items-center gap-2 cursor-pointer">
-              <img
-                src={attachmentUrl}
-                alt={`attachment-${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </DialogTrigger>
-          <DialogContent className="scrollbar w-[60vw] h-[90vh] overflow-y-scroll flex flex-col gap-4">
-            {attachments.map((attachment, index) => (
-              <div className=" w-full h-[400px] rounded-lg overflow-hidden flex items-center gap-2 cursor-pointer">
-                <img
-                  src={attachment}
-                  alt={`attachment-${index + 1}`}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-            ))}
-          </DialogContent>
-        </Dialog>
-      )
-    );
-
-    if (attachments.length > 3) {
-      attachmentElements.push(
-        <div
-          key="extra-attachments"
-          className="w-20 h-20 overflow-hidden rounded-lg flex items-center justify-center bg-primary text-white cursor-pointer"
-        >
-          +{attachments.length - 3}
-        </div>
-      );
-    }
-
-    return attachmentElements;
-  };
+  const [inputValue, setInputValue] = useState(content);
 
   return (
     <>
@@ -102,87 +48,72 @@ const Message = ({
       >
         {/* {renderAttachments()} */}
       </div>
-      <RenderAttachments attachments={attachments} isSender={isSender} />
+      {/* <RenderAttachments attachments={attachments} isSender={isSender} /> */}
       <div
         className={cn(
-          "relative w-fit max-w-sm px-4 py-2 rounded-xl shadow-md group",
+          "relative w-fit max-w-sm px-4 py-2 pr-[70px] rounded-xl shadow-md group",
           isSender
             ? "bg-primary/40 text-white self-end rounded-tr-none"
             : "bg-muted-foreground/10 self-start rounded-tl-none"
         )}
       >
         {/* Decorative Shape */}
-        <div
-          className={cn(
-            "absolute w-4 h-4",
-            isSender ? "top-0 -right-2" : "top-0 -left-2"
-          )}
-        >
-          <svg
-            width="100%"
-            height="100%"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+        {!isPrevMessageFromSameUser && (
+          <div
+            className={cn(
+              "absolute w-4 h-4",
+              isSender ? "top-0 -right-2" : "top-0 -left-2"
+            )}
           >
-            <path
-              d={isSender ? "M0,0 L24,0 L0,24 Z" : "M24,0 L24,24 L0,0 Z"}
-              fill={isSender ? "#34406B" : "#21232A"}
-            />
-          </svg>
-        </div>
+            <svg
+              width="100%"
+              height="100%"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d={isSender ? "M0,0 L24,0 L0,24 Z" : "M24,0 L24,24 L0,0 Z"}
+                fill={isSender ? "#34406B" : "#21232A"}
+              />
+            </svg>
+          </div>
+        )}
 
         <div className="flex items-start gap-3">
-          <div className="flex-1 flex items-center gap-2">
-            <p
-              className="text-sm break-words whitespace-normal"
-              style={{ wordBreak: "break-word" }}
-            >
-              {inputValue}
-            </p>
+          <p
+            className="text-sm break-words whitespace-normal"
+            style={{ wordBreak: "break-word" }}
+          >
+            {inputValue}
+          </p>
+          <div className="absolute bottom-1 right-2 flex items-center justify-between w-[55px]">
             <span
               className={cn(
-                "text-xs place-self-end justify-self-end min-w-10 mr-1 ml-auto",
+                "text-[10px] text-muted-foreground ",
                 isSender ? "text-white" : "text-muted-foreground"
               )}
             >
-              {time}
+              {moment(createdAt).format("hh:mm A")}
+            </span>
+            <span>
+              <Check
+                size={12}
+                // className={cn(isSeen ? "text-white" : "text-primary")}
+              />
             </span>
           </div>
 
-          <MessageDropdown isSender={isSender} />
+          {/* <MessageDropdown isSender={isSender} /> */}
         </div>
 
-        {isSender && (
+        {/* {isSender && (
           <div className="absolute bottom-1 right-2">
             <Check
               size={14}
               className={cn(isSeen ? "text-white" : "text-primary")}
             />
           </div>
-        )}
-
-        {/* <div className="relative">
-        <Button
-          size="sm"
-          variant="outline"
-          className="border-none bg-transparent"
-          onClick={toggleEmojiPicker}
-        >
-          <Smile size={30} />
-        </Button>
-        {showEmojiPicker && (
-          <div
-            className="absolute bottom-10 right-0 z-50"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <EmojiPicker
-              emojiStyle={EmojiStyle.GOOGLE}
-              theme={Theme.DARK}
-              onEmojiClick={handleEmojiClick}
-            />
-          </div>
-        )}
-      </div> */}
+        )} */}
       </div>
     </>
   );

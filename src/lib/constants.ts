@@ -60,7 +60,7 @@ const ActionType = Object.freeze({
 
   NEW_FRIEND_REQUEST_RECEIVE: "friendRequest/newFriendRequestReceive",
 
-  CURRENT_ACTIVE_CHAT: "myChats/setCurrentActiveChat",
+  CURRENT_ACTIVE_CHAT: "activeChat/setActiveChat",
 });
 
 export { ChatEventEnum, ActionType };
