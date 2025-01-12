@@ -1,14 +1,10 @@
 import { sendMessage } from "@/api";
 import { Mic, Plus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 
 function CustomInput() {
   const divRef = useRef<HTMLDivElement | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
-  const [searchParams] = useSearchParams();
-  const paramValue = searchParams.get("chatId");
-
   const [cursorPosition, setCursorPosition] = useState<Range | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
@@ -140,7 +136,7 @@ function CustomInput() {
       console.log("Message :- ", divRef.current?.textContent);
 
       const response = await sendMessage({
-        chatId: paramValue as string,
+        chatId: "67790f72d99a6265d176643e",
         content: divRef.current?.textContent as string,
       });
       console.log("response :>> ", response);

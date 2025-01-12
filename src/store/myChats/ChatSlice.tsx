@@ -31,6 +31,28 @@ const fetchMyChats = createAsyncThunk(
   }
 );
 
+const fetchMessages = createAsyncThunk(
+  "myChats/fetchMessages",
+  async ({ chatId }: { chatId: string }, { rejectWithValue }) => {
+    try {
+      const response = await getChatMessagesBasedOnChatId(chatId);
+      console.log("response :>> ", response);
+      return response;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.log(
+          "Error during fetching my chats:",
+          error.response?.data.message
+        );
+        return rejectWithValue(error.response?.data.message);
+      } else {
+        console.error("Unexpected error:", error);
+        return rejectWithValue("An unknown error occurred.");
+      }
+    }
+  }
+);
+
 const initialState: MyChatsStatus = {
   myChats: [],
   isLoading: false,
