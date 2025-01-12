@@ -3,11 +3,13 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
 const fetchActiveChatMessages = createAsyncThunk(
-  "activeChat/fetchMessages",
-  async ({ chatId }: { chatId: string }, { rejectWithValue }) => {
+  "activeChat/fetchActiveChatMessages",
+  async (
+    { chatId, page, limit }: { chatId: string; page: number; limit: number },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await getChatMessagesBasedOnChatId(chatId);
-      console.log("response :>> ", response);
+      const response = await getChatMessagesBasedOnChatId(chatId, page, limit);
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -24,4 +26,28 @@ const fetchActiveChatMessages = createAsyncThunk(
   }
 );
 
-export default fetchActiveChatMessages;
+const fetchOldActiveChatMessages = createAsyncThunk(
+  "activeChat/fetchOldActiveChatMessages",
+  async (
+    { chatId, page, limit }: { chatId: string; page: number; limit: number },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await getChatMessagesBasedOnChatId(chatId, page, limit);
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.log(
+          "Error during fetching my chats:",
+          error.response?.data.message
+        );
+        return rejectWithValue(error.response?.data.message);
+      } else {
+        console.error("Unexpected error:", error);
+        return rejectWithValue("An unknown error occurred.");
+      }
+    }
+  }
+);
+
+export { fetchActiveChatMessages, fetchOldActiveChatMessages };
