@@ -1,7 +1,8 @@
+import CustomLoader from "@/components/common/CustomLoader";
 import ChattingSection from "@/components/homepage/chattingsection/ChattingSection";
 import Sidebar from "@/components/homepage/Sidebar";
 import { setActiveChat } from "@/store/activeChat/ActiveChatSlice";
-import fetchActiveChatMessages from "@/store/activeChat/ActiveChatThunk";
+import { fetchActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
 import { createConnection, disconnected } from "@/store/socket/SocketSlice";
 import { useAppDispatch } from "@/store/store";
 import { useEffect, useRef } from "react";
@@ -27,7 +28,9 @@ const HomePage = () => {
     }
 
     if (paramValue) {
-      dispatch(fetchActiveChatMessages({ chatId: paramValue }));
+      dispatch(
+        fetchActiveChatMessages({ chatId: paramValue, page: 1, limit: 20 })
+      );
       dispatch(
         setActiveChat({
           activeChatId: paramValue,
@@ -41,6 +44,7 @@ const HomePage = () => {
 
   return (
     <div className="w-full h-full flex gap-2">
+      {/* <CustomLoader /> */}
       <Sidebar />
       <ChattingSection />
     </div>

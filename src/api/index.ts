@@ -135,10 +135,14 @@ const sendMessage = async (data: { chatId: string; content: string }) => {
   }
 };
 
-const getChatMessagesBasedOnChatId = async (chatId: string) => {
+const getChatMessagesBasedOnChatId = async (
+  chatId: string,
+  page: number,
+  limit: number
+) => {
   try {
     const response: AxiosResponse<MessageResponse> = await apiClient.get(
-      `/message/get-messages-by-chat/${chatId}`
+      `/message/get-messages-by-chat/${chatId}?page=${page}&limit=${limit}`
     );
     return response.data;
   } catch (error) {

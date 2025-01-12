@@ -12,6 +12,7 @@ import { Button } from "./components/ui/button";
 import { useAppDispatch, useAppSelector } from "./store/store";
 import { isUserLoggedIn, logout } from "./store/auth/AuthSlice";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import CustomLoader from "./components/common/CustomLoader";
 
 const Notification = ({
   message,
@@ -118,7 +119,7 @@ function App() {
   if (initialLoading) {
     return (
       <div className="w-screen h-screen flex items-center justify-center">
-        <Loader size={32} color="white" className="animate-spin" />
+        <CustomLoader />
       </div>
     );
   }
