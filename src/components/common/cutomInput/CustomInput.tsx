@@ -1,34 +1,34 @@
 import { sendMessage } from "@/api";
 import { Mic, Plus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 function CustomInput() {
   const divRef = useRef<HTMLDivElement | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
+  const [searchParams] = useSearchParams();
+  const paramValue = searchParams.get("chatId");
+
   const [cursorPosition, setCursorPosition] = useState<Range | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
   const [users] = useState(["John Doe", "Jane Smith", "Alice Johnson"]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuStyle, setMenuStyle] = useState({});
   const plusButtonRef = useRef<HTMLDivElement | null>(null);
 
   const handleOnInput = () => {
     const selection: Selection | null = window.getSelection();
-
     if (selection?.anchorNode) {
       const textBeforeCursor = selection.anchorNode.textContent?.slice(
         0,
         selection.anchorOffset
       );
-
       if (textBeforeCursor?.endsWith("@")) {
         try {
           const range = selection.getRangeAt(0);
           const rect = range.getBoundingClientRect();
-
           setPopupPosition({
             top: rect.bottom + window.scrollY,
             left: rect.left,
@@ -46,21 +46,17 @@ function CustomInput() {
       setShowPopup(false);
     }
   };
-
   const handleCursorChange = () => {
     const selection = window.getSelection();
     if (selection && selection.rangeCount > 0) {
       setCursorPosition(selection.getRangeAt(0));
     }
   };
-
   const handleItemSelect = (name: string) => {
     if (!cursorPosition || !divRef.current) return;
-
     const range = cursorPosition;
     const selection: Selection | null = window.getSelection();
     const startOffset = range.startOffset;
-
     // Remove the '@' character before adding the chip
     const textNode = range.startContainer;
     if (textNode.nodeType === Node.TEXT_NODE) {
@@ -68,20 +64,16 @@ function CustomInput() {
       const updatedText =
         textContent.slice(0, startOffset - 1) + textContent.slice(startOffset); // Remove '@'
       textNode.textContent = updatedText;
-
       // Adjust the range after text update
       range.setStart(textNode, startOffset - 1);
       range.setEnd(textNode, startOffset - 1);
     }
-
     // Create and insert the chip
     const chip = document.createElement("span");
     chip.textContent = `@${name}`;
     chip.className = "chip";
     chip.contentEditable = "false";
-
     range.insertNode(chip);
-
     // Move cursor after the chip
     const newRange = document.createRange();
     newRange.setStartAfter(chip);
@@ -90,11 +82,9 @@ function CustomInput() {
       selection.removeAllRanges();
       selection.addRange(newRange);
     }
-
     setShowPopup(false);
     handleCursorChange();
   };
-
   const handleKeyDown = (e: KeyboardEvent) => {
     if (showPopup) {
       if (e.key === "ArrowDown") {
@@ -113,7 +103,6 @@ function CustomInput() {
       }
     }
   };
-
   const handleClickOutside = (e: MouseEvent) => {
     if (
       popupRef.current &&
@@ -123,7 +112,6 @@ function CustomInput() {
       setShowPopup(false);
     }
   };
-
   const handleSentMessage = async (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (
       e.key === "Enter" &&
@@ -136,23 +124,20 @@ function CustomInput() {
       console.log("Message :- ", divRef.current?.textContent);
 
       const response = await sendMessage({
-        chatId: "67790f72d99a6265d176643e",
+        chatId: paramValue as string,
         content: divRef.current?.textContent as string,
       });
       console.log("response :>> ", response);
     }
   };
-
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleKeyDown);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [showPopup, selectedIndex, users]);
-
   const toggleMenu = () => {
     if (!menuOpen && plusButtonRef.current) {
       setMenuStyle({
@@ -182,7 +167,6 @@ function CustomInput() {
           />
         </div>
       </button>
-
       <div
         className="flex-1 scrollbar min-h-12 max-h-20 overflow-auto bg-primary-foreground text-white rounded-lg p-3"
         ref={divRef}
@@ -229,18 +213,15 @@ function CustomInput() {
     </div>
   );
 }
-
 const ExtraMenu = ({ menuStyle }: any) => {
   const handleMenuOptionsClick = (
     e: React.MouseEvent<HTMLUListElement, MouseEvent>
   ) => {
     const target = e.target as HTMLElement;
-
     if (target.tagName === "LI") {
       console.log(`Option clicked: ${target.textContent}`);
     }
   };
-
   return (
     <div
       className="bg-black rounded p-4 transition-transform duration-300 ease-in-out transform scale-0 opacity-0 animate-open-menu"
@@ -257,27 +238,23 @@ const ExtraMenu = ({ menuStyle }: any) => {
     </div>
   );
 };
-
 const AudioRecorder = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
-
   const handleStartRecording = async () => {
     console.log("START RECORDING");
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
-
       audioChunksRef.current = [];
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           audioChunksRef.current.push(event.data);
         }
       };
-
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, {
           type: "audio/mp3",
@@ -285,14 +262,12 @@ const AudioRecorder = () => {
         const audioUrl = URL.createObjectURL(audioBlob);
         setAudioUrl(audioUrl);
       };
-
       mediaRecorder.start();
       setIsRecording(true);
     } catch (error) {
       console.error("Error accessing microphone:", error);
     }
   };
-
   const handleStopRecording = () => {
     console.log("STOP RECORDING");
     if (mediaRecorderRef.current) {
@@ -300,7 +275,6 @@ const AudioRecorder = () => {
       setIsRecording(false);
     }
   };
-
   return (
     <div className="audio-recorder">
       <div className="controls">
@@ -318,5 +292,4 @@ const AudioRecorder = () => {
     </div>
   );
 };
-
 export default CustomInput;
