@@ -3,10 +3,16 @@ import { ChatDetails } from "@/types/ApiResponse.types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
+interface UnReadMessageCount {
+  chatId: string;
+  count: number;
+}
+
 interface MyChatsStatus {
   myChats: ChatDetails[];
   isLoading: boolean;
   isError: string | null;
+  unreadMessageCount: UnReadMessageCount[];
 }
 
 const fetchMyChats = createAsyncThunk(
@@ -31,32 +37,11 @@ const fetchMyChats = createAsyncThunk(
   }
 );
 
-const fetchMessages = createAsyncThunk(
-  "myChats/fetchMessages",
-  async ({ chatId }: { chatId: string }, { rejectWithValue }) => {
-    try {
-      const response = await getChatMessagesBasedOnChatId(chatId);
-      console.log("response :>> ", response);
-      return response;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        console.log(
-          "Error during fetching my chats:",
-          error.response?.data.message
-        );
-        return rejectWithValue(error.response?.data.message);
-      } else {
-        console.error("Unexpected error:", error);
-        return rejectWithValue("An unknown error occurred.");
-      }
-    }
-  }
-);
-
 const initialState: MyChatsStatus = {
   myChats: [],
   isLoading: false,
   isError: null,
+  unreadMessageCount: [],
 };
 
 const myChatsSlice = createSlice({
@@ -65,6 +50,54 @@ const myChatsSlice = createSlice({
   reducers: {
     addNewChat: (state, action) => {
       state.myChats.push(action.payload);
+    },
+
+    setUnreadMessageCount: (
+      state,
+      action: { payload: UnReadMessageCount[] }
+    ) => {
+      state.unreadMessageCount = action.payload;
+    },
+
+    updateUnreadMessageCount: (
+      state,
+      action: { payload: { chatId: string; userId: string } }
+    ) => {
+      console.log("action updateUnreadMessageCount :>> ", action.payload);
+      const userId = action.payload.userId;
+      state.myChats = state.myChats.map((item) => {
+        if (item._id === action.payload.chatId) {
+          return {
+            ...item,
+            unreadMessagesCounts: {
+              ...item.unreadMessagesCounts,
+              [userId]: item.unreadMessagesCounts[userId] + 1,
+            },
+          };
+        } else {
+          return item;
+        }
+      });
+    },
+
+    clearUnreadMessageCount: (
+      state,
+      action: { payload: { chatId: string; userId: string } }
+    ) => {
+      console.log("clearUnreadMessageCount: ", action.payload);
+      state.myChats = state.myChats.map((item) => {
+        if (item._id === action.payload.chatId) {
+          return {
+            ...item,
+            unreadMessagesCounts: {
+              ...item.unreadMessagesCounts,
+              [action.payload.userId]: 0,
+            },
+          };
+        } else {
+          return item;
+        }
+      });
     },
   },
   extraReducers: (builder) => {
@@ -103,5 +136,10 @@ const myChatsSlice = createSlice({
 });
 
 export const myChatsReducer = myChatsSlice.reducer;
-export const { addNewChat } = myChatsSlice.actions;
+export const {
+  addNewChat,
+  setUnreadMessageCount,
+  updateUnreadMessageCount,
+  clearUnreadMessageCount,
+} = myChatsSlice.actions;
 export { fetchMyChats };

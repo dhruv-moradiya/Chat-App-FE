@@ -3,7 +3,7 @@ import { Middleware } from "@reduxjs/toolkit";
 import { io, Socket } from "socket.io-client";
 import { newFriendRequestReceive } from "../friendRequest/FriendRequestSlice";
 import { FriendRequestData } from "@/types/ApiResponse.types";
-import { addNewChat } from "../myChats/ChatSlice";
+import { addNewChat, updateUnreadMessageCount } from "../myChats/ChatSlice";
 import { showNotificationToast } from "@/components/common/ToastProvider";
 import { playNotificationSound } from "@/lib/utils";
 import { newMessageReceived } from "../activeChat/ActiveChatSlice";
@@ -99,6 +99,13 @@ const socketMiddleware: Middleware = (storeAPI) => {
           socket.on(ChatEventEnum.MESSAGE_RECEIVED_EVENT, (data) => {
             console.log("📨 Message received:", data);
             storeAPI.dispatch(newMessageReceived(data.message));
+          });
+
+          socket.on(ChatEventEnum.UNREAD_MESSAGE_EVENT, (data) => {
+            console.log("UNREAD_MESSAGE_EVENT :>> ", data);
+            const { chatId } = data;
+            const userId = state.auth.user._id;
+            storeAPI.dispatch(updateUnreadMessageCount({ chatId, userId }));
           });
 
           // Listen for socket disconnection

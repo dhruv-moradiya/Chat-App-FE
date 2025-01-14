@@ -5,6 +5,7 @@ import { Pin } from "lucide-react";
 import { memo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Badge } from "../ui/badge";
+import { clearUnreadMessageCount } from "@/store/myChats/ChatSlice";
 
 interface ChatEntryProps {
   chat: ChatDetails;
@@ -13,6 +14,7 @@ interface ChatEntryProps {
 const ChatEntry = ({ chat }: ChatEntryProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { _id: userId } = useAppSelector((state) => state.auth.user);
 
   const [searchParams] = useSearchParams();
   const { user } = useAppSelector((state) => state.auth);
@@ -23,6 +25,7 @@ const ChatEntry = ({ chat }: ChatEntryProps) => {
   // console.log("🚀 ~ file: ChatEntry.tsx:ChatEntry ~ chat", chat);
   const handleCurrentChat = () => {
     navigate(`/?chatId=${chat._id}`);
+    dispatch(clearUnreadMessageCount({ chatId: chat._id, userId: user._id }));
   };
 
   return (
@@ -56,7 +59,7 @@ const ChatEntry = ({ chat }: ChatEntryProps) => {
       {/* Time and Pin Icon */}
       <div className="min-w-[40px] self-end flex items-center gap-2 text-white">
         <Badge className="self-end border-none w-5 h-5 flex items-center justify-center rounded-full bg-primary/60 text-white">
-          12
+          {chat.unreadMessagesCounts[userId]}
         </Badge>
         <div className="flex flex-col items-center gap-2">
           <Pin fill="white" size={16} className="rotate-45" />

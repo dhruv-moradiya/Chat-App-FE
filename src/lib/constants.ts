@@ -20,6 +20,8 @@ const ChatEventEnum = Object.freeze({
   MESSAGE_EDIT_EVENT: "messageEdited",
   TYPING_EVENT: "typing",
   STOP_TYPING_EVENT: "stopTyping",
+  UNREAD_MESSAGE_EVENT: "unreadMessage",
+  UNREAD_MESSAGE_COUNT_EVENT: "unreadMessageCount",
 
   // Reactions and interactions
   MESSAGE_LIKE_EVENT: "messageLiked",

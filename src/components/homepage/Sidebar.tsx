@@ -1,8 +1,8 @@
-import { useAppDispatch, useAppSelector } from "@/store/store";
-import ChatEntry from "./ChatEntry";
-import { useEffect } from "react";
 import { fetchMyChats } from "@/store/myChats/ChatSlice";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { useEffect } from "react";
 import { Skeleton } from "../ui/skeleton";
+import ChatEntry from "./ChatEntry";
 
 const Sidebar = () => {
   const {

@@ -60,6 +60,9 @@ interface ChatDetails {
     UserProfile,
     "friends" | "mutedChats" | "createdAt" | "updatedAt"
   >[];
+  unreadMessagesCounts: {
+    [key: string]: number;
+  };
 }
 
 interface ChatDetailResponse extends ApiResponseBase {

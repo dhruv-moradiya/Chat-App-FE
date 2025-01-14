@@ -64,8 +64,6 @@ const ChattingSection = () => {
 
   if (isLoading) return <Loader />;
 
-  console.log("activeChatDetails.messages :>> ", activeChatDetails?.messages);
-
   return (
     <div className=" h-full flex flex-col w-[calc(100%-384px)] relative">
       <Header />
