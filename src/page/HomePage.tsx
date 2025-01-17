@@ -1,4 +1,5 @@
 // import CustomLoader from "@/components/common/CustomLoader";
+import { fetchMyFriendsList } from "@/api";
 import ChattingSection from "@/components/homepage/chattingsection/ChattingSection";
 import Sidebar from "@/components/homepage/Sidebar";
 import { setActiveChat } from "@/store/activeChat/ActiveChatSlice";
@@ -12,6 +13,7 @@ const HomePage = () => {
   const [searchParams] = useSearchParams();
   const paramValue = searchParams.get("chatId");
   const prevParamValue = useRef<string | null>(null);
+
   useEffect(() => {
     dispatch(createConnection());
     return () => {

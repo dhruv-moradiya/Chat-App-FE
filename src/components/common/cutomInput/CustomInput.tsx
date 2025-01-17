@@ -1,5 +1,5 @@
 import { sendMessage } from "@/api";
-import { Mic, Plus, X } from "lucide-react";
+import { Mic, Plus, Smile, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -149,8 +149,13 @@ function CustomInput() {
     }
     setMenuOpen((prev) => !prev);
   };
+  const buttonRef = useRef(null);
+
   return (
     <div className="flex items-center gap-3 absolute bottom-10 p-2 w-full">
+      <button ref={buttonRef}>
+        <Smile />
+      </button>
       <button
         onClick={toggleMenu}
         className={`p-1 flex items-center justify-center rounded-full transition-all duration-300 
@@ -238,6 +243,7 @@ const ExtraMenu = ({ menuStyle }: any) => {
     </div>
   );
 };
+
 const AudioRecorder = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);

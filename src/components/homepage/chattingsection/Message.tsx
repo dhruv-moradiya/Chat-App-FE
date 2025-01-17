@@ -103,7 +103,7 @@ const Message = ({
             </span>
           </div>
 
-          {/* <MessageDropdown isSender={isSender} /> */}
+          <MessageDropdown isSender={isSender} />
         </div>
 
         {/* {isSender && (

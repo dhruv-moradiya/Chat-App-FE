@@ -4,6 +4,7 @@ import {
   ExcludedFriendsUsersResponse,
   FriendRequestResponse,
   MessageResponse,
+  MyFriendsList,
   SendMessageResponse,
   SentFriendRequestResponse,
 } from "@/types/ApiResponse.types";
@@ -150,6 +151,18 @@ const getChatMessagesBasedOnChatId = async (
   }
 };
 
+const fetchMyFriendsList = async () => {
+  try {
+    const response: AxiosResponse<MyFriendsList> = await apiClient.get(
+      "/friendrequest/get-my-friends"
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export {
   acceptFriendRequest,
   getAllChats,
@@ -160,4 +173,5 @@ export {
   sendFriendRequest,
   sendMessage,
   getChatMessagesBasedOnChatId,
+  fetchMyFriendsList,
 };

@@ -126,6 +126,15 @@ interface MessageResponse extends ApiResponseBase {
   data: ChatMessagesSummary;
 }
 
+interface MyFriendsList extends ApiResponseBase {
+  data: {
+    friends: Omit<
+      UserProfile,
+      "friends" | "mutedChats" | "createdAt" | "updatedAt"
+    >[];
+  };
+}
+
 export type {
   ApiResponseBase,
   UserProfile,
@@ -143,4 +152,5 @@ export type {
   ChatMessage,
   ChatMessagesSummary,
   MessageResponse,
+  MyFriendsList,
 };

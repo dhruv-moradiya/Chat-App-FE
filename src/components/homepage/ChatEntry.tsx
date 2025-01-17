@@ -14,15 +14,15 @@ interface ChatEntryProps {
 const ChatEntry = ({ chat }: ChatEntryProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.auth);
   const { _id: userId } = useAppSelector((state) => state.auth.user);
 
   const [searchParams] = useSearchParams();
-  const { user } = useAppSelector((state) => state.auth);
 
   const friend = chat.participants.find(
     (participant) => participant._id !== user._id
   );
-  // console.log("🚀 ~ file: ChatEntry.tsx:ChatEntry ~ chat", chat);
+  console.log("🚀 ~ file: ChatEntry.tsx:ChatEntry ~ chat", chat);
   const handleCurrentChat = () => {
     navigate(`/?chatId=${chat._id}`);
     dispatch(clearUnreadMessageCount({ chatId: chat._id, userId: user._id }));

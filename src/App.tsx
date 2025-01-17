@@ -85,9 +85,9 @@ function App() {
 
       const timer = setTimeout(() => {
         if (location.pathname === "/") {
-          setNotification("Your session has expired. Please sign in again.");
+          // setNotification("Your session has expired. Please sign in again.");
           dispatch(logout());
-          // navigate("/signin");
+          navigate("/signin");
         }
       }, expirationTime);
 
@@ -109,8 +109,8 @@ function App() {
 
   useEffect(() => {
     if (notification) {
+      console.log("notification :>> ", notification);
       // alert(notification);
-
       setNotification("");
     }
   }, [notification]);
