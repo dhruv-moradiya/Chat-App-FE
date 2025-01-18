@@ -84,7 +84,6 @@ const myChatsSlice = createSlice({
       state,
       action: { payload: { chatId: string; userId: string } }
     ) => {
-      console.log("clearUnreadMessageCount: ", action.payload);
       state.myChats = state.myChats.map((item) => {
         if (item._id === action.payload.chatId) {
           return {

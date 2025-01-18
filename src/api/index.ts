@@ -1,6 +1,7 @@
 import {
   AcceptFriendRequestResponse,
   ChatDetailResponse,
+  CreateGroupChatResponse,
   ExcludedFriendsUsersResponse,
   FriendRequestResponse,
   MessageResponse,
@@ -163,6 +164,30 @@ const fetchMyFriendsList = async () => {
   }
 };
 
+const createGroupChat = async (data: {
+  chatName: string;
+  participantIds: string[];
+  coverImage: File;
+}) => {
+  const formData = new FormData();
+  formData.append("chatName", data.chatName);
+  formData.append("coverImage", data.coverImage);
+  for (let i = 0; i < data.participantIds.length; i++) {
+    formData.append("participantIds", data.participantIds[i]);
+  }
+
+  const response: AxiosResponse<CreateGroupChatResponse> = await apiClient.post(
+    "/chat/create-group-chat",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return response.data;
+};
+
 export {
   acceptFriendRequest,
   getAllChats,
@@ -174,4 +199,5 @@ export {
   sendMessage,
   getChatMessagesBasedOnChatId,
   fetchMyFriendsList,
+  createGroupChat,
 };

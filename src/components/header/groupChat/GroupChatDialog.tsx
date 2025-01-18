@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { fetchMyFriendsList } from "@/api";
+import { createGroupChat, fetchMyFriendsList } from "@/api";
 import { UserProfile } from "@/types/ApiResponse.types";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -86,8 +86,16 @@ const GroupChatDialog = () => {
             />
           )}
 
-          {tab === 0 && <Button onClick={() => setTab(1)}>Next</Button>}
-          {tab === 1 && <Button onClick={() => setTab(0)}>Prev</Button>}
+          {tab === 0 && (
+            <Button onClick={() => setTab(1)} className="w-fit">
+              Next
+            </Button>
+          )}
+          {tab === 1 && (
+            <Button onClick={() => setTab(0)} className="w-fit">
+              Prev
+            </Button>
+          )}
         </DialogContent>
       </Dialog>
     </div>
@@ -186,13 +194,21 @@ const GroupChatForm: React.FC<GroupChatFormProps> = ({
     if (file) setImage(file);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!groupName || !image) {
       // alert("Please provide all the required fields.");
+
       return;
     }
-    console.log("Group Created", { groupName, image, selectedFriends });
+    const data = {
+      chatName: groupName,
+      participantIds: selectedFriends.map((friend) => friend._id),
+      coverImage: image,
+    };
+
+    const response = await createGroupChat(data);
   };
 
   return (

@@ -22,7 +22,6 @@ const ChatEntry = ({ chat }: ChatEntryProps) => {
   const friend = chat.participants.find(
     (participant) => participant._id !== user._id
   );
-  console.log("🚀 ~ file: ChatEntry.tsx:ChatEntry ~ chat", chat);
   const handleCurrentChat = () => {
     navigate(`/?chatId=${chat._id}`);
     dispatch(clearUnreadMessageCount({ chatId: chat._id, userId: user._id }));
@@ -39,8 +38,8 @@ const ChatEntry = ({ chat }: ChatEntryProps) => {
       {/* Profile Picture */}
       <div className="w-12 h-12 rounded-lg overflow-hidden">
         <img
-          src={friend?.profilePicture}
-          alt={friend?.username}
+          src={chat.isGroup ? chat.coverImage.url : friend?.profilePicture}
+          alt={chat.isGroup ? chat.coverImage.fileName : friend?.username}
           className="w-full h-full object-cover"
         />
       </div>
@@ -48,7 +47,9 @@ const ChatEntry = ({ chat }: ChatEntryProps) => {
       {/* Chat Text */}
       <div className="flex-1 overflow-hidden">
         <h3 className="mb-1">
-          {capitalizeFirstLetter(friend?.username as string)}
+          {chat.isGroup
+            ? chat.chatName
+            : capitalizeFirstLetter(friend?.username as string)}
         </h3>
         <p className="whitespace-nowrap text-ellipsis overflow-hidden text-[12px] text-muted-foreground">
           Lorem ipsum dolor sit, amet consectetur adipisicing elit.

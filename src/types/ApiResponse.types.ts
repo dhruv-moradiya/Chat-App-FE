@@ -50,10 +50,26 @@ interface FriendRequestResponse extends ApiResponseBase {
   data: FriendRequestData[];
 }
 
-// Chats
-interface ChatDetails {
+type GroupChatDetails = {
+  chatName: string;
+  isGroup: true;
+  admin: string;
+  coverImage: {
+    url: string;
+    publicId: string;
+    fileName: string;
+  };
+};
+
+type DirectChatDetails = {
+  isGroup: false;
+  admin?: never;
+  coverImage?: never;
+  chatName?: never;
+};
+
+type ChatDetails = (GroupChatDetails | DirectChatDetails) & {
   _id: string;
-  name: { isGroup: true; name: string } | { isGroup: false; name?: never };
   createdAt: string;
   updatedAt: string;
   participants: Omit<
@@ -63,7 +79,7 @@ interface ChatDetails {
   unreadMessagesCounts: {
     [key: string]: number;
   };
-}
+};
 
 interface ChatDetailResponse extends ApiResponseBase {
   data: ChatDetails[];
@@ -135,6 +151,10 @@ interface MyFriendsList extends ApiResponseBase {
   };
 }
 
+interface CreateGroupChatResponse extends ApiResponseBase {
+  data: ChatDetails;
+}
+
 export type {
   ApiResponseBase,
   UserProfile,
@@ -153,4 +173,5 @@ export type {
   ChatMessagesSummary,
   MessageResponse,
   MyFriendsList,
+  CreateGroupChatResponse,
 };
