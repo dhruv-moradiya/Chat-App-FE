@@ -1,13 +1,37 @@
 import { sendMessage } from "@/api";
+import { capitalizeFirstLetter, cn } from "@/lib/utils";
+import { useAppSelector } from "@/store/store";
 import { Mic, Plus, Smile, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-function CustomInput() {
+function CustomInput({
+  replyedMessage,
+  setReplyedMessage,
+}: {
+  replyedMessage: string | null;
+  setReplyedMessage: React.Dispatch<React.SetStateAction<string | null>>;
+}) {
   const divRef = useRef<HTMLDivElement | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
   const [searchParams] = useSearchParams();
   const paramValue = searchParams.get("chatId");
+
+  const { activeChatDetails, activeChatId } = useAppSelector(
+    (state) => state.activeChat
+  );
+
+  const messageDetails = activeChatDetails?.messages.find(
+    (message) => message._id === replyedMessage
+  );
+  const { myChats } = useAppSelector((state) => state.myChats);
+
+  const senderName =
+    myChats
+      .find((chat) => chat._id === activeChatId)
+      ?.participants.find(
+        (participant) => participant._id === messageDetails?.sender
+      )?.username || "Anonymous";
 
   const [cursorPosition, setCursorPosition] = useState<Range | null>(null);
   const [showPopup, setShowPopup] = useState(false);
@@ -17,8 +41,18 @@ function CustomInput() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuStyle, setMenuStyle] = useState({});
   const plusButtonRef = useRef<HTMLDivElement | null>(null);
+  const [isUserTyping, setIsUserTyping] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsUserTyping(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [isUserTyping]);
 
   const handleOnInput = () => {
+    setIsUserTyping(true);
     const selection: Selection | null = window.getSelection();
     if (selection?.anchorNode) {
       const textBeforeCursor = selection.anchorNode.textContent?.slice(
@@ -152,69 +186,85 @@ function CustomInput() {
   const buttonRef = useRef(null);
 
   return (
-    <div className="flex items-center gap-3 absolute bottom-10 p-2 w-full">
-      <button ref={buttonRef}>
-        <Smile />
-      </button>
-      <button
-        onClick={toggleMenu}
-        className={`p-1 flex items-center justify-center rounded-full transition-all duration-300 
-        ${menuOpen ? "bg-gray-700 rotate-180" : "bg-slate-600 text-white"}`}
-      >
-        <div className="relative w-6 h-6" ref={plusButtonRef}>
-          <Plus
-            className={`absolute w-6 h-6 text-white transition-transform duration-300 
-            ${menuOpen ? "scale-0 rotate-90" : "scale-100 rotate-0"}`}
-          />
-          <X
-            className={`absolute w-6 h-6 text-white transition-transform duration-300 
-            ${menuOpen ? "scale-100 rotate-0" : "scale-0 rotate-90"}`}
-          />
-        </div>
-      </button>
-      <div
-        className="flex-1 scrollbar min-h-12 max-h-20 overflow-auto bg-primary-foreground text-white rounded-lg p-3"
-        ref={divRef}
-        contentEditable
-        onInput={handleOnInput}
-        onMouseUp={handleCursorChange}
-        onKeyUp={handleCursorChange}
-        onKeyDown={handleSentMessage}
-      ></div>
-      <AudioRecorder />
-      {menuOpen && <ExtraMenu menuStyle={menuStyle} />}
-      {showPopup && (
-        <div
-          ref={popupRef}
-          style={{
-            position: "fixed",
-            // top: popupPosition.top,
-            bottom: window.screen.availHeight - popupPosition.top - 50,
-            left: popupPosition.left,
-            background: "black",
-            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-            zIndex: 1000,
-            padding: "10px",
-            borderRadius: "4px",
-          }}
-        >
-          {users.map((item, index) => (
-            <div
-              key={item}
-              onClick={() => handleItemSelect(item)}
-              style={{
-                padding: "5px",
-                cursor: "pointer",
-                borderRadius: "4px",
-                paddingLeft: "10px",
-                backgroundColor: selectedIndex === index ? "#2b2b2b" : "black ",
-              }}
-            >
-              {item}
-            </div>
-          ))}
+    <div className="w-full grid grid-flow-row bg-primary-foreground">
+      {replyedMessage && (
+        <div className={cn("w-full min-h-14 flex items-center p-2 pb-0")}>
+          <div className="min-w-[50px] flex items-center justify-center">1</div>
+          <div className="flex-1 bg-black border-l-4 h-full border-primary rounded-lg text-sm py-2 flex flex-col gap-[0.5px] justify-center px-3">
+            <p className="text-primary">{capitalizeFirstLetter(senderName)}</p>
+            <p>{messageDetails?.content}</p>
+          </div>
+          <div className="min-w-[50px] flex items-center justify-center">
+            <X onClick={() => setReplyedMessage(null)} />
+          </div>
         </div>
       )}
+
+      <div className="w-full flex items-center gap-3 p-2">
+        <button ref={buttonRef}>
+          <Smile />
+        </button>
+        <button
+          onClick={toggleMenu}
+          className={`p-1 flex items-center justify-center rounded-full transition-all duration-300 
+    ${menuOpen ? "bg-gray-700 rotate-180" : "bg-slate-600 text-white"}`}
+        >
+          <div className="relative w-6 h-6" ref={plusButtonRef}>
+            <Plus
+              className={`absolute w-6 h-6 text-white transition-transform duration-300 
+        ${menuOpen ? "scale-0 rotate-90" : "scale-100 rotate-0"}`}
+            />
+            <X
+              className={`absolute w-6 h-6 text-white transition-transform duration-300 
+        ${menuOpen ? "scale-100 rotate-0" : "scale-0 rotate-90"}`}
+            />
+          </div>
+        </button>
+        <div
+          className="flex-1 scrollbar min-h-12 max-h-20 overflow-auto bg-slate-800 text-white rounded-lg p-3"
+          ref={divRef}
+          contentEditable
+          onInput={handleOnInput}
+          onMouseUp={handleCursorChange}
+          onKeyUp={handleCursorChange}
+          onKeyDown={handleSentMessage}
+        ></div>
+        <AudioRecorder />
+        {menuOpen && <ExtraMenu menuStyle={menuStyle} />}
+        {showPopup && (
+          <div
+            ref={popupRef}
+            style={{
+              position: "fixed",
+              // top: popupPosition.top,
+              bottom: window.screen.availHeight - popupPosition.top - 50,
+              left: popupPosition.left,
+              background: "black",
+              boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+              zIndex: 1000,
+              padding: "10px",
+              borderRadius: "4px",
+            }}
+          >
+            {users.map((item, index) => (
+              <div
+                key={item}
+                onClick={() => handleItemSelect(item)}
+                style={{
+                  padding: "5px",
+                  cursor: "pointer",
+                  borderRadius: "4px",
+                  paddingLeft: "10px",
+                  backgroundColor:
+                    selectedIndex === index ? "#2b2b2b" : "black ",
+                }}
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -299,3 +349,5 @@ const AudioRecorder = () => {
   );
 };
 export default CustomInput;
+// https://i.pinimg.com/736x/0a/86/e5/0a86e5d0c6d593e0091d197cfebcdd7d.jpg
+// https://i.pinimg.com/736x/0a/86/e5/0a86e5d0c6d593e0091d197cfebcdd7d.jpg

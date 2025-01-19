@@ -17,6 +17,7 @@ interface MessageProps extends ChatMessage {
   isSeen: boolean;
   isSender: boolean;
   isPrevMessageFromSameUser: boolean;
+  setReplyedMessage: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const Message = ({
@@ -34,8 +35,22 @@ const Message = ({
   isSeen,
   attachments,
   isPrevMessageFromSameUser,
+  setReplyedMessage,
 }: MessageProps) => {
   const [inputValue, setInputValue] = useState(content);
+
+  const messageDropdownOnClickFunction = (
+    value: "Reply" | "React" | "Star" | "Pin" | "Delete"
+  ) => {
+    switch (value) {
+      case "Reply":
+        setReplyedMessage(_id);
+        break;
+
+      default:
+        break;
+    }
+  };
 
   return (
     <>
@@ -58,26 +73,7 @@ const Message = ({
         )}
       >
         {/* Decorative Shape */}
-        {!isPrevMessageFromSameUser && (
-          <div
-            className={cn(
-              "absolute w-4 h-4",
-              isSender ? "top-0 -right-2" : "top-0 -left-2"
-            )}
-          >
-            <svg
-              width="100%"
-              height="100%"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d={isSender ? "M0,0 L24,0 L0,24 Z" : "M24,0 L24,24 L0,0 Z"}
-                fill={isSender ? "#34406B" : "#21232A"}
-              />
-            </svg>
-          </div>
-        )}
+        {!isPrevMessageFromSameUser && <DecorativeShape isSender={isSender} />}
 
         <div className="flex items-start gap-3">
           <p
@@ -103,7 +99,11 @@ const Message = ({
             </span>
           </div>
 
-          <MessageDropdown isSender={isSender} />
+          <MessageDropdown
+            isSender={isSender}
+            onClick={messageDropdownOnClickFunction}
+            setReplyedMessage={setReplyedMessage}
+          />
         </div>
 
         {/* {isSender && (
@@ -195,6 +195,29 @@ const RenderAttachments = ({
       )}
     >
       {attachmentElements}
+    </div>
+  );
+};
+
+const DecorativeShape = ({ isSender }: { isSender: boolean }) => {
+  return (
+    <div
+      className={cn(
+        "absolute w-4 h-4",
+        isSender ? "top-0 -right-2" : "top-0 -left-2"
+      )}
+    >
+      <svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d={isSender ? "M0,0 L24,0 L0,24 Z" : "M24,0 L24,24 L0,0 Z"}
+          fill={isSender ? "#34406B" : "#21232A"}
+        />
+      </svg>
     </div>
   );
 };

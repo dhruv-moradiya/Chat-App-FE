@@ -8,8 +8,22 @@ import {
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 
-const MessageDropdown = ({ isSender }: { isSender: boolean }) => {
-  const options = ["Reply", "React", "Star", "Pin", "Delete"];
+const MessageDropdown = ({
+  isSender,
+  onClick,
+  setReplyedMessage,
+}: {
+  isSender: boolean;
+  onClick: (value: "Reply" | "React" | "Star" | "Pin" | "Delete") => void;
+  setReplyedMessage: React.Dispatch<React.SetStateAction<string | null>>;
+}) => {
+  const options: Array<"Reply" | "React" | "Star" | "Pin" | "Delete"> = [
+    "Reply",
+    "React",
+    "Star",
+    "Pin",
+    "Delete",
+  ];
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -29,6 +43,7 @@ const MessageDropdown = ({ isSender }: { isSender: boolean }) => {
             <DropdownMenuItem
               key={index}
               className="hover:bg-black cursor-pointer"
+              onClick={() => onClick(item)}
             >
               {item}
             </DropdownMenuItem>

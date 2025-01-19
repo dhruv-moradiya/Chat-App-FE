@@ -1,7 +1,7 @@
 import CustomInput from "@/components/common/cutomInput/CustomInput";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { Loader } from "lucide-react";
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Header from "./Header";
 import Message from "./Message";
@@ -14,6 +14,9 @@ const ChattingSection = () => {
   const params = useSearchParams();
   const paramValue = params[0].get("chatId");
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
+  const [replyedMessage, setReplyedMessage] = useState<string | null>(null);
+
+  console.log("replyedMessage :>> ", replyedMessage);
 
   const { activeChatId, activeChatDetails, isLoading, isLoadingOldMessages } =
     useAppSelector((state) => state.activeChat);
@@ -96,13 +99,17 @@ const ChattingSection = () => {
                   isSender={isSender}
                   isSeen={true}
                   isPrevMessageFromSameUser={isPrevMessageFromSameUser}
+                  setReplyedMessage={setReplyedMessage}
                 />
               </React.Fragment>
             );
           })}
         {/* <SkeletonLoader numberOfSkeletons={12} /> */}
       </div>
-      <CustomInput />
+      <CustomInput
+        replyedMessage={replyedMessage}
+        setReplyedMessage={setReplyedMessage}
+      />
     </div>
   );
 };
