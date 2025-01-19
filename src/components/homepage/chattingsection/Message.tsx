@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChatMessage } from "@/types/ApiResponse.types";
+import { Attachment, ChatMessage } from "@/types/ApiResponse.types";
 import moment from "moment";
 import { useAppSelector } from "@/store/store";
 
@@ -69,12 +69,9 @@ const Message = ({
     }
   };
 
-  if (replyTo) {
-  }
-
   return (
     <>
-      {/* <RenderAttachments attachments={attachments} isSender={isSender} /> */}
+      <RenderAttachments attachments={attachments} isSender={isSender} />
       <div
         className={cn(
           "relative w-fit max-w-sm px-1 py-2 pr-[70px]1 rounded-[10px] shadow-md group space-y-1",
@@ -141,13 +138,15 @@ const Message = ({
 
 export default Message;
 
+interface RenderAttachmentProps {
+  attachments: Attachment[];
+  isSender: boolean;
+}
+
 const RenderAttachments = ({
   attachments,
   isSender,
-}: {
-  attachments: string[];
-  isSender: boolean;
-}) => {
+}: RenderAttachmentProps) => {
   const MAX_VISIBLE_ATTACHMENTS = 3;
 
   const visibleAttachments =
@@ -168,7 +167,7 @@ const RenderAttachments = ({
             className="w-full !h-[400px] rounded-3xl overflow-hidden cursor-pointer my-6"
           >
             <img
-              src={attachment}
+              src={attachment.url}
               alt={`attachment-${index + 1}`}
               className="w-full h-full object-contain rounded-3xl"
             />
@@ -178,12 +177,12 @@ const RenderAttachments = ({
     </DialogContent>
   );
 
-  const attachmentElements = visibleAttachments.map((attachmentUrl, index) => (
+  const attachmentElements = visibleAttachments.map((attachment, index) => (
     <Dialog key={index}>
       <DialogTrigger>
         <div className="w-20 h-20 overflow-hidden rounded-lg flex items-center gap-2 cursor-pointer">
           <img
-            src={attachmentUrl}
+            src={attachment.url}
             alt={`attachment-thumbnail-${index + 1}`}
             className="w-full h-full object-cover"
           />

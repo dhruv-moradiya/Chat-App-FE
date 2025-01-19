@@ -125,11 +125,35 @@ const getAllChats = async () => {
   }
 };
 
-const sendMessage = async (data: { chatId: string; content: string }) => {
+const sendMessage = async (data: {
+  chatId: string;
+  content: string;
+  replyTo?: string;
+  attachments?: File[];
+}) => {
+  const formData = new FormData();
+  formData.append("chatId", data.chatId);
+  formData.append("content", data.content);
+
+  if (data.replyTo) {
+    formData.append("replyTo", data.replyTo);
+  }
+
+  if (data.attachments && data.attachments.length > 0) {
+    for (let i = 0; i < data.attachments.length; i++) {
+      formData.append("attachments", data.attachments[i]);
+    }
+  }
+
   try {
     const response: AxiosResponse<SendMessageResponse> = await apiClient.post(
       "/message/send-message",
-      { ...data }
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     return response.data;
   } catch (error) {

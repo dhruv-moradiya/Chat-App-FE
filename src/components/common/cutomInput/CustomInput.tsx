@@ -1,9 +1,10 @@
 import { sendMessage } from "@/api";
 import { capitalizeFirstLetter, cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/store";
-import { Mic, Plus, Smile, X } from "lucide-react";
+import { Mic, Pin, Plus, Smile, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { showWarnToast } from "../ToastProvider";
 
 function CustomInput({
   replyedMessage,
@@ -14,6 +15,7 @@ function CustomInput({
 }) {
   const divRef = useRef<HTMLDivElement | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [searchParams] = useSearchParams();
   const paramValue = searchParams.get("chatId");
 
@@ -38,10 +40,9 @@ function CustomInput({
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
   const [users] = useState(["John Doe", "Jane Smith", "Alice Johnson"]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [menuStyle, setMenuStyle] = useState({});
-  const plusButtonRef = useRef<HTMLDivElement | null>(null);
   const [isUserTyping, setIsUserTyping] = useState(false);
+  const [fileInputValue, setFileInputValue] = useState<File[] | null>(null);
+  console.log("fileInputValue :>> ", fileInputValue);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -157,7 +158,12 @@ function CustomInput({
       e.preventDefault();
       console.log("Message :- ", divRef.current?.textContent);
 
-      const payload: { chatId: string; content: string; replyTo?: string } = {
+      const payload: {
+        chatId: string;
+        content: string;
+        replyTo?: string;
+        attachments?: File[];
+      } = {
         chatId: paramValue as string,
         content: divRef.current?.textContent as string,
       };
@@ -166,10 +172,41 @@ function CustomInput({
         payload.replyTo = replyedMessage;
       }
 
+      if (fileInputValue && fileInputValue.length > 0) {
+        payload.attachments = fileInputValue;
+      }
+
       const response = await sendMessage(payload);
       console.log("response :>> ", response);
     }
   };
+
+  const handleFileButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (fileInputValue && fileInputValue.length === 2) {
+      showWarnToast("Only 2 files can be send at a time");
+      return;
+    }
+    const files = event.target.files;
+    if (!files) return;
+    const file = files[0];
+    if (file) {
+      setFileInputValue((prev) => (prev ? [...prev, file] : [file]));
+    }
+  };
+
+  const removeSelectedFile = (index: number) => {
+    setFileInputValue((prev) => {
+      if (!prev) return prev;
+      const copy = [...prev];
+      copy.splice(index, 1);
+      return copy;
+    });
+  };
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleKeyDown);
@@ -178,21 +215,11 @@ function CustomInput({
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [showPopup, selectedIndex, users]);
-  const toggleMenu = () => {
-    if (!menuOpen && plusButtonRef.current) {
-      setMenuStyle({
-        position: "absolute",
-        left: 0,
-        top: "-180%",
-        transformOrigin: "top left",
-      });
-    }
-    setMenuOpen((prev) => !prev);
-  };
+
   const buttonRef = useRef(null);
 
   return (
-    <div className="w-full grid grid-flow-row bg-primary-foreground">
+    <div className="w-full grid grid-flow-row bg-primary-foreground relative">
       {replyedMessage && (
         <div
           className={cn(
@@ -211,26 +238,39 @@ function CustomInput({
         </div>
       )}
 
+      {fileInputValue && (
+        <div className="absolute left-0 -top-full grid grid-cols-2 gap-2">
+          {fileInputValue.map((file, index) => (
+            <div
+              key={index}
+              className="w-16 h-16 overflow-hidden rounded-lg"
+              onClick={() => removeSelectedFile(index)}
+            >
+              <img
+                src={URL.createObjectURL(file)}
+                alt="Image"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="w-full flex items-center gap-3 p-2">
         <button ref={buttonRef}>
           <Smile />
         </button>
-        <button
-          onClick={toggleMenu}
-          className={`p-1 flex items-center justify-center rounded-full transition-all duration-300 
-    ${menuOpen ? "bg-gray-700 rotate-180" : "bg-slate-600 text-white"}`}
-        >
-          <div className="relative w-6 h-6" ref={plusButtonRef}>
-            <Plus
-              className={`absolute w-6 h-6 text-white transition-transform duration-300 
-        ${menuOpen ? "scale-0 rotate-90" : "scale-100 rotate-0"}`}
-            />
-            <X
-              className={`absolute w-6 h-6 text-white transition-transform duration-300 
-        ${menuOpen ? "scale-100 rotate-0" : "scale-0 rotate-90"}`}
-            />
-          </div>
+        <button onClick={handleFileButtonClick}>
+          <Pin />
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={handleFileChange}
+            accept="image/*"
+          />
         </button>
+
         <div
           className="flex-1 scrollbar min-h-12 max-h-20 overflow-auto bg-slate-800 text-white rounded-lg p-3"
           ref={divRef}
@@ -241,7 +281,6 @@ function CustomInput({
           onKeyDown={handleSentMessage}
         ></div>
         <AudioRecorder />
-        {menuOpen && <ExtraMenu menuStyle={menuStyle} />}
         {showPopup && (
           <div
             ref={popupRef}
@@ -279,31 +318,6 @@ function CustomInput({
     </div>
   );
 }
-const ExtraMenu = ({ menuStyle }: any) => {
-  const handleMenuOptionsClick = (
-    e: React.MouseEvent<HTMLUListElement, MouseEvent>
-  ) => {
-    const target = e.target as HTMLElement;
-    if (target.tagName === "LI") {
-      console.log(`Option clicked: ${target.textContent}`);
-    }
-  };
-  return (
-    <div
-      className="bg-black rounded p-4 transition-transform duration-300 ease-in-out transform scale-0 opacity-0 animate-open-menu"
-      style={menuStyle}
-    >
-      <ul
-        onClick={handleMenuOptionsClick}
-        className="flex flex-col items-center gap-2 text-white"
-      >
-        <li>Photos</li>
-        <li>Videos</li>
-        <li>Documents</li>
-      </ul>
-    </div>
-  );
-};
 
 const AudioRecorder = () => {
   const [isRecording, setIsRecording] = useState(false);
