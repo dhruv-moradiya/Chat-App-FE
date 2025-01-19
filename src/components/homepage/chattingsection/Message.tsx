@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { capitalizeFirstLetter, cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 import { useState } from "react";
 import MessageDropdown from "./MessageDropdown";
@@ -12,6 +12,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChatMessage } from "@/types/ApiResponse.types";
 import moment from "moment";
+import { useAppSelector } from "@/store/store";
 
 interface MessageProps extends ChatMessage {
   isSeen: boolean;
@@ -39,6 +40,22 @@ const Message = ({
 }: MessageProps) => {
   const [inputValue, setInputValue] = useState(content);
 
+  const { activeChatDetails, activeChatId } = useAppSelector(
+    (state) => state.activeChat
+  );
+
+  const messageDetails = activeChatDetails?.messages.find(
+    (message) => message._id === replyTo
+  );
+  const { myChats } = useAppSelector((state) => state.myChats);
+
+  const senderName =
+    myChats
+      .find((chat) => chat._id === activeChatId)
+      ?.participants.find(
+        (participant) => participant._id === messageDetails?.sender
+      )?.username || "Anonymous";
+
   const messageDropdownOnClickFunction = (
     value: "Reply" | "React" | "Star" | "Pin" | "Delete"
   ) => {
@@ -52,21 +69,15 @@ const Message = ({
     }
   };
 
+  if (replyTo) {
+  }
+
   return (
     <>
-      <div
-        className={cn(
-          "grid gap-2",
-          isSender ? "ml-auto" : "mr-auto",
-          attachments.length >= 2 ? "grid-cols-2" : "grid-cols-1"
-        )}
-      >
-        {/* {renderAttachments()} */}
-      </div>
       {/* <RenderAttachments attachments={attachments} isSender={isSender} /> */}
       <div
         className={cn(
-          "relative w-fit max-w-sm px-4 py-2 pr-[70px] rounded-xl shadow-md group",
+          "relative w-fit max-w-sm px-1 py-2 pr-[70px]1 rounded-[10px] shadow-md group space-y-1",
           isSender
             ? "bg-primary/40 text-white self-end rounded-tr-none"
             : "bg-muted-foreground/10 self-start rounded-tl-none"
@@ -75,7 +86,16 @@ const Message = ({
         {/* Decorative Shape */}
         {!isPrevMessageFromSameUser && <DecorativeShape isSender={isSender} />}
 
-        <div className="flex items-start gap-3">
+        {replyTo && (
+          <div className="bg-primary-foreground/30 p-2 rounded-lg text-sm border-l-4 border-primary">
+            <p className="text-primary font-bold">
+              {capitalizeFirstLetter(senderName)}
+            </p>
+            <p>{messageDetails?.content}</p>
+          </div>
+        )}
+
+        <div className="flex items-start gap-3 pr-[65px] px-2">
           <p
             className="text-sm break-words whitespace-normal"
             style={{ wordBreak: "break-word" }}

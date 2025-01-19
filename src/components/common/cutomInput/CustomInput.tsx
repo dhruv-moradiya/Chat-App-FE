@@ -157,10 +157,16 @@ function CustomInput({
       e.preventDefault();
       console.log("Message :- ", divRef.current?.textContent);
 
-      const response = await sendMessage({
+      const payload: { chatId: string; content: string; replyTo?: string } = {
         chatId: paramValue as string,
         content: divRef.current?.textContent as string,
-      });
+      };
+
+      if (replyedMessage) {
+        payload.replyTo = replyedMessage;
+      }
+
+      const response = await sendMessage(payload);
       console.log("response :>> ", response);
     }
   };
@@ -188,7 +194,12 @@ function CustomInput({
   return (
     <div className="w-full grid grid-flow-row bg-primary-foreground">
       {replyedMessage && (
-        <div className={cn("w-full min-h-14 flex items-center p-2 pb-0")}>
+        <div
+          className={cn(
+            "w-full flex items-center p-2 pb-0 overflow-hidden animate-slide-in",
+            replyedMessage ? "slide-in" : "animate-slide-out"
+          )}
+        >
           <div className="min-w-[50px] flex items-center justify-center">1</div>
           <div className="flex-1 bg-black border-l-4 h-full border-primary rounded-lg text-sm py-2 flex flex-col gap-[0.5px] justify-center px-3">
             <p className="text-primary">{capitalizeFirstLetter(senderName)}</p>

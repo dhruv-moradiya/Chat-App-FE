@@ -10,7 +10,7 @@ const Layout = () => {
   return (
     <div className="w-screen h-screen flex gap-2 overflow-hidden">
       <Navbar />
-      <div className="flex-1 bg-[#14151b] rounded-2xl overflow-hidden p-4">
+      <div className="flex-1 bg-[#14151b] rounded-2xl overflow-hidden py-4">
         <Header />
         <Outlet />
       </div>

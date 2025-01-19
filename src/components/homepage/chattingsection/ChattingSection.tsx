@@ -68,10 +68,10 @@ const ChattingSection = () => {
   if (isLoading) return <Loader />;
 
   return (
-    <div className=" h-full flex flex-col w-[calc(100%-384px)] relative">
+    <div className="flex flex-col w-[calc(100%-384px)] relative mb-5">
       <Header />
       <div
-        className="scrollbar w-full h-[calc(100%-180px)] px-2 overflow-y-scroll flex flex-col items-center gap-2 mb-2"
+        className="scrollbar w-full px-2 overflow-y-scroll flex flex-col items-center gap-2 mb-2"
         ref={chatContainerRef}
       >
         {activeChatDetails &&
