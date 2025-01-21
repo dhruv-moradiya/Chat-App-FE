@@ -14,7 +14,7 @@ import { LoginUserResponse, RegisterUserResponse } from "@/types/Auth.types";
 
 // Create an instance of axios with a base URL, credentials, and timeout.
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_APP_SERVER_URL,
+  baseURL: import.meta.env.VITE_APP_SERVER_URI,
   withCredentials: true,
   timeout: 12000,
 });
