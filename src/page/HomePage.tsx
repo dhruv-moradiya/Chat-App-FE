@@ -1,13 +1,12 @@
-// import CustomLoader from "@/components/common/CustomLoader";
-import { fetchMyFriendsList } from "@/api";
-import ChattingSection from "@/components/homepage/chattingsection/ChattingSection";
-import Sidebar from "@/components/homepage/Sidebar";
-import { setActiveChat } from "@/store/activeChat/ActiveChatSlice";
-import { fetchActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
-import { createConnection, disconnected } from "@/store/socket/SocketSlice";
-import { useAppDispatch } from "@/store/store";
 import { useEffect, useRef } from "react";
+import { useAppDispatch } from "@/store/store";
 import { useSearchParams } from "react-router-dom";
+import { setActiveChat } from "@/store/activeChat/ActiveChatSlice";
+import { createConnection, disconnected } from "@/store/socket/SocketSlice";
+import { fetchActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
+import Sidebar from "@/components/homepage/Sidebar";
+import ChattingSection from "@/components/homepage/chattingsection/ChattingSection";
+
 const HomePage = () => {
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
@@ -20,6 +19,7 @@ const HomePage = () => {
       dispatch(disconnected());
     };
   }, []);
+
   useEffect(() => {
     if (prevParamValue.current && prevParamValue.current !== paramValue) {
     }
@@ -40,7 +40,6 @@ const HomePage = () => {
 
   return (
     <div className="w-full h-full flex gap-2">
-      {/* <CustomLoader /> */}
       <Sidebar />
       <ChattingSection />
     </div>

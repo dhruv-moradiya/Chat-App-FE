@@ -1,7 +1,9 @@
-import { capitalizeFirstLetter, cn } from "@/lib/utils";
-import { Check } from "lucide-react";
 import { useState } from "react";
-import MessageDropdown from "./MessageDropdown";
+import { Check } from "lucide-react";
+import { useAppSelector } from "@/store/store";
+import { capitalizeFirstLetter, cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Attachment, ChatMessage } from "@/types/ApiResponse.types";
 import {
   Dialog,
   DialogContent,
@@ -9,10 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Attachment, ChatMessage } from "@/types/ApiResponse.types";
 import moment from "moment";
-import { useAppSelector } from "@/store/store";
+import MessageDropdown from "./MessageDropdown";
 
 interface MessageProps extends ChatMessage {
   isSeen: boolean;

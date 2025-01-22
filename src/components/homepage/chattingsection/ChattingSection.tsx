@@ -1,13 +1,13 @@
-import CustomInput from "@/components/common/cutomInput/CustomInput";
-import { useAppDispatch, useAppSelector } from "@/store/store";
-import { Loader } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Loader } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import CustomInput from "@/components/common/cutomInput/CustomInput";
+import { fetchOldActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
+import moment from "moment";
 import Header from "./Header";
 import Message from "./Message";
 import NoChatSelected from "./NoChatSelected";
-import moment from "moment";
-import { fetchOldActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
 
 const ChattingSection = () => {
   const dispatch = useAppDispatch();
@@ -16,11 +16,9 @@ const ChattingSection = () => {
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const [replyedMessage, setReplyedMessage] = useState<string | null>(null);
 
-  console.log("replyedMessage :>> ", replyedMessage);
-
+  const { user } = useAppSelector((state) => state.auth);
   const { activeChatId, activeChatDetails, isLoading, isLoadingOldMessages } =
     useAppSelector((state) => state.activeChat);
-  const { user } = useAppSelector((state) => state.auth);
 
   const handleScroll = useCallback(() => {
     const container = chatContainerRef.current;

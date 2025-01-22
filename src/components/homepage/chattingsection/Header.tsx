@@ -1,14 +1,13 @@
-// Header.jsx
+import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
+import { Search, Phone, Sidebar, EllipsisVertical } from "lucide-react";
+import { openChatDetail } from "@/store/chatDetailSidebar/ChatDetailSlice";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { openChatDetail } from "@/store/chatDetailSidebar/ChatDetailSlice";
-import { Search, Phone, Sidebar, EllipsisVertical } from "lucide-react";
-import { useDispatch } from "react-redux";
 
 const Header = () => {
   const dispatch = useDispatch();

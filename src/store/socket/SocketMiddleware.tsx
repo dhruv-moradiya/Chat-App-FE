@@ -57,7 +57,7 @@ const socketMiddleware: Middleware = (storeAPI) => {
           const socketServerUri = import.meta.env.VITE_APP_SOCKET_SERVER_URL;
           if (!socketServerUri) {
             throw new Error(
-              "VITE_SOCKET_SERVER_URI is not defined in the environment variables."
+              "VITE_APP_SOCKET_SERVER_URL is not defined in the environment variables."
             );
           }
 
