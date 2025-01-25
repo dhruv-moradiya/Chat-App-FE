@@ -15,6 +15,7 @@ const ChatEventEnum = Object.freeze({
   USER_LEAVE_GROUP_EVENT: "userLeaveGroup",
 
   // Messaging
+  UPDATED_MESSAGE_WITH_ATTACHMENT_EVENT: "updatedMessageWithAttachment",
   MESSAGE_RECEIVED_EVENT: "messageReceived",
   MESSAGE_DELETE_EVENT: "messageDeleted",
   MESSAGE_EDIT_EVENT: "messageEdited",

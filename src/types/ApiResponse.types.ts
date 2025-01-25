@@ -128,6 +128,7 @@ interface ChatMessage {
   reactions: any[];
   createdAt: string;
   updatedAt: string;
+  isAttachment?: boolean;
 }
 
 interface ChatMessagesSummary {

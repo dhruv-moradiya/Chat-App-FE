@@ -5,13 +5,17 @@ import { Mic, Pin, Plus, Smile, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { showWarnToast } from "../ToastProvider";
+import { SelectedMessageType } from "@/types/Common.types";
 
 function CustomInput({
-  replyedMessage,
-  setReplyedMessage,
-}: {
-  replyedMessage: string | null;
-  setReplyedMessage: React.Dispatch<React.SetStateAction<string | null>>;
+  selectedMessage,
+  setSelectedMessage,
+}: // replyedMessage,
+{
+  selectedMessage: SelectedMessageType | null;
+  setSelectedMessage: React.Dispatch<
+    React.SetStateAction<SelectedMessageType | null>
+  >;
 }) {
   const divRef = useRef<HTMLDivElement | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
@@ -24,7 +28,7 @@ function CustomInput({
   );
 
   const messageDetails = activeChatDetails?.messages.find(
-    (message) => message._id === replyedMessage
+    (message) => message._id === selectedMessage?._id
   );
   const { myChats } = useAppSelector((state) => state.myChats);
 
@@ -42,7 +46,6 @@ function CustomInput({
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isUserTyping, setIsUserTyping] = useState(false);
   const [fileInputValue, setFileInputValue] = useState<File[] | null>(null);
-  console.log("fileInputValue :>> ", fileInputValue);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -168,8 +171,8 @@ function CustomInput({
         content: divRef.current?.textContent as string,
       };
 
-      if (replyedMessage) {
-        payload.replyTo = replyedMessage;
+      if (selectedMessage?.type === "Reply") {
+        payload.replyTo = selectedMessage._id;
       }
 
       if (fileInputValue && fileInputValue.length > 0) {
@@ -220,11 +223,11 @@ function CustomInput({
 
   return (
     <div className="w-full grid grid-flow-row bg-primary-foreground relative">
-      {replyedMessage && (
+      {selectedMessage?.type === "Reply" && (
         <div
           className={cn(
             "w-full flex items-center p-2 pb-0 overflow-hidden animate-slide-in",
-            replyedMessage ? "slide-in" : "animate-slide-out"
+            selectedMessage?.type === "Reply" ? "slide-in" : "animate-slide-out"
           )}
         >
           <div className="min-w-[50px] flex items-center justify-center">1</div>
@@ -233,7 +236,7 @@ function CustomInput({
             <p>{messageDetails?.content}</p>
           </div>
           <div className="min-w-[50px] flex items-center justify-center">
-            <X onClick={() => setReplyedMessage(null)} />
+            <X onClick={() => setSelectedMessage(null)} />
           </div>
         </div>
       )}

@@ -13,12 +13,19 @@ import {
 } from "@/components/ui/dialog";
 import moment from "moment";
 import MessageDropdown from "./MessageDropdown";
+import {
+  MessageUserInteractionType,
+  SelectedMessageType,
+} from "@/types/Common.types";
+import Model from "@/components/ui/Modal";
 
 interface MessageProps extends ChatMessage {
   isSeen: boolean;
   isSender: boolean;
   isPrevMessageFromSameUser: boolean;
-  setReplyedMessage: React.Dispatch<React.SetStateAction<string | null>>;
+  setSelectedMessage: React.Dispatch<
+    React.SetStateAction<SelectedMessageType | null>
+  >;
 }
 
 const Message = ({
@@ -33,10 +40,11 @@ const Message = ({
   createdAt,
   updatedAt,
   isSender,
+  isAttachment,
   isSeen,
   attachments,
   isPrevMessageFromSameUser,
-  setReplyedMessage,
+  setSelectedMessage,
 }: MessageProps) => {
   const [inputValue, setInputValue] = useState(content);
 
@@ -57,11 +65,28 @@ const Message = ({
       )?.username || "Anonymous";
 
   const messageDropdownOnClickFunction = (
-    value: "Reply" | "React" | "Star" | "Pin" | "Delete"
+    value: MessageUserInteractionType
   ) => {
     switch (value) {
       case "Reply":
-        setReplyedMessage(_id);
+        setSelectedMessage({
+          _id,
+          content,
+          type: "Reply",
+        });
+        break;
+      case "React":
+        break;
+      case "Star":
+        break;
+      case "Pin":
+        break;
+      case "Delete":
+        setSelectedMessage({
+          _id,
+          content,
+          type: "Delete",
+        });
         break;
 
       default:
@@ -71,6 +96,14 @@ const Message = ({
 
   return (
     <>
+      {isAttachment && (
+        <div
+          className={cn(
+            "animate-pulse rounded-lg bg-primary/10 p-10",
+            isSender ? "self-end" : "self-start"
+          )}
+        ></div>
+      )}
       <RenderAttachments attachments={attachments} isSender={isSender} />
       <div
         className={cn(
@@ -119,7 +152,6 @@ const Message = ({
           <MessageDropdown
             isSender={isSender}
             onClick={messageDropdownOnClickFunction}
-            setReplyedMessage={setReplyedMessage}
           />
         </div>
 

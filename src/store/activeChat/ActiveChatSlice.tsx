@@ -11,8 +11,8 @@ interface ActiveChatState {
   activeChatId: string | null;
   activeChatDetails: ChatMessagesSummary | null;
   prevChatId: string | null;
-  hasMoreMessages: boolean; // To indicate if more messages are available
-  isLoadingOldMessages: boolean; // To track loading of old messages
+  hasMoreMessages: boolean;
+  isLoadingOldMessages: boolean;
 }
 
 const initialState: ActiveChatState = {
@@ -38,6 +38,20 @@ const activeChatSlice = createSlice({
         state.activeChatDetails = {
           ...state.activeChatDetails,
           messages: [...state.activeChatDetails.messages, action.payload],
+        };
+      }
+    },
+
+    newMessageUpdateWithAttachment: (state, action) => {
+      if (state.activeChatDetails) {
+        state.activeChatDetails = {
+          ...state.activeChatDetails,
+          messages: state.activeChatDetails.messages.map((message) => {
+            if (message._id === action.payload._id) {
+              return action.payload;
+            }
+            return message;
+          }),
         };
       }
     },
@@ -97,5 +111,9 @@ const activeChatSlice = createSlice({
 });
 
 export const activeChatReducer = activeChatSlice.reducer;
-export const { setActiveChat, newMessageReceived } = activeChatSlice.actions;
+export const {
+  setActiveChat,
+  newMessageReceived,
+  newMessageUpdateWithAttachment,
+} = activeChatSlice.actions;
 export default activeChatSlice;

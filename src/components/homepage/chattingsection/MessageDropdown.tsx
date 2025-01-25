@@ -6,18 +6,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { MessageUserInteractionType } from "@/types/Common.types";
 import { ChevronDown } from "lucide-react";
 
 const MessageDropdown = ({
   isSender,
   onClick,
-  setReplyedMessage,
 }: {
   isSender: boolean;
-  onClick: (value: "Reply" | "React" | "Star" | "Pin" | "Delete") => void;
-  setReplyedMessage: React.Dispatch<React.SetStateAction<string | null>>;
+  onClick: (value: MessageUserInteractionType) => void;
 }) => {
-  const options: Array<"Reply" | "React" | "Star" | "Pin" | "Delete"> = [
+  const options: MessageUserInteractionType[] = [
     "Reply",
     "React",
     "Star",

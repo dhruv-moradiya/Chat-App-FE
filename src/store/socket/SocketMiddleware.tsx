@@ -6,7 +6,10 @@ import { FriendRequestData } from "@/types/ApiResponse.types";
 import { addNewChat, updateUnreadMessageCount } from "../myChats/ChatSlice";
 import { showNotificationToast } from "@/components/common/ToastProvider";
 import { playNotificationSound } from "@/lib/utils";
-import { newMessageReceived } from "../activeChat/ActiveChatSlice";
+import {
+  newMessageReceived,
+  newMessageUpdateWithAttachment,
+} from "../activeChat/ActiveChatSlice";
 
 // const playNotificationSound = useNotificationSound("/to_the_point.mp3");
 
@@ -55,7 +58,6 @@ const socketMiddleware: Middleware = (storeAPI) => {
           console.log("😖 Connecting socket...");
 
           const socketServerUri = import.meta.env.VITE_APP_SOCKET_SERVER_URL;
-          console.log("socketServerUri :>> ", socketServerUri);
           if (!socketServerUri) {
             throw new Error(
               "VITE_APP_SOCKET_SERVER_URL is not defined in the environment variables."
@@ -101,6 +103,14 @@ const socketMiddleware: Middleware = (storeAPI) => {
             console.log("📨 Message received:", data);
             storeAPI.dispatch(newMessageReceived(data.message));
           });
+
+          socket.on(
+            ChatEventEnum.UPDATED_MESSAGE_WITH_ATTACHMENT_EVENT,
+            (data) => {
+              console.log("UPDATED_MESSAGE_WITH_ATTACHMENT_EVENT :>> ", data);
+              storeAPI.dispatch(newMessageUpdateWithAttachment(data.message));
+            }
+          );
 
           socket.on(ChatEventEnum.UNREAD_MESSAGE_EVENT, (data) => {
             console.log("UNREAD_MESSAGE_EVENT :>> ", data);
