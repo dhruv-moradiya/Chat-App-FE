@@ -46,7 +46,7 @@ const ChatDetails = () => {
         {new Array(4).fill(0).map((_, index) => (
           <div key={index} className="w-full h-28 overflow-hidden rounded-lg">
             <img
-              src="https://via.placeholder.com/150"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOncwcdfdMqq42OOJp3l7u5qBLrlZFGYjJ8j8FIo_uU-PYB7fOBL6FyXk&s"
               alt="media"
               className="w-full h-full object-cover"
             />
@@ -70,7 +70,7 @@ const ChatDetails = () => {
             {new Array(4).fill(0).map((_, index) => (
               <li key={index} className="flex items-center space-x-2">
                 <img
-                  src="https://via.placeholder.com/150"
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOncwcdfdMqq42OOJp3l7u5qBLrlZFGYjJ8j8FIo_uU-PYB7fOBL6FyXk&s"
                   alt="member"
                   className="w-8 h-8 rounded-xl"
                 />
@@ -95,7 +95,7 @@ const AllLinks = () => {
         {new Array(100).fill(0).map((_, index) => (
           <li key={index} className="flex items-center space-x-2">
             <img
-              src="https://via.placeholder.com/150"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOncwcdfdMqq42OOJp3l7u5qBLrlZFGYjJ8j8FIo_uU-PYB7fOBL6FyXk&s"
               alt="member"
               className="w-10 h-10 rounded-xl"
             />

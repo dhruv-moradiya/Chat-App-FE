@@ -24,6 +24,9 @@ const ChattingSection = () => {
   const { user } = useAppSelector((state) => state.auth);
   const { activeChatId, activeChatDetails, isLoading, isLoadingOldMessages } =
     useAppSelector((state) => state.activeChat);
+  const chatList = useAppSelector((state) => state.myChats.myChats);
+  const isCurrentChatIsGroupChat =
+    chatList.find((chat) => chat._id === activeChatId)?.isGroup ?? false;
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
@@ -79,10 +82,11 @@ const ChattingSection = () => {
               moment(activeChatDetails.messages[index - 1]?.createdAt).format(
                 "DD-MM-YYYY"
               );
-          const isSender = message.sender === user?._id;
+          const isSender = message.sender._id === user?._id;
           const isPrevMessageFromSameUser =
             index > 0 &&
-            activeChatDetails.messages[index - 1].sender === message.sender;
+            activeChatDetails.messages[index - 1].sender._id ===
+              message.sender._id;
 
           return (
             <React.Fragment key={message._id}>
@@ -97,6 +101,7 @@ const ChattingSection = () => {
                 isSeen={true}
                 isPrevMessageFromSameUser={isPrevMessageFromSameUser}
                 setSelectedMessage={setSelectedMessage}
+                isCurrentChatIsGroupChat={isCurrentChatIsGroupChat}
               />
             </React.Fragment>
           );
@@ -111,7 +116,7 @@ const ChattingSection = () => {
     <div className="flex flex-col w-[calc(100%-384px)] relative mb-5">
       <Header />
       <div
-        className="scrollbar w-full px-2 overflow-y-scroll flex flex-col items-center gap-2 mb-2"
+        className="scrollbar flex-grow w-full px-2 overflow-y-scroll flex flex-col items-center gap-2 mb-2"
         ref={chatContainerRef}
       >
         {renderMessages()}
@@ -120,12 +125,12 @@ const ChattingSection = () => {
         selectedMessage={selectedMessage}
         setSelectedMessage={setSelectedMessage}
       />
-      <button
+      {/* <button
         className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 transition"
         onClick={toggleModal}
       >
         Open Modal
-      </button>
+      </button> */}
       <Modal
         isOpen={isModalOpen}
         onClose={toggleModal}

@@ -180,6 +180,12 @@ function CustomInput({
       }
 
       const response = await sendMessage(payload);
+
+      if (response) {
+        setFileInputValue(null);
+        divRef.current!.textContent = "";
+        setSelectedMessage(null);
+      }
       console.log("response :>> ", response);
     }
   };
@@ -223,23 +229,23 @@ function CustomInput({
 
   return (
     <div className="w-full grid grid-flow-row bg-primary-foreground relative">
-      {selectedMessage?.type === "Reply" && (
-        <div
-          className={cn(
-            "w-full flex items-center p-2 pb-0 overflow-hidden animate-slide-in",
-            selectedMessage?.type === "Reply" ? "slide-in" : "animate-slide-out"
-          )}
-        >
-          <div className="min-w-[50px] flex items-center justify-center">1</div>
-          <div className="flex-1 bg-black border-l-4 h-full border-primary rounded-lg text-sm py-2 flex flex-col gap-[0.5px] justify-center px-3">
-            <p className="text-primary">{capitalizeFirstLetter(senderName)}</p>
-            <p>{messageDetails?.content}</p>
-          </div>
-          <div className="min-w-[50px] flex items-center justify-center">
-            <X onClick={() => setSelectedMessage(null)} />
-          </div>
+      <div
+        className={cn(
+          "w-full flex items-center overflow-hidden transform transition-all duration-150",
+          selectedMessage?.type === "Reply"
+            ? "opacity-100 h-auto p-2 pb-0"
+            : "opacity-0 h-0 p-0"
+        )}
+      >
+        <div className="min-w-[50px] flex items-center justify-center">1</div>
+        <div className="flex-1 bg-black border-l-4 h-full border-primary rounded-lg text-sm py-2 flex flex-col gap-[0.5px] justify-center px-3">
+          <p className="text-primary">{capitalizeFirstLetter(senderName)}</p>
+          <p>{messageDetails?.content}</p>
         </div>
-      )}
+        <div className="min-w-[50px] flex items-center justify-center">
+          <X onClick={() => setSelectedMessage(null)} />
+        </div>
+      </div>
 
       {fileInputValue && (
         <div className="absolute left-0 -top-full grid grid-cols-2 gap-2">

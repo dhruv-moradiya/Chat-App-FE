@@ -17,6 +17,13 @@ interface UserProfile {
   updatedAt: string;
 }
 
+interface UserPreview {
+  _id: string;
+  username: string;
+  profilePicture: string;
+  email: string;
+}
+
 interface ExcludedFriendsUsersResponse extends ApiResponseBase {
   data: {
     users: UserProfile[];
@@ -118,7 +125,7 @@ interface Attachment {
 
 interface ChatMessage {
   _id: string;
-  sender: string;
+  sender: UserPreview;
   content: string;
   replyTo?: string;
   deletedBy: string[];
@@ -159,6 +166,7 @@ interface CreateGroupChatResponse extends ApiResponseBase {
 export type {
   ApiResponseBase,
   UserProfile,
+  UserPreview,
   ExcludedFriendsUsersResponse,
   SentFriendRequestData,
   SentFriendRequestResponse,

@@ -26,6 +26,7 @@ interface MessageProps extends ChatMessage {
   setSelectedMessage: React.Dispatch<
     React.SetStateAction<SelectedMessageType | null>
   >;
+  isCurrentChatIsGroupChat: boolean;
 }
 
 const Message = ({
@@ -45,6 +46,7 @@ const Message = ({
   attachments,
   isPrevMessageFromSameUser,
   setSelectedMessage,
+  isCurrentChatIsGroupChat,
 }: MessageProps) => {
   const [inputValue, setInputValue] = useState(content);
 
@@ -61,7 +63,7 @@ const Message = ({
     myChats
       .find((chat) => chat._id === activeChatId)
       ?.participants.find(
-        (participant) => participant._id === messageDetails?.sender
+        (participant) => participant._id === messageDetails?.sender._id
       )?.username || "Anonymous";
 
   const messageDropdownOnClickFunction = (
@@ -95,25 +97,41 @@ const Message = ({
   };
 
   return (
-    <>
+    <div
+      className={cn("w-fit space-y-1.5", isSender ? "self-end" : "self-start")}
+    >
       {isAttachment && (
         <div
           className={cn(
             "animate-pulse rounded-lg bg-primary/10 p-10",
-            isSender ? "self-end" : "self-start"
+            isSender ? "self-end ml-auto" : "self-start mr-auto"
           )}
         ></div>
       )}
-      <RenderAttachments attachments={attachments} isSender={isSender} />
+      {attachments.length ? (
+        <RenderAttachments attachments={attachments} isSender={isSender} />
+      ) : (
+        ""
+      )}
+
+      {/* {isCurrentChatIsGroupChat && (
+        <div className="w-12 h-12 rounded-lg overflow-hidden">
+          <img
+            src={sender.profilePicture}
+            alt={sender.username}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )} */}
+
       <div
         className={cn(
           "relative w-fit max-w-sm px-1 py-2 pr-[70px]1 rounded-[10px] shadow-md group space-y-1",
           isSender
-            ? "bg-primary/40 text-white self-end rounded-tr-none"
-            : "bg-muted-foreground/10 self-start rounded-tl-none"
+            ? "bg-primary/40 text-white rounded-tr-none"
+            : "bg-muted-foreground/10 rounded-tl-none"
         )}
       >
-        {/* Decorative Shape */}
         {!isPrevMessageFromSameUser && <DecorativeShape isSender={isSender} />}
 
         {replyTo && (
@@ -124,6 +142,11 @@ const Message = ({
             <p>{messageDetails?.content}</p>
           </div>
         )}
+        {/* <div className="px-2">
+          <p className="text-[12px] text-secondary">
+            {capitalizeFirstLetter(sender.username)}
+          </p>
+        </div> */}
 
         <div className="flex items-start gap-3 pr-[65px] px-2">
           <p
@@ -164,7 +187,7 @@ const Message = ({
           </div>
         )} */}
       </div>
-    </>
+    </div>
   );
 };
 
@@ -242,7 +265,7 @@ const RenderAttachments = ({
       className={cn(
         "grid  gap-2",
         attachments.length >= 2 ? "grid-cols-2" : "grid-cols-1",
-        isSender ? "ml-auto" : "mr-auto"
+        isSender ? "ml-auto place-items-end" : "mr-auto place-items-start"
       )}
     >
       {attachmentElements}
