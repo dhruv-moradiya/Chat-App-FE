@@ -28,9 +28,11 @@ const MessageDropdown = ({
       <DropdownMenuTrigger asChild>
         <div
           className={cn(
-            " p-0 h-fit absolute top-1 right-3 shadow-2xl cursor-pointer group-hover:block",
-            "transition-all duration-300 ease-in-out opacity-0 group-hover:opacity-100",
-            isSender ? "bg-[#34406B]" : "bg-[#21232A]"
+            "p-0 h-fit absolute top-1 right-3 shadow-lg cursor-pointer group-hover:block rounded-xl",
+            "transition-all duration-300 ease-in-out opacity-0 group-hover:opacity-100 ",
+            isSender
+              ? "bg-[#34406B] shadow-[0_8px_15px_rgba(52,64,107,0.5)] bg-transparent"
+              : "bg-[#21232A] shadow-[0_8px_15px_rgba(33,35,42,0.5)] bg-transparent"
           )}
         >
           <ChevronDown size={20} />

@@ -1,9 +1,9 @@
-import { capitalizeFirstLetter, cn } from "@/lib/utils";
 import { Check } from "lucide-react";
+import { UserPreview } from "@/types/ApiResponse.types";
+import { capitalizeFirstLetter, cn } from "@/lib/utils";
 import { MessageUserInteractionType } from "@/types/Common.types";
 import moment from "moment";
 import MessageDropdown from "./MessageDropdown";
-import { UserPreview } from "@/types/ApiResponse.types";
 
 const DecorativeShape = ({ isSender }: { isSender: boolean }) => {
   return (

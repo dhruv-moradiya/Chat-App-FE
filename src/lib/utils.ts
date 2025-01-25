@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { AxiosResponse } from "axios";
+import moment from "moment";
+import { ChatMessage } from "@/types/ApiResponse.types";
 
 type ChatAppResponse = {
   statusCode: number;
@@ -54,11 +56,23 @@ const capitalizeFirstLetter = (str: string) => {
 };
 
 const playNotificationSound = (soundUrl = "/to_the_point.mp3") => {
-  const audio = new Audio(soundUrl); // Create a new Audio instance
-  audio.currentTime = 0; // Reset to the start for replay
+  const audio = new Audio(soundUrl);
+  audio.currentTime = 0;
   audio.play().catch((error) => {
     console.error("Failed to play the notification sound:", error);
   });
 };
 
-export { requestHandler, capitalizeFirstLetter, playNotificationSound };
+const isNewDate = (messages: ChatMessage[], index: number) => {
+  if (index === 0) return true;
+  const currentDate = moment(messages[index].createdAt).format("DD-MM-YYYY");
+  const prevDate = moment(messages[index - 1]?.createdAt).format("DD-MM-YYYY");
+  return currentDate !== prevDate;
+};
+
+export {
+  requestHandler,
+  capitalizeFirstLetter,
+  playNotificationSound,
+  isNewDate,
+};

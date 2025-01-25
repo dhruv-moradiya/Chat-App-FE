@@ -10,6 +10,7 @@ import CustomInput from "@/components/common/cutomInput/CustomInput";
 import { SelectedMessageType } from "@/types/Common.types";
 import Modal from "@/components/ui/Modal";
 import SkeletonLoader from "./ChatSkeletonLoader ";
+import { isNewDate } from "@/lib/utils";
 
 const ChattingSection = () => {
   const dispatch = useAppDispatch();
@@ -76,25 +77,16 @@ const ChattingSection = () => {
     return (
       <>
         {activeChatDetails?.messages.map((message, index) => {
-          const isNewDate =
-            index === 0 ||
-            moment(message.createdAt).format("DD-MM-YYYY") !==
-              moment(activeChatDetails.messages[index - 1]?.createdAt).format(
-                "DD-MM-YYYY"
-              );
+          const showNewDate = isNewDate(activeChatDetails?.messages, index);
           const isSender = message.sender._id === user?._id;
           const isPrevMessageFromSameUser =
             index > 0 &&
-            activeChatDetails.messages[index - 1].sender._id ===
+            activeChatDetails?.messages[index - 1]?.sender._id ===
               message.sender._id;
 
           return (
             <React.Fragment key={message._id}>
-              {isNewDate && (
-                <div className="w-full flex justify-center text-sm text-muted-foreground">
-                  <p>{moment(message.createdAt).format("DD MMM YYYY")}</p>
-                </div>
-              )}
+              {showNewDate && <MessageDate date={message.createdAt} />}
               <Message
                 {...message}
                 isSender={isSender}
@@ -155,3 +147,9 @@ const ChattingSection = () => {
 };
 
 export default ChattingSection;
+
+const MessageDate = ({ date }: { date: string }) => (
+  <div className="w-full flex justify-center text-sm text-muted-foreground">
+    <p>{moment(date).format("DD MMM YYYY")}</p>
+  </div>
+);
