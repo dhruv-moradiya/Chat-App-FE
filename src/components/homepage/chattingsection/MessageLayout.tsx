@@ -1,69 +1,9 @@
 import { capitalizeFirstLetter, cn } from "@/lib/utils";
 import { Check } from "lucide-react";
+import { MessageUserInteractionType } from "@/types/Common.types";
 import moment from "moment";
-
-const MessageHeader = ({
-  senderName,
-  isSender,
-}: {
-  senderName: string;
-  isSender: boolean;
-}) => (
-  <div className="px-2">
-    <p className="text-[12px] text-secondary">
-      {isSender ? "You" : capitalizeFirstLetter(senderName)}
-    </p>
-  </div>
-);
-
-const ReplyPreview = ({
-  senderName,
-  content,
-}: {
-  senderName: string;
-  content: string;
-}) => (
-  <div className="bg-primary-foreground/30 p-2 rounded-lg text-sm border-l-4 border-primary">
-    <p className="text-primary font-bold">
-      {capitalizeFirstLetter(senderName)}
-    </p>
-    <p>{content}</p>
-  </div>
-);
-
-const MessageFooter = ({
-  createdAt,
-  isSender,
-  isSeen,
-}: {
-  createdAt: string;
-  isSender: boolean;
-  isSeen: boolean;
-}) => (
-  <div className="absolute bottom-1 right-2 flex items-center justify-between w-[55px]">
-    <span
-      className={cn(
-        "text-[10px] text-muted-foreground",
-        isSender ? "text-white" : ""
-      )}
-    >
-      {moment(createdAt).format("hh:mm A")}
-    </span>
-    <span>
-      <Check size={12} className={cn(isSeen ? "text-white" : "text-primary")} />
-    </span>
-  </div>
-);
-
-const OneOnOneChatMessage = ({ isSender }: { isSender: boolean }) => {
-  return <div></div>;
-};
-
-const OneOnOneChatMessageWithAttachment = () => {};
-
-const GroupChatMessage = () => {};
-
-const GroupChatMessageWithAttachment = () => {};
+import MessageDropdown from "./MessageDropdown";
+import { UserPreview } from "@/types/ApiResponse.types";
 
 const DecorativeShape = ({ isSender }: { isSender: boolean }) => {
   return (
@@ -88,9 +28,131 @@ const DecorativeShape = ({ isSender }: { isSender: boolean }) => {
   );
 };
 
+// Sub-Components
+const SenderAvatar = ({
+  sender,
+}: {
+  sender: { profilePicture: string; username: string };
+}) => (
+  <div className="w-6 h-6 rounded-lg overflow-hidden translate-y-3">
+    <img
+      src={sender.profilePicture}
+      alt={sender.username}
+      className="w-full h-full object-cover"
+    />
+  </div>
+);
+
+const ReplyMessage = ({
+  replyTo,
+  senderName,
+}: {
+  replyTo: string;
+  senderName: string;
+}) => (
+  <div className="bg-primary-foreground/30 p-2 rounded-lg text-sm border-l-4 border-primary">
+    <p className="text-primary font-bold">{senderName}</p>
+    <p>{replyTo}</p>
+  </div>
+);
+
+const MessageContent = ({
+  inputValue,
+  createdAt,
+  isSender,
+  messageDropdownOnClickFunction,
+}: {
+  inputValue: string;
+  createdAt: string;
+  isSender: boolean;
+  messageDropdownOnClickFunction: (value: MessageUserInteractionType) => void;
+}) => (
+  <div className="flex items-start gap-3 pr-[65px] px-2">
+    <p
+      className="text-sm break-words whitespace-normal"
+      style={{ wordBreak: "break-word" }}
+    >
+      {inputValue}
+    </p>
+    <div className="absolute bottom-1 right-2 flex items-center justify-between w-[55px]">
+      <span
+        className={cn(
+          "text-[10px] text-muted-foreground",
+          isSender ? "text-white" : ""
+        )}
+      >
+        {moment(createdAt).format("hh:mm A")}
+      </span>
+      <Check size={12} />
+    </div>
+    <MessageDropdown
+      isSender={isSender}
+      onClick={messageDropdownOnClickFunction}
+    />
+  </div>
+);
+
+const AttachmentLoader = ({ isSender }: { isSender: boolean }) => (
+  <div
+    className={cn(
+      "animate-pulse rounded-lg bg-primary/10 p-10",
+      isSender ? "self-end ml-auto" : "self-start mr-auto"
+    )}
+  ></div>
+);
+
+const MessageBox = ({
+  inputValue,
+  replyTo,
+  sender,
+  isSender,
+  createdAt,
+  isPrevMessageFromSameUser,
+  messageDropdownOnClickFunction,
+  isCurrentChatIsGroupChat,
+}: {
+  inputValue: string;
+  replyTo?: string;
+  sender: UserPreview;
+  isSender: boolean;
+  createdAt: string;
+  isPrevMessageFromSameUser: boolean;
+  messageDropdownOnClickFunction: (value: MessageUserInteractionType) => void;
+  isCurrentChatIsGroupChat: boolean;
+}) => (
+  <div
+    className={cn(
+      "relative w-fit max-w-sm px-1 py-2 pr-[70px]1 rounded-[10px] shadow-md group space-y-1",
+      isSender
+        ? "bg-primary/40 text-white rounded-tr-none"
+        : "bg-muted-foreground/10 rounded-tl-none"
+    )}
+  >
+    {!isPrevMessageFromSameUser && <DecorativeShape isSender={isSender} />}
+    {replyTo && (
+      <ReplyMessage replyTo={replyTo} senderName={sender.username!} />
+    )}
+
+    {isCurrentChatIsGroupChat && (
+      <p className="text-[13px] px-2">
+        {capitalizeFirstLetter(sender.username)}
+      </p>
+    )}
+
+    <MessageContent
+      inputValue={inputValue}
+      createdAt={createdAt}
+      isSender={isSender}
+      messageDropdownOnClickFunction={messageDropdownOnClickFunction}
+    />
+  </div>
+);
+
 export {
-  OneOnOneChatMessage,
-  OneOnOneChatMessageWithAttachment,
-  GroupChatMessage,
-  GroupChatMessageWithAttachment,
+  SenderAvatar,
+  AttachmentLoader,
+  MessageBox,
+  MessageContent,
+  ReplyMessage,
+  DecorativeShape,
 };
