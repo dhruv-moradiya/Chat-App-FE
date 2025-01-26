@@ -29,7 +29,7 @@ const Modal: React.FC<ModalProps> = ({
       onClick={handleBackdropClick}
     >
       <div
-        className={`bg-white p-6 rounded-lg shadow-lg transform transition-transform duration-300 ${
+        className={`bg-[#252733] p-6 rounded-lg shadow-lg transform transition-transform duration-300 ${
           isOpen ? "scale-100" : "scale-95"
         }`}
       >

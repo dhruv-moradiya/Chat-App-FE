@@ -13,10 +13,12 @@ interface MessageProps extends ChatMessage {
   isSeen: boolean;
   isSender: boolean;
   isPrevMessageFromSameUser: boolean;
+  selectedMessage: SelectedMessageType[] | null;
   setSelectedMessage: React.Dispatch<
-    React.SetStateAction<SelectedMessageType | null>
+    React.SetStateAction<SelectedMessageType[] | null>
   >;
   isCurrentChatIsGroupChat: boolean;
+  isCheckBoxForDelete: boolean;
 }
 
 const Message = ({
@@ -35,8 +37,10 @@ const Message = ({
   isSeen,
   attachments,
   isPrevMessageFromSameUser,
+  selectedMessage,
   setSelectedMessage,
   isCurrentChatIsGroupChat,
+  isCheckBoxForDelete,
 }: MessageProps) => {
   const [inputValue, setInputValue] = useState(content);
 
@@ -51,11 +55,13 @@ const Message = ({
   ) => {
     switch (value) {
       case "Reply":
-        setSelectedMessage({
-          _id,
-          content,
-          type: "Reply",
-        });
+        setSelectedMessage([
+          {
+            _id,
+            content,
+            type: "Reply",
+          },
+        ]);
         break;
       case "React":
         break;
@@ -64,11 +70,24 @@ const Message = ({
       case "Pin":
         break;
       case "Delete":
-        setSelectedMessage({
-          _id,
-          content,
-          type: "Delete",
-        });
+        setSelectedMessage((prev) =>
+          prev
+            ? [
+                ...prev,
+                {
+                  _id,
+                  content,
+                  type: "Delete",
+                },
+              ]
+            : [
+                {
+                  _id,
+                  content,
+                  type: "Delete",
+                },
+              ]
+        );
         break;
 
       default:
@@ -80,7 +99,9 @@ const Message = ({
     <div
       className={cn(
         "w-fit space-y-1.5 flex gap-2",
-        isSender ? "self-end flex-row-reverse" : "self-start flex-row"
+        isSender
+          ? "self-end ml-auto flex-row-reverse"
+          : "self-start flex-row mr-auto"
       )}
     >
       {isCurrentChatIsGroupChat && !isSender && (

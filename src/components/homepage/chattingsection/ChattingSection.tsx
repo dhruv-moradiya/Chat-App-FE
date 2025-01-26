@@ -10,7 +10,11 @@ import CustomInput from "@/components/common/cutomInput/CustomInput";
 import { SelectedMessageType } from "@/types/Common.types";
 import Modal from "@/components/ui/Modal";
 import SkeletonLoader from "./ChatSkeletonLoader ";
-import { isNewDate } from "@/lib/utils";
+import { cn, isNewDate } from "@/lib/utils";
+import CheckBox from "@/components/common/CheckBox";
+import { ChatMessage } from "@/types/ApiResponse.types";
+import { Binary, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const ChattingSection = () => {
   const dispatch = useAppDispatch();
@@ -18,9 +22,15 @@ const ChattingSection = () => {
   const paramValue = params[0].get("chatId");
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const [selectedMessage, setSelectedMessage] =
-    useState<SelectedMessageType | null>(null);
+  const [selectedMessage, setSelectedMessage] = useState<
+    SelectedMessageType[] | null
+  >(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCheckBoxForDelete, setIsCheckBoxForDelete] = useState(false);
+  const [
+    isSelectedAllMessageFromCurrentUserSide,
+    setIsSelectedAllMessageFromCurrentUserSide,
+  ] = useState(false);
 
   const { user } = useAppSelector((state) => state.auth);
   const { activeChatId, activeChatDetails, isLoading, isLoadingOldMessages } =
@@ -30,6 +40,8 @@ const ChattingSection = () => {
     chatList.find((chat) => chat._id === activeChatId)?.isGroup ?? false;
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
+
+  console.log("activeChatDetails :>> ", activeChatDetails);
 
   const handleScroll = useCallback(() => {
     const container = chatContainerRef.current;
@@ -71,8 +83,49 @@ const ChattingSection = () => {
     }
   }, [activeChatDetails]);
 
+  useEffect(() => {
+    const hasDeleteType = selectedMessage?.some(
+      (message) => message.type === "Delete"
+    );
+
+    const allSenders = selectedMessage?.map((message) => {
+      const findMessage = activeChatDetails?.messages.find(
+        (m) => m._id === message._id
+      );
+      return {
+        ...findMessage?.sender,
+      };
+    });
+
+    const allSenderIsCurrentUser = allSenders
+      ? allSenders.every((sender) => sender?._id === user._id)
+      : false;
+
+    setIsSelectedAllMessageFromCurrentUserSide(
+      allSenderIsCurrentUser && !!hasDeleteType
+    );
+    setIsCheckBoxForDelete(!!hasDeleteType);
+  }, [selectedMessage, user._id]);
+
+  const toggleCheckBox = (id: string, content: string) => {
+    const index = selectedMessage?.findIndex((message) => message._id === id)!;
+    if (index > -1) {
+      setSelectedMessage((prev) => {
+        if (!prev) return prev;
+        const copy = [...prev];
+        copy.splice(index, 1);
+        return copy.length > 0 ? copy : null;
+      });
+    } else {
+      setSelectedMessage((prev) => {
+        if (!prev) return [{ _id: id, type: "Delete", content }];
+        return [...prev, { _id: id, type: "Delete", content }];
+      });
+    }
+  };
+
   const renderMessages = useCallback(() => {
-    if (isLoading) return <SkeletonLoader numberOfSkeletons={12} />;
+    if (isLoading) return <SkeletonLoader numberOfSkeletons={20} />;
 
     return (
       <>
@@ -83,24 +136,40 @@ const ChattingSection = () => {
             index > 0 &&
             activeChatDetails?.messages[index - 1]?.sender._id ===
               message.sender._id;
+          const isCurrentMessageSelectedForDelete =
+            selectedMessage?.find((msg) => msg._id === message._id)?.type ===
+            "Delete";
 
           return (
-            <React.Fragment key={message._id}>
-              {showNewDate && <MessageDate date={message.createdAt} />}
-              <Message
-                {...message}
-                isSender={isSender}
-                isSeen={true}
-                isPrevMessageFromSameUser={isPrevMessageFromSameUser}
-                setSelectedMessage={setSelectedMessage}
-                isCurrentChatIsGroupChat={isCurrentChatIsGroupChat}
-              />
-            </React.Fragment>
+            <MessageContainer
+              key={message._id}
+              message={message}
+              showNewDate={showNewDate}
+              isSender={isSender}
+              isPrevMessageFromSameUser={isPrevMessageFromSameUser}
+              isCurrentMessageSelectedForDelete={
+                isCurrentMessageSelectedForDelete
+              }
+              isCheckBoxForDelete={isCheckBoxForDelete}
+              selectedMessage={selectedMessage}
+              toggleCheckBox={toggleCheckBox}
+              setSelectedMessage={setSelectedMessage}
+              isCurrentChatIsGroupChat={isCurrentChatIsGroupChat}
+            />
           );
         })}
       </>
     );
-  }, [activeChatDetails, isLoading, user?._id]);
+  }, [
+    isLoading,
+    activeChatDetails,
+    user?._id,
+    selectedMessage,
+    isCheckBoxForDelete,
+    toggleCheckBox,
+    setSelectedMessage,
+    isCurrentChatIsGroupChat,
+  ]);
 
   if (!paramValue) return <NoChatSelected />;
 
@@ -117,29 +186,54 @@ const ChattingSection = () => {
         selectedMessage={selectedMessage}
         setSelectedMessage={setSelectedMessage}
       />
-      {/* <button
-        className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 transition"
-        onClick={toggleModal}
+
+      <div
+        className={cn(
+          "h-0 overflow-hidden w-full absolute bottom-0 bg-primary-foreground flex items-center justify-between gap-4 transition-all duration-200",
+          isCheckBoxForDelete ? "opacity-100 h-auto px-4 py-5" : "opacity-0"
+        )}
       >
-        Open Modal
-      </button> */}
+        <X
+          onClick={() => {
+            setIsCheckBoxForDelete(false);
+            setSelectedMessage(null);
+          }}
+        />
+        <p className="flex-grow">{selectedMessage?.length} Message Selected</p>
+        <Binary onClick={() => setIsModalOpen(true)} />
+      </div>
+
       <Modal
         isOpen={isModalOpen}
         onClose={toggleModal}
         closeOnOutsideClick={true}
-        backgroundStyle="blur"
+        backgroundStyle="transparent"
       >
-        <div className="text-center">
-          <h2 className="text-xl font-bold mb-4">Custom Modal Content</h2>
-          <p className="mb-4">
-            This is dynamic content passed as children to the modal.
-          </p>
-          <button
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-            onClick={toggleModal}
+        <div className="flex flex-col gap-4 min-w-96">
+          <p className="text-md mb-4">Delete Message?</p>
+          <div
+            className={cn(
+              "self-end flex flex-row items-end gap-4",
+              isSelectedAllMessageFromCurrentUserSide ? "flex-col" : "flex-row"
+            )}
           >
-            Close Modal
-          </button>
+            {isSelectedAllMessageFromCurrentUserSide && (
+              <Button variant="outline">Delete for everyone</Button>
+            )}
+            <Button
+              variant="outline"
+              className={cn(
+                !isSelectedAllMessageFromCurrentUserSide &&
+                  "bg-primary/80 text-black/80 hover:bg-primary/90"
+              )}
+            >
+              Delete for me
+            </Button>
+
+            <Button variant="outline" onClick={toggleModal}>
+              Cancel
+            </Button>
+          </div>
         </div>
       </Modal>
     </div>
@@ -153,3 +247,80 @@ const MessageDate = ({ date }: { date: string }) => (
     <p>{moment(date).format("DD MMM YYYY")}</p>
   </div>
 );
+
+interface MessageContainerProps {
+  message: ChatMessage;
+  showNewDate: boolean;
+  isSender: boolean;
+  isPrevMessageFromSameUser: boolean;
+  isCurrentMessageSelectedForDelete: boolean;
+  isCheckBoxForDelete: boolean;
+  selectedMessage: SelectedMessageType[] | null;
+  toggleCheckBox: (id: string, content: string) => void;
+  setSelectedMessage: React.Dispatch<
+    React.SetStateAction<SelectedMessageType[] | null>
+  >;
+  isCurrentChatIsGroupChat: boolean;
+}
+
+function MessageContainer({
+  message,
+  showNewDate,
+  isSender,
+  isPrevMessageFromSameUser,
+  isCurrentMessageSelectedForDelete,
+  isCheckBoxForDelete,
+  selectedMessage,
+  toggleCheckBox,
+  setSelectedMessage,
+  isCurrentChatIsGroupChat,
+}: MessageContainerProps) {
+  return (
+    <div className={cn("w-full px-10 transition-all duration-300")}>
+      {showNewDate && <MessageDate date={message.createdAt} />}
+      <div
+        className={cn(
+          "w-full flex items-center gap-2 transition-all duration-300",
+          isCurrentMessageSelectedForDelete && "bg-primary/5 rounded-lg",
+          isCheckBoxForDelete ? "translate-x-0" : "-translate-x-2rem"
+        )}
+        onClick={() => toggleCheckBox(message._id, message.content)}
+      >
+        {isCheckBoxForDelete && (
+          <div
+            className={cn(
+              "transition-all duration-300 ease-in-out",
+              isCheckBoxForDelete
+                ? "opacity-100 scale-100"
+                : "opacity-0 scale-75"
+            )}
+          >
+            <CheckBox
+              checked={
+                selectedMessage?.some((msg) => msg._id === message._id) ?? false
+              }
+              setChecked={() => toggleCheckBox(message._id, message.content)}
+            />
+          </div>
+        )}
+        <div
+          className={cn(
+            "w-full transition-all duration-300 ease-in-out",
+            isCheckBoxForDelete && "ml-8"
+          )}
+        >
+          <Message
+            {...message}
+            isSender={isSender}
+            isSeen={true}
+            isPrevMessageFromSameUser={isPrevMessageFromSameUser}
+            selectedMessage={selectedMessage}
+            setSelectedMessage={setSelectedMessage}
+            isCurrentChatIsGroupChat={isCurrentChatIsGroupChat}
+            isCheckBoxForDelete={isCheckBoxForDelete}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}

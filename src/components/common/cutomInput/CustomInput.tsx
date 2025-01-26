@@ -12,9 +12,9 @@ function CustomInput({
   setSelectedMessage,
 }: // replyedMessage,
 {
-  selectedMessage: SelectedMessageType | null;
+  selectedMessage: SelectedMessageType[] | null;
   setSelectedMessage: React.Dispatch<
-    React.SetStateAction<SelectedMessageType | null>
+    React.SetStateAction<SelectedMessageType[] | null>
   >;
 }) {
   const divRef = useRef<HTMLDivElement | null>(null);
@@ -28,7 +28,7 @@ function CustomInput({
   );
 
   const messageDetails = activeChatDetails?.messages.find(
-    (message) => message._id === selectedMessage?._id
+    (message) => selectedMessage && selectedMessage[0]?._id === message?._id
   );
   const { myChats } = useAppSelector((state) => state.myChats);
 
@@ -36,7 +36,7 @@ function CustomInput({
     myChats
       .find((chat) => chat._id === activeChatId)
       ?.participants.find(
-        (participant) => participant._id === messageDetails?.sender
+        (participant) => participant._id === messageDetails?.sender._id
       )?.username || "Anonymous";
 
   const [cursorPosition, setCursorPosition] = useState<Range | null>(null);
@@ -171,8 +171,8 @@ function CustomInput({
         content: divRef.current?.textContent as string,
       };
 
-      if (selectedMessage?.type === "Reply") {
-        payload.replyTo = selectedMessage._id;
+      if (selectedMessage![0].type === "Reply") {
+        payload.replyTo = selectedMessage![0]._id;
       }
 
       if (fileInputValue && fileInputValue.length > 0) {
@@ -232,7 +232,7 @@ function CustomInput({
       <div
         className={cn(
           "w-full flex items-center overflow-hidden transform transition-all duration-150",
-          selectedMessage?.type === "Reply"
+          selectedMessage && selectedMessage[0].type === "Reply"
             ? "opacity-100 h-auto p-2 pb-0"
             : "opacity-0 h-0 p-0"
         )}
