@@ -171,8 +171,8 @@ function CustomInput({
         content: divRef.current?.textContent as string,
       };
 
-      if (selectedMessage![0].type === "Reply") {
-        payload.replyTo = selectedMessage![0]._id;
+      if (selectedMessage && selectedMessage[0].type === "Reply") {
+        payload.replyTo = selectedMessage[0]._id;
       }
 
       if (fileInputValue && fileInputValue.length > 0) {

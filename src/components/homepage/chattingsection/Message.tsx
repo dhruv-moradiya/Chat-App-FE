@@ -114,6 +114,8 @@ const Message = ({
           <RenderAttachments attachments={attachments} isSender={isSender} />
         )}
         <MessageBox
+          isDeletedForAll={isDeletedForAll}
+          deletedBy={deletedBy}
           inputValue={inputValue}
           replyTo={messageDetails?.content}
           sender={sender}

@@ -15,6 +15,8 @@ import CheckBox from "@/components/common/CheckBox";
 import { ChatMessage } from "@/types/ApiResponse.types";
 import { Binary, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { deleteMessageForSelectedParticipantsApi } from "@/api";
+import { AxiosError } from "axios";
 
 const ChattingSection = () => {
   const dispatch = useAppDispatch();
@@ -40,8 +42,6 @@ const ChattingSection = () => {
     chatList.find((chat) => chat._id === activeChatId)?.isGroup ?? false;
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
-
-  console.log("activeChatDetails :>> ", activeChatDetails);
 
   const handleScroll = useCallback(() => {
     const container = chatContainerRef.current;
@@ -124,6 +124,29 @@ const ChattingSection = () => {
     }
   };
 
+  const deleteMessageForSelectedParticipants = async (
+    isDeletedForAll: boolean
+  ) => {
+    const messageId = selectedMessage?.map((message) => message._id);
+
+    try {
+      const response = await deleteMessageForSelectedParticipantsApi(
+        messageId!,
+        isDeletedForAll
+      );
+      console.log("response :>> ", response);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.log("error.response?.data :>> ", error.response?.data.message);
+      } else {
+        console.log(
+          "An unknown error occurred while accepting friend request :>> ",
+          error
+        );
+      }
+    }
+  };
+
   const renderMessages = useCallback(() => {
     if (isLoading) return <SkeletonLoader numberOfSkeletons={20} />;
 
@@ -174,7 +197,7 @@ const ChattingSection = () => {
   if (!paramValue) return <NoChatSelected />;
 
   return (
-    <div className="flex flex-col w-[calc(100%-384px)] relative mb-5">
+    <div className="flex flex-col w-full md:w-[calc(100%-384px)] relative mb-5">
       <Header />
       <div
         className="scrollbar flex-grow w-full px-2 overflow-y-scroll flex flex-col items-center gap-2 mb-2"
@@ -218,7 +241,12 @@ const ChattingSection = () => {
             )}
           >
             {isSelectedAllMessageFromCurrentUserSide && (
-              <Button variant="outline">Delete for everyone</Button>
+              <Button
+                variant="outline"
+                onClick={() => deleteMessageForSelectedParticipants(true)}
+              >
+                Delete for everyone
+              </Button>
             )}
             <Button
               variant="outline"
@@ -226,6 +254,7 @@ const ChattingSection = () => {
                 !isSelectedAllMessageFromCurrentUserSide &&
                   "bg-primary/80 text-black/80 hover:bg-primary/90"
               )}
+              onClick={() => deleteMessageForSelectedParticipants(false)}
             >
               Delete for me
             </Button>

@@ -2,6 +2,7 @@ import {
   AcceptFriendRequestResponse,
   ChatDetailResponse,
   CreateGroupChatResponse,
+  DeleteMessageForSelectedParticipantsResponse,
   ExcludedFriendsUsersResponse,
   FriendRequestResponse,
   MessageResponse,
@@ -211,6 +212,23 @@ const createGroupChat = async (data: {
   );
   return response.data;
 };
+const deleteMessageForSelectedParticipantsApi = async (
+  messageIds: string[],
+  isDeletedForAll: boolean
+) => {
+  const data = {
+    messageId: messageIds, // Use "messageId" here
+    isDeletedForAll, // Rename this key to match the backend
+  };
+
+  try {
+    const response: AxiosResponse<DeleteMessageForSelectedParticipantsResponse> =
+      await apiClient.patch("/message/delete-for-selected", data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export {
   acceptFriendRequest,
@@ -224,4 +242,5 @@ export {
   getChatMessagesBasedOnChatId,
   fetchMyFriendsList,
   createGroupChat,
+  deleteMessageForSelectedParticipantsApi,
 };

@@ -4,11 +4,15 @@ import { fetchMyChats } from "@/store/myChats/ChatSlice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatEntry from "./ChatEntry";
+import { cn } from "@/lib/utils";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
   const { myChats, isLoading, isError } = useAppSelector(
     (state) => state.myChats
+  );
+  const isChatListSideBarOpen = useAppSelector(
+    (state) => state.chatDetail.isChatListSideBarOpen
   );
 
   const renderLoading = () => (
@@ -31,7 +35,14 @@ const Sidebar = () => {
   }, [dispatch]);
 
   return (
-    <Tabs defaultValue="all" className="flex flex-col gap-1">
+    <Tabs
+      defaultValue="all"
+      className={cn(
+        "fixed h-full top-12 left-14 z-10 md:static md:w-96 md:flex flex-col gap-1 transition-all duration-150",
+        isChatListSideBarOpen ? "translate-x-0" : "translate-x-[-150%]",
+        "md:translate-x-0"
+      )}
+    >
       <TabsList className="grid grid-cols-3 place-items-center">
         <TabsTrigger value="all" className="w-full">
           All
@@ -44,7 +55,7 @@ const Sidebar = () => {
         </TabsTrigger>
       </TabsList>
 
-      <div className="scrollbar w-96 h-full overflow-y-scroll flex flex-col gap-1 p-4 pl-0 rounded-lg">
+      <div className="scrollbar overflow-y-scroll flex flex-col gap-1 p-4 pl-0 rounded-lg">
         {isLoading ? (
           renderLoading()
         ) : isError ? (

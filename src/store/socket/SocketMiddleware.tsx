@@ -7,6 +7,7 @@ import { addNewChat, updateUnreadMessageCount } from "../myChats/ChatSlice";
 import { showNotificationToast } from "@/components/common/ToastProvider";
 import { playNotificationSound } from "@/lib/utils";
 import {
+  deleteMessage,
   newMessageReceived,
   newMessageUpdateWithAttachment,
 } from "../activeChat/ActiveChatSlice";
@@ -118,6 +119,17 @@ const socketMiddleware: Middleware = (storeAPI) => {
             const userId = state.auth.user._id;
             storeAPI.dispatch(updateUnreadMessageCount({ chatId, userId }));
           });
+
+          socket.on(
+            ChatEventEnum.DELETE_MESSAGE_FOR_EVERYONE_OR_SELF_EVENT,
+            (data) => {
+              console.log(
+                "DELETE_MESSAGE_FOR_EVERYONE_OR_SELF_EVENT :>> ",
+                data
+              );
+              storeAPI.dispatch(deleteMessage(data));
+            }
+          );
 
           // Listen for socket disconnection
           socket.on(ChatEventEnum.DISCONNECT_EVENT, () => {

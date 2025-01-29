@@ -129,7 +129,7 @@ interface ChatMessage {
   content: string;
   replyTo?: string;
   deletedBy: string[];
-  isDeletedForAll: boolean;
+  isDeletedForAll?: boolean;
   chat: string;
   attachments: Attachment[];
   reactions: any[];
@@ -163,6 +163,10 @@ interface CreateGroupChatResponse extends ApiResponseBase {
   data: ChatDetails;
 }
 
+interface DeleteMessageForSelectedParticipantsResponse extends ApiResponseBase {
+  data: {};
+}
+
 export type {
   ApiResponseBase,
   UserProfile,
@@ -183,4 +187,5 @@ export type {
   MessageResponse,
   MyFriendsList,
   CreateGroupChatResponse,
+  DeleteMessageForSelectedParticipantsResponse,
 };

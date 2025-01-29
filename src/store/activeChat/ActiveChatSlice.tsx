@@ -33,6 +33,7 @@ const activeChatSlice = createSlice({
       state.activeChatId = action.payload.activeChatId;
       state.prevChatId = action.payload.prevChatId;
     },
+
     newMessageReceived: (state, action) => {
       if (state.activeChatDetails) {
         state.activeChatDetails = {
@@ -51,6 +52,29 @@ const activeChatSlice = createSlice({
               return action.payload;
             }
             return message;
+          }),
+        };
+      }
+    },
+
+    deleteMessage: (state, action) => {
+      const { chatId, deleteBy, isDeletedForAll, messageId } = action.payload;
+      console.log("action.payload :>> ", action.payload);
+      console.log("state.activeChatId :>> ", state.activeChatId);
+      if (state.activeChatDetails && chatId === state.activeChatId) {
+        console.log("CONDITION PASSED");
+        state.activeChatDetails = {
+          ...state.activeChatDetails,
+          messages: state.activeChatDetails.messages.map((message) => {
+            if (message._id === messageId) {
+              return {
+                ...message,
+                isDeleteForAll: isDeletedForAll,
+                deletedBy: [...message.deletedBy, deleteBy],
+              };
+            } else {
+              return message;
+            }
           }),
         };
       }
@@ -115,5 +139,6 @@ export const {
   setActiveChat,
   newMessageReceived,
   newMessageUpdateWithAttachment,
+  deleteMessage,
 } = activeChatSlice.actions;
 export default activeChatSlice;

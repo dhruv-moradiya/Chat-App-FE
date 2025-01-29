@@ -4,6 +4,7 @@ import { capitalizeFirstLetter, cn } from "@/lib/utils";
 import { MessageUserInteractionType } from "@/types/Common.types";
 import moment from "moment";
 import MessageDropdown from "./MessageDropdown";
+import { useAppSelector } from "@/store/store";
 
 const DecorativeShape = ({ isSender }: { isSender: boolean }) => {
   return (
@@ -61,36 +62,54 @@ const MessageContent = ({
   createdAt,
   isSender,
   messageDropdownOnClickFunction,
+  deletedBy,
+  isDeletedForAll,
 }: {
   inputValue: string;
   createdAt: string;
   isSender: boolean;
+  deletedBy: string[];
+  isDeletedForAll?: boolean;
   messageDropdownOnClickFunction: (value: MessageUserInteractionType) => void;
-}) => (
-  <div className="flex items-start gap-3 pr-[65px] px-2">
-    <p
-      className="text-sm break-words whitespace-normal"
-      style={{ wordBreak: "break-word" }}
-    >
-      {inputValue}
-    </p>
-    <div className="absolute bottom-1 right-2 flex items-center justify-between w-[55px]">
-      <span
-        className={cn(
-          "text-[10px] text-muted-foreground",
-          isSender ? "text-white" : ""
-        )}
-      >
-        {moment(createdAt).format("hh:mm A")}
-      </span>
-      <Check size={12} />
+}) => {
+  const userId = useAppSelector((state) => state.auth.user._id);
+  return (
+    <div className="flex items-start gap-3 pr-[65px] px-2">
+      {(deletedBy.length > 0 && deletedBy.includes(userId)) ||
+      isDeletedForAll ? (
+        <p
+          className="text-sm break-words whitespace-normal"
+          style={{ wordBreak: "break-word" }}
+        >
+          You deleted this message
+        </p>
+      ) : (
+        <p
+          className="text-sm break-words whitespace-normal"
+          style={{ wordBreak: "break-word" }}
+        >
+          {inputValue}
+        </p>
+      )}
+
+      <div className="absolute bottom-1 right-2 flex items-center justify-between w-[55px]">
+        <span
+          className={cn(
+            "text-[10px] text-muted-foreground",
+            isSender ? "text-white" : ""
+          )}
+        >
+          {moment(createdAt).format("hh:mm A")}
+        </span>
+        <Check size={12} />
+      </div>
+      <MessageDropdown
+        isSender={isSender}
+        onClick={messageDropdownOnClickFunction}
+      />
     </div>
-    <MessageDropdown
-      isSender={isSender}
-      onClick={messageDropdownOnClickFunction}
-    />
-  </div>
-);
+  );
+};
 
 const AttachmentLoader = ({ isSender }: { isSender: boolean }) => (
   <div
@@ -110,7 +129,11 @@ const MessageBox = ({
   isPrevMessageFromSameUser,
   messageDropdownOnClickFunction,
   isCurrentChatIsGroupChat,
+  isDeletedForAll,
+  deletedBy,
 }: {
+  deletedBy: string[];
+  isDeletedForAll?: boolean;
   inputValue: string;
   replyTo?: string;
   sender: UserPreview;
@@ -119,34 +142,40 @@ const MessageBox = ({
   isPrevMessageFromSameUser: boolean;
   messageDropdownOnClickFunction: (value: MessageUserInteractionType) => void;
   isCurrentChatIsGroupChat: boolean;
-}) => (
-  <div
-    className={cn(
-      "relative w-fit max-w-sm px-1 py-2 pr-[70px]1 rounded-[10px] shadow-md group space-y-1",
-      isSender
-        ? "bg-primary/40 text-white rounded-tr-none"
-        : "bg-muted-foreground/10 rounded-tl-none"
-    )}
-  >
-    {!isPrevMessageFromSameUser && <DecorativeShape isSender={isSender} />}
-    {replyTo && (
-      <ReplyMessage replyTo={replyTo} senderName={sender.username!} />
-    )}
+}) => {
+  const userId = useAppSelector((state) => state.auth.user._id);
+  return (
+    <div
+      className={cn(
+        "relative w-fit max-w-sm px-1 py-2 pr-[70px]1 rounded-[10px] shadow-md group space-y-1",
+        isSender
+          ? "bg-primary/40 text-white rounded-tr-none"
+          : "bg-muted-foreground/10 rounded-tl-none",
+        deletedBy.length > 0 && deletedBy.includes(userId) && "bg-slate-600/90"
+      )}
+    >
+      {!isPrevMessageFromSameUser && <DecorativeShape isSender={isSender} />}
+      {replyTo && (
+        <ReplyMessage replyTo={replyTo} senderName={sender.username!} />
+      )}
 
-    {isCurrentChatIsGroupChat && (
-      <p className="text-[13px] px-2">
-        {capitalizeFirstLetter(sender.username)}
-      </p>
-    )}
+      {isCurrentChatIsGroupChat && (
+        <p className="text-[13px] px-2">
+          {capitalizeFirstLetter(sender.username)}
+        </p>
+      )}
 
-    <MessageContent
-      inputValue={inputValue}
-      createdAt={createdAt}
-      isSender={isSender}
-      messageDropdownOnClickFunction={messageDropdownOnClickFunction}
-    />
-  </div>
-);
+      <MessageContent
+        isDeletedForAll={isDeletedForAll}
+        deletedBy={deletedBy}
+        inputValue={inputValue}
+        createdAt={createdAt}
+        isSender={isSender}
+        messageDropdownOnClickFunction={messageDropdownOnClickFunction}
+      />
+    </div>
+  );
+};
 
 export {
   SenderAvatar,

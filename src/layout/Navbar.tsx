@@ -23,7 +23,7 @@ const NavItem = ({
     onClick={onClick}
   >
     {icon}
-    <h4>{label}</h4>
+    <p className="text-[12px] md:text-md">{label}</p>
   </li>
 );
 
@@ -34,17 +34,17 @@ const Navbar = () => {
     {
       label: "All Chats",
       path: "/",
-      icon: <MessageCircle fill="white" size={20} />,
+      icon: <MessageCircle fill="white" size={14} />,
     },
     {
       label: "Work",
       path: "/",
-      icon: <BriefcaseBusiness fill="white" size={20} />,
+      icon: <BriefcaseBusiness fill="white" size={14} />,
     },
     {
       label: "Friends",
       path: "/",
-      icon: <HandMetal fill="white" size={20} />,
+      icon: <HandMetal fill="white" size={14} />,
     },
   ];
 
@@ -58,8 +58,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="h-full w-20 flex flex-col items-center py-4">
-      <h2 className="text-3xl mb-10">DM</h2>
+    <nav className="h-full w-14 md:w-20 flex flex-col items-center py-4">
+      <h2 className="text-2xl md:text-3xl mb-10">DM</h2>
 
       <ul className="flex-1 flex flex-col gap-6">
         {navList.map((item) => (
@@ -68,9 +68,9 @@ const Navbar = () => {
       </ul>
 
       <div className="flex flex-col items-center gap-4">
-        <NavItem icon={<Settings size={20} />} label="Settings" />
+        <NavItem icon={<Settings size={14} />} label="Settings" />
         <NavItem
-          icon={<LogOut size={20} />}
+          icon={<LogOut size={14} />}
           label="Logout"
           onClick={handleLogOut}
         />
