@@ -217,8 +217,8 @@ const deleteMessageForSelectedParticipantsApi = async (
   isDeletedForAll: boolean
 ) => {
   const data = {
-    messageId: messageIds, // Use "messageId" here
-    isDeletedForAll, // Rename this key to match the backend
+    messageIds: messageIds,
+    isDeletedForAll,
   };
 
   try {

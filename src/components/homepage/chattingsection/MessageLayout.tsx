@@ -6,6 +6,29 @@ import moment from "moment";
 import MessageDropdown from "./MessageDropdown";
 import { useAppSelector } from "@/store/store";
 
+interface MessageContentProps {
+  inputValue: string;
+  createdAt: string;
+  sender: UserPreview;
+  isSender: boolean;
+  deletedBy: string[];
+  isDeletedForAll?: boolean;
+  messageDropdownOnClickFunction: (value: MessageUserInteractionType) => void;
+}
+
+interface MessageBoxProps {
+  deletedBy: string[];
+  isDeletedForAll?: boolean;
+  inputValue: string;
+  replyTo?: string;
+  sender: UserPreview;
+  isSender: boolean;
+  createdAt: string;
+  isPrevMessageFromSameUser: boolean;
+  messageDropdownOnClickFunction: (value: MessageUserInteractionType) => void;
+  isCurrentChatIsGroupChat: boolean;
+}
+
 const DecorativeShape = ({ isSender }: { isSender: boolean }) => {
   return (
     <div
@@ -60,37 +83,27 @@ const ReplyMessage = ({
 const MessageContent = ({
   inputValue,
   createdAt,
+  sender,
   isSender,
   messageDropdownOnClickFunction,
   deletedBy,
   isDeletedForAll,
-}: {
-  inputValue: string;
-  createdAt: string;
-  isSender: boolean;
-  deletedBy: string[];
-  isDeletedForAll?: boolean;
-  messageDropdownOnClickFunction: (value: MessageUserInteractionType) => void;
-}) => {
+}: MessageContentProps) => {
   const userId = useAppSelector((state) => state.auth.user._id);
+  const isDeleted = deletedBy.includes(userId) || isDeletedForAll;
+  const deletedMessageText =
+    userId === sender._id
+      ? "You deleted this message"
+      : `${capitalizeFirstLetter(sender.username)} deleted this message`;
+
   return (
     <div className="flex items-start gap-3 pr-[65px] px-2">
-      {(deletedBy.length > 0 && deletedBy.includes(userId)) ||
-      isDeletedForAll ? (
-        <p
-          className="text-sm break-words whitespace-normal"
-          style={{ wordBreak: "break-word" }}
-        >
-          You deleted this message
-        </p>
-      ) : (
-        <p
-          className="text-sm break-words whitespace-normal"
-          style={{ wordBreak: "break-word" }}
-        >
-          {inputValue}
-        </p>
-      )}
+      <p
+        className="text-sm break-words whitespace-normal"
+        style={{ wordBreak: "break-word" }}
+      >
+        {isDeleted ? deletedMessageText : inputValue}
+      </p>
 
       <div className="absolute bottom-1 right-2 flex items-center justify-between w-[55px]">
         <span
@@ -131,18 +144,7 @@ const MessageBox = ({
   isCurrentChatIsGroupChat,
   isDeletedForAll,
   deletedBy,
-}: {
-  deletedBy: string[];
-  isDeletedForAll?: boolean;
-  inputValue: string;
-  replyTo?: string;
-  sender: UserPreview;
-  isSender: boolean;
-  createdAt: string;
-  isPrevMessageFromSameUser: boolean;
-  messageDropdownOnClickFunction: (value: MessageUserInteractionType) => void;
-  isCurrentChatIsGroupChat: boolean;
-}) => {
+}: MessageBoxProps) => {
   const userId = useAppSelector((state) => state.auth.user._id);
   return (
     <div
@@ -170,6 +172,7 @@ const MessageBox = ({
         deletedBy={deletedBy}
         inputValue={inputValue}
         createdAt={createdAt}
+        sender={sender}
         isSender={isSender}
         messageDropdownOnClickFunction={messageDropdownOnClickFunction}
       />

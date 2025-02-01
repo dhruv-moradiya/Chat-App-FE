@@ -58,19 +58,16 @@ const activeChatSlice = createSlice({
     },
 
     deleteMessage: (state, action) => {
-      const { chatId, deleteBy, isDeletedForAll, messageId } = action.payload;
-      console.log("action.payload :>> ", action.payload);
-      console.log("state.activeChatId :>> ", state.activeChatId);
+      const { chatId, deletedBy, isDeletedForAll, messageIds } = action.payload;
       if (state.activeChatDetails && chatId === state.activeChatId) {
-        console.log("CONDITION PASSED");
         state.activeChatDetails = {
           ...state.activeChatDetails,
           messages: state.activeChatDetails.messages.map((message) => {
-            if (message._id === messageId) {
+            if (messageIds.includes(message._id)) {
               return {
                 ...message,
                 isDeleteForAll: isDeletedForAll,
-                deletedBy: [...message.deletedBy, deleteBy],
+                deletedBy: [...message.deletedBy, deletedBy],
               };
             } else {
               return message;

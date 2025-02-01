@@ -130,11 +130,10 @@ const ChattingSection = () => {
     const messageId = selectedMessage?.map((message) => message._id);
 
     try {
-      const response = await deleteMessageForSelectedParticipantsApi(
+      await deleteMessageForSelectedParticipantsApi(
         messageId!,
         isDeletedForAll
       );
-      console.log("response :>> ", response);
     } catch (error) {
       if (error instanceof AxiosError) {
         console.log("error.response?.data :>> ", error.response?.data.message);
