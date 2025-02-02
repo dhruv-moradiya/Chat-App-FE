@@ -101,11 +101,12 @@ const MessageContent = ({
       <p
         className="text-sm break-words whitespace-normal"
         style={{ wordBreak: "break-word" }}
-      >
-        {isDeleted ? deletedMessageText : inputValue}
-      </p>
+        dangerouslySetInnerHTML={{
+          __html: isDeleted ? deletedMessageText : inputValue,
+        }}
+      />
 
-      <div className="absolute bottom-1 right-2 flex items-center justify-between w-[55px]">
+      <div className="absolute bottom-1 right-2 flex items-center justify-between w-[55px] text-justify hyphens-auto">
         <span
           className={cn(
             "text-[10px] text-muted-foreground",
@@ -145,7 +146,7 @@ const MessageBox = ({
   isDeletedForAll,
   deletedBy,
 }: MessageBoxProps) => {
-  const userId = useAppSelector((state) => state.auth.user._id);
+  const { _id: userId, username } = useAppSelector((state) => state.auth.user);
   return (
     <div
       className={cn(
@@ -162,8 +163,10 @@ const MessageBox = ({
       )}
 
       {isCurrentChatIsGroupChat && (
-        <p className="text-[13px] px-2">
-          {capitalizeFirstLetter(sender.username)}
+        <p className="text-[12px] px-2 font-bold">
+          {capitalizeFirstLetter(
+            sender.username === username ? "you" : sender.username
+          )}
         </p>
       )}
 

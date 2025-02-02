@@ -2,15 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ... */
-
-/* #E9C46A (soft gold)
-#8AB17D (muted green)
-#4CC9F0 – A bright icy blue to add freshness.
-#2A9D8F – A teal that complements the blues and adds a touch of vibrancy.
-#94D2BD – A soft mint green for a subtle, cold accent.
-#5E60CE – A deep lavender blue for harmony with #637FE3. */
-
 @layer base {
   :root {
     --background: 0 0% 100%; /* #ffffff */

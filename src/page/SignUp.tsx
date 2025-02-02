@@ -58,9 +58,12 @@ const SignUp = () => {
     <div className="w-screen h-screen flex flex-col justify-center items-center gap-2">
       <h2 className="text-2xl font-bold my-2">Sign Up</h2>
 
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+      <form
+        className="min-w-52 sm:min-w-72 md:min-w-96 flex flex-col items-center gap-4"
+        onSubmit={handleSubmit}
+      >
         <IconInput
-          icon={<User />}
+          icon={<User size={18} />}
           placeholder="Username"
           name="username"
           onChange={handleChange}
@@ -69,7 +72,7 @@ const SignUp = () => {
 
         <IconInput
           type="email"
-          icon={<Mail />}
+          icon={<Mail size={18} />}
           placeholder="Email"
           name="email"
           onChange={handleChange}
@@ -77,28 +80,32 @@ const SignUp = () => {
         />
 
         <IconInput
-          icon={<Key />}
+          icon={<Key size={18} />}
           placeholder="Password"
           name="password"
           onChange={handleChange}
           value={formData.password}
         />
         <IconInput
-          icon={<Key />}
+          icon={<Key size={18} />}
           placeholder="Confirm Password"
           name="confirmPassword"
           onChange={handleChange}
           value={formData.confirmPassword}
         />
 
-        <Button className="rounded-xl" type="submit" disabled={isLoading}>
+        <Button
+          className="w-full rounded-xl"
+          type="submit"
+          disabled={isLoading}
+        >
           {isLoading ? "Loading..." : "Sign Up"}
         </Button>
 
-        <p>OR</p>
+        <p className="w-full text-center">OR</p>
 
         <Button
-          className="rounded-xl"
+          className="w-full rounded-xl"
           type="button"
           onClick={() => navigate("/signin")}
         >

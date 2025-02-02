@@ -111,7 +111,6 @@ const activeChatSlice = createSlice({
     builder.addCase(fetchOldActiveChatMessages.fulfilled, (state, action) => {
       if (state.activeChatDetails) {
         const messages = [...action.payload.messages].reverse();
-        console.log("messages :>> ", messages);
         state.activeChatDetails = {
           ...state.activeChatDetails,
           messages: [...messages, ...state.activeChatDetails.messages],

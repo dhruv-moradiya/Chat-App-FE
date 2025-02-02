@@ -1,22 +1,22 @@
+import { deleteMessageForSelectedParticipantsApi } from "@/api";
+import CheckBox from "@/components/common/CheckBox";
+import CustomInput from "@/components/common/cutomInput/CustomInput";
+import { Button } from "@/components/ui/button";
+import Modal from "@/components/ui/Modal";
+import { cn, isNewDate } from "@/lib/utils";
+import { fetchOldActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { ChatMessage } from "@/types/ApiResponse.types";
+import { SelectedMessageType } from "@/types/Common.types";
+import { AxiosError } from "axios";
+import { Trash2, X } from "lucide-react";
+import moment from "moment";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "@/store/store";
-import { fetchOldActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
-import moment from "moment";
+import SkeletonLoader from "./ChatSkeletonLoader ";
 import Header from "./Header";
 import Message from "./Message";
 import NoChatSelected from "./NoChatSelected";
-import CustomInput from "@/components/common/cutomInput/CustomInput";
-import { SelectedMessageType } from "@/types/Common.types";
-import Modal from "@/components/ui/Modal";
-import SkeletonLoader from "./ChatSkeletonLoader ";
-import { cn, isNewDate } from "@/lib/utils";
-import CheckBox from "@/components/common/CheckBox";
-import { ChatMessage } from "@/types/ApiResponse.types";
-import { Binary, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { deleteMessageForSelectedParticipantsApi } from "@/api";
-import { AxiosError } from "axios";
 
 const ChattingSection = () => {
   const dispatch = useAppDispatch();
@@ -77,11 +77,17 @@ const ChattingSection = () => {
   }, [handleScroll]);
 
   useEffect(() => {
-    if (chatContainerRef.current) {
-      const container = chatContainerRef.current;
-      container.scrollTop = container.scrollHeight;
+    if (
+      !isLoadingOldMessages &&
+      chatContainerRef.current &&
+      activeChatDetails?.currentPage === 1
+    ) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
     }
-  }, [activeChatDetails]);
+  }, [activeChatDetails, isLoadingOldMessages]);
+
+  console.log("Re-rendering Chatting Section");
 
   useEffect(() => {
     const hasDeleteType = selectedMessage?.some(
@@ -134,6 +140,9 @@ const ChattingSection = () => {
         messageId!,
         isDeletedForAll
       );
+
+      setSelectedMessage(null);
+      setIsModalOpen(false);
     } catch (error) {
       if (error instanceof AxiosError) {
         console.log("error.response?.data :>> ", error.response?.data.message);
@@ -151,6 +160,9 @@ const ChattingSection = () => {
 
     return (
       <>
+        {isLoadingOldMessages && (
+          <p className="w-full text-start text-sm">Loading....</p>
+        )}
         {activeChatDetails?.messages.map((message, index) => {
           const showNewDate = isNewDate(activeChatDetails?.messages, index);
           const isSender = message.sender._id === user?._id;
@@ -222,7 +234,7 @@ const ChattingSection = () => {
           }}
         />
         <p className="flex-grow">{selectedMessage?.length} Message Selected</p>
-        <Binary onClick={() => setIsModalOpen(true)} />
+        <Trash2 size={18} onClick={() => setIsModalOpen(true)} />
       </div>
 
       <Modal
@@ -312,7 +324,7 @@ function MessageContainer({
           isCurrentMessageSelectedForDelete && "bg-primary/5 rounded-lg",
           isCheckBoxForDelete ? "translate-x-0" : "-translate-x-2rem"
         )}
-        onClick={() => toggleCheckBox(message._id, message.content)}
+        // onClick={() => toggleCheckBox(message._id, message.content)}
       >
         {isCheckBoxForDelete && (
           <div

@@ -1,7 +1,7 @@
 import { sendMessage } from "@/api";
 import { capitalizeFirstLetter, cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/store";
-import { Mic, Pin, Plus, Smile, X } from "lucide-react";
+import { Mic, Pin, Smile, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { showWarnToast } from "../ToastProvider";
@@ -152,6 +152,7 @@ function CustomInput({
   };
   const handleSentMessage = async (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (
+      !showPopup &&
       e.key === "Enter" &&
       !e.shiftKey &&
       !e.ctrlKey &&
@@ -159,7 +160,7 @@ function CustomInput({
       !e.metaKey
     ) {
       e.preventDefault();
-      console.log("Message :- ", divRef.current?.textContent);
+      console.log("Message :- ", divRef.current?.innerHTML);
 
       const payload: {
         chatId: string;
@@ -168,7 +169,7 @@ function CustomInput({
         attachments?: File[];
       } = {
         chatId: paramValue as string,
-        content: divRef.current?.textContent as string,
+        content: divRef.current?.innerHTML as string,
       };
 
       if (selectedMessage && selectedMessage[0].type === "Reply") {
