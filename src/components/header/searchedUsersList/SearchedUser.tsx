@@ -1,9 +1,10 @@
-import { memo } from "react";
-import { AxiosError } from "axios";
-import { SentFriendRequestData } from "@/types/ApiResponse.types";
 import { sendFriendRequest } from "@/api";
 import { Button } from "@/components/ui/button";
-import { Handshake } from "lucide-react";
+import { capitalizeFirstLetter } from "@/lib/utils";
+import { SentFriendRequestData } from "@/types/ApiResponse.types";
+import { AxiosError } from "axios";
+import { Heart } from "lucide-react";
+import { memo } from "react";
 
 type SearchedUserProps = {
   imgSrc: string;
@@ -30,14 +31,14 @@ const SearchedUser = ({ imgSrc, name, _id }: SearchedUserProps) => {
         <img src={imgSrc} alt={name} />
       </div>
 
-      <p className="text-lg min-w-40">{name}</p>
+      <p className="text-lg min-w-40">{capitalizeFirstLetter(name)}</p>
 
       <Button
         variant="outline"
-        className="p-0 px-4 text-green-500 transition-colors duration-150 hover:bg-green-500"
+        className="p-0 px-4 text-white-500 hover:border-green-500 rounded-lg transition-all duration-150 active:scale-90 active:border-green-600"
         onClick={sendFriendRequestFun}
       >
-        <Handshake size={22} />
+        <Heart size={18} />
       </Button>
     </div>
   );

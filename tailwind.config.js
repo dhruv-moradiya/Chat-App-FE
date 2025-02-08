@@ -98,12 +98,17 @@ export default {
             zIndex: "-10",
           },
         },
+        shine: {
+          "0%": { "background-position": "100%" },
+          "100%": { "background-position": "-100%" },
+        },
       },
       animation: {
         "pop-up": "popUp 0.4s ease-out",
         "fade-out": "fadeOut 0.3s ease-out",
         "slide-in": "slideIn 0.2s ease-out",
         "slide-out": "slideOut 0.3s ease-out",
+        shine: "shine 5s linear infinite",
       },
     },
   },

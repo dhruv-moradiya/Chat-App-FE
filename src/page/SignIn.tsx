@@ -1,6 +1,7 @@
 import { showErrorToast } from "@/components/common/ToastProvider";
 import { Button } from "@/components/ui/button";
 import { IconInput } from "@/components/ui/icon-input";
+import Squares from "@/components/ui/squares";
 import { loginUserThunk } from "@/store/auth/AuthThunks";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { Key, Mail, User } from "lucide-react";
@@ -49,46 +50,58 @@ const SignIn = () => {
 
   return (
     <div className="w-screen h-screen flex flex-col justify-center items-center gap-2">
-      <h2 className="text-2xl font-bold my-2">Sign In</h2>
+      <Squares
+        speed={0.5}
+        squareSize={40}
+        direction="diagonal"
+        borderColor="#2b2b2b"
+        hoverFillColor="#222"
+      />
+      <div className="absolute">
+        <h2 className="text-2xl font-bold my-2">Sign In</h2>
 
-      <form className="w-96 flex flex-col gap-4" onSubmit={handleSubmit}>
-        <IconInput
-          icon={<User />}
-          placeholder="Username"
-          name="username"
-          onChange={handleChange}
-          value={formData.username}
-        />
-
-        <IconInput
-          type="email"
-          icon={<Mail />}
-          placeholder="Email"
-          name="email"
-          onChange={handleChange}
-          value={formData.email}
-        />
-
-        <IconInput
-          icon={<Key />}
-          placeholder="Password"
-          name="password"
-          onChange={handleChange}
-          value={formData.password}
-        />
-
-        <Button className="rounded-xl" type="submit" disabled={isLoading}>
-          {isLoading ? "Loading..." : "Sign In"}
-        </Button>
-        <p>OR</p>
-        <Button
-          className="rounded-xl"
-          type="button"
-          onClick={() => navigate("/signup")}
+        <form
+          className="w-96 flex flex-col gap-4 border-lime-200"
+          onSubmit={handleSubmit}
         >
-          Sign Up
-        </Button>
-      </form>
+          <IconInput
+            icon={<User />}
+            placeholder="Username"
+            name="username"
+            onChange={handleChange}
+            value={formData.username}
+          />
+
+          <IconInput
+            type="email"
+            icon={<Mail />}
+            placeholder="Email"
+            name="email"
+            onChange={handleChange}
+            value={formData.email}
+          />
+
+          <IconInput
+            icon={<Key />}
+            placeholder="Password"
+            name="password"
+            onChange={handleChange}
+            value={formData.password}
+          />
+
+          <Button className="rounded-xl" type="submit" disabled={isLoading}>
+            {isLoading ? "Loading..." : "Sign In"}
+          </Button>
+          <p>OR</p>
+          <Button
+            className="rounded-xl"
+            type="button"
+            onClick={() => navigate("/signup")}
+          >
+            Sign Up
+          </Button>
+        </form>
+      </div>
     </div>
   );
 };

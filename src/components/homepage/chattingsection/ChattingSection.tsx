@@ -1,21 +1,18 @@
 import { deleteMessageForSelectedParticipantsApi } from "@/api";
-import CheckBox from "@/components/common/CheckBox";
 import CustomInput from "@/components/common/cutomInput/CustomInput";
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/ui/Modal";
 import { cn, isNewDate } from "@/lib/utils";
 import { fetchOldActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { ChatMessage } from "@/types/ApiResponse.types";
 import { SelectedMessageType } from "@/types/Common.types";
 import { AxiosError } from "axios";
 import { Trash2, X } from "lucide-react";
-import moment from "moment";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import SkeletonLoader from "./ChatSkeletonLoader ";
 import Header from "./Header";
-import Message from "./Message";
+import MessageContainer from "./messages/MessageContainer";
 import NoChatSelected from "./NoChatSelected";
 
 const ChattingSection = () => {
@@ -158,21 +155,22 @@ const ChattingSection = () => {
   const renderMessages = useCallback(() => {
     if (isLoading) return <SkeletonLoader numberOfSkeletons={20} />;
 
+    const messages = activeChatDetails?.messages || [];
+
     return (
       <>
         {isLoadingOldMessages && (
           <p className="w-full text-start text-sm">Loading....</p>
         )}
-        {activeChatDetails?.messages.map((message, index) => {
-          const showNewDate = isNewDate(activeChatDetails?.messages, index);
+        {messages.map((message, index) => {
+          const prevMessage = messages[index - 1];
+          const showNewDate = isNewDate(messages, index);
           const isSender = message.sender._id === user?._id;
           const isPrevMessageFromSameUser =
-            index > 0 &&
-            activeChatDetails?.messages[index - 1]?.sender._id ===
-              message.sender._id;
-          const isCurrentMessageSelectedForDelete =
-            selectedMessage?.find((msg) => msg._id === message._id)?.type ===
-            "Delete";
+            prevMessage?.sender._id === message.sender._id;
+          const isCurrentMessageSelectedForDelete = selectedMessage?.some(
+            (msg) => msg._id === message._id && msg.type === "Delete"
+          );
 
           return (
             <MessageContainer
@@ -182,7 +180,7 @@ const ChattingSection = () => {
               isSender={isSender}
               isPrevMessageFromSameUser={isPrevMessageFromSameUser}
               isCurrentMessageSelectedForDelete={
-                isCurrentMessageSelectedForDelete
+                isCurrentMessageSelectedForDelete ?? false
               }
               isCheckBoxForDelete={isCheckBoxForDelete}
               selectedMessage={selectedMessage}
@@ -196,7 +194,8 @@ const ChattingSection = () => {
     );
   }, [
     isLoading,
-    activeChatDetails,
+    isLoadingOldMessages,
+    activeChatDetails?.messages,
     user?._id,
     selectedMessage,
     isCheckBoxForDelete,
@@ -281,86 +280,3 @@ const ChattingSection = () => {
 };
 
 export default ChattingSection;
-
-const MessageDate = ({ date }: { date: string }) => (
-  <div className="w-full flex justify-center text-sm text-muted-foreground">
-    <p>{moment(date).format("DD MMM YYYY")}</p>
-  </div>
-);
-
-interface MessageContainerProps {
-  message: ChatMessage;
-  showNewDate: boolean;
-  isSender: boolean;
-  isPrevMessageFromSameUser: boolean;
-  isCurrentMessageSelectedForDelete: boolean;
-  isCheckBoxForDelete: boolean;
-  selectedMessage: SelectedMessageType[] | null;
-  toggleCheckBox: (id: string, content: string) => void;
-  setSelectedMessage: React.Dispatch<
-    React.SetStateAction<SelectedMessageType[] | null>
-  >;
-  isCurrentChatIsGroupChat: boolean;
-}
-
-function MessageContainer({
-  message,
-  showNewDate,
-  isSender,
-  isPrevMessageFromSameUser,
-  isCurrentMessageSelectedForDelete,
-  isCheckBoxForDelete,
-  selectedMessage,
-  toggleCheckBox,
-  setSelectedMessage,
-  isCurrentChatIsGroupChat,
-}: MessageContainerProps) {
-  return (
-    <div className={cn("w-full px-10 transition-all duration-300")}>
-      {showNewDate && <MessageDate date={message.createdAt} />}
-      <div
-        className={cn(
-          "w-full flex items-center gap-2 transition-all duration-300",
-          isCurrentMessageSelectedForDelete && "bg-primary/5 rounded-lg",
-          isCheckBoxForDelete ? "translate-x-0" : "-translate-x-2rem"
-        )}
-        // onClick={() => toggleCheckBox(message._id, message.content)}
-      >
-        {isCheckBoxForDelete && (
-          <div
-            className={cn(
-              "transition-all duration-300 ease-in-out",
-              isCheckBoxForDelete
-                ? "opacity-100 scale-100"
-                : "opacity-0 scale-75"
-            )}
-          >
-            <CheckBox
-              checked={
-                selectedMessage?.some((msg) => msg._id === message._id) ?? false
-              }
-              setChecked={() => toggleCheckBox(message._id, message.content)}
-            />
-          </div>
-        )}
-        <div
-          className={cn(
-            "w-full transition-all duration-300 ease-in-out",
-            isCheckBoxForDelete && "ml-8"
-          )}
-        >
-          <Message
-            {...message}
-            isSender={isSender}
-            isSeen={true}
-            isPrevMessageFromSameUser={isPrevMessageFromSameUser}
-            selectedMessage={selectedMessage}
-            setSelectedMessage={setSelectedMessage}
-            isCurrentChatIsGroupChat={isCurrentChatIsGroupChat}
-            isCheckBoxForDelete={isCheckBoxForDelete}
-          />
-        </div>
-      </div>
-    </div>
-  );
-}

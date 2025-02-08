@@ -2,12 +2,12 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/store";
 import { ChatMessage } from "@/types/ApiResponse.types";
-import RenderAttachments from "./RenderAttachments";
-import { AttachmentLoader, MessageBox, SenderAvatar } from "./MessageLayout";
 import {
   MessageUserInteractionType,
   SelectedMessageType,
 } from "@/types/Common.types";
+import { AttachmentLoader, MessageBox, SenderAvatar } from "./MessageLayout";
+import RenderAttachments from "./RenderAttachments";
 
 interface MessageProps extends ChatMessage {
   isSeen: boolean;
@@ -70,24 +70,10 @@ const Message = ({
       case "Pin":
         break;
       case "Delete":
-        setSelectedMessage((prev) =>
-          prev
-            ? [
-                ...prev,
-                {
-                  _id,
-                  content,
-                  type: "Delete",
-                },
-              ]
-            : [
-                {
-                  _id,
-                  content,
-                  type: "Delete",
-                },
-              ]
-        );
+        setSelectedMessage((prev) => [
+          ...(prev ?? []),
+          { _id, content, type: "Delete" },
+        ]);
         break;
 
       default:
