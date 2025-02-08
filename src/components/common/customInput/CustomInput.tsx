@@ -5,16 +5,15 @@ import { Mic, Pin, Smile, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { showWarnToast } from "../ToastProvider";
-import { SelectedMessageType } from "@/types/Common.types";
+import { SelectedMessagesForInteraction } from "@/types/Common.types";
 
 function CustomInput({
   selectedMessage,
   setSelectedMessage,
-}: // replyedMessage,
-{
-  selectedMessage: SelectedMessageType[] | null;
+}: {
+  selectedMessage: SelectedMessagesForInteraction | null;
   setSelectedMessage: React.Dispatch<
-    React.SetStateAction<SelectedMessageType[] | null>
+    React.SetStateAction<SelectedMessagesForInteraction | null>
   >;
 }) {
   const divRef = useRef<HTMLDivElement | null>(null);
@@ -28,7 +27,10 @@ function CustomInput({
   );
 
   const messageDetails = activeChatDetails?.messages.find(
-    (message) => selectedMessage && selectedMessage[0]?._id === message?._id
+    (message) =>
+      selectedMessage &&
+      selectedMessage.type === "Reply" &&
+      selectedMessage.messages[0]._id === message?._id
   );
   const { myChats } = useAppSelector((state) => state.myChats);
 
@@ -172,8 +174,8 @@ function CustomInput({
         content: divRef.current?.innerHTML as string,
       };
 
-      if (selectedMessage && selectedMessage[0].type === "Reply") {
-        payload.replyTo = selectedMessage[0]._id;
+      if (selectedMessage && selectedMessage.type === "Reply") {
+        payload.replyTo = selectedMessage.messages[0]._id;
       }
 
       if (fileInputValue && fileInputValue.length > 0) {
@@ -233,7 +235,7 @@ function CustomInput({
       <div
         className={cn(
           "w-full flex items-center overflow-hidden transform transition-all duration-150",
-          selectedMessage && selectedMessage[0].type === "Reply"
+          selectedMessage && selectedMessage.type === "Reply"
             ? "opacity-100 h-auto p-2 pb-0"
             : "opacity-0 h-0 p-0"
         )}

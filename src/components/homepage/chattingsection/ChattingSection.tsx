@@ -1,19 +1,22 @@
-import { deleteMessageForSelectedParticipantsApi } from "@/api";
-import CustomInput from "@/components/common/cutomInput/CustomInput";
-import { Button } from "@/components/ui/button";
-import Modal from "@/components/ui/Modal";
-import { cn, isNewDate } from "@/lib/utils";
-import { fetchOldActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
-import { useAppDispatch, useAppSelector } from "@/store/store";
-import { SelectedMessageType } from "@/types/Common.types";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AxiosError } from "axios";
 import { Trash2, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { cn, isNewDate } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { useSearchParams } from "react-router-dom";
-import SkeletonLoader from "./ChatSkeletonLoader ";
+import {
+  InteractedMessage,
+  SelectedMessagesForInteraction,
+} from "@/types/Common.types";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { fetchOldActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
+import { deleteMessageForSelectedParticipantsApi } from "@/api";
 import Header from "./Header";
-import MessageContainer from "./messages/MessageContainer";
+import Modal from "@/components/ui/Modal";
 import NoChatSelected from "./NoChatSelected";
+import SkeletonLoader from "./ChatSkeletonLoader ";
+import MessageContainer from "./messages/MessageContainer";
+import CustomInput from "@/components/common/customInput/CustomInput";
 
 const ChattingSection = () => {
   const dispatch = useAppDispatch();
@@ -21,11 +24,14 @@ const ChattingSection = () => {
   const paramValue = params[0].get("chatId");
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const [selectedMessage, setSelectedMessage] = useState<
-    SelectedMessageType[] | null
-  >(null);
+  // Message selection for delete, reply etc
+  const [selectedMessage, setSelectedMessage] =
+    useState<SelectedMessagesForInteraction | null>(null);
+  // For deleting messages model
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // For deleting multiple message selection
   const [isCheckBoxForDelete, setIsCheckBoxForDelete] = useState(false);
+  // For selected message is current user's message
   const [
     isSelectedAllMessageFromCurrentUserSide,
     setIsSelectedAllMessageFromCurrentUserSide,
@@ -84,24 +90,22 @@ const ChattingSection = () => {
     }
   }, [activeChatDetails, isLoadingOldMessages]);
 
-  console.log("Re-rendering Chatting Section");
-
   useEffect(() => {
-    const hasDeleteType = selectedMessage?.some(
-      (message) => message.type === "Delete"
-    );
+    const hasDeleteType = selectedMessage?.type === "Delete";
 
-    const allSenders = selectedMessage?.map((message) => {
-      const findMessage = activeChatDetails?.messages.find(
-        (m) => m._id === message._id
-      );
-      return {
-        ...findMessage?.sender,
-      };
-    });
+    const selectedMessageSenders =
+      selectedMessage &&
+      selectedMessage.messages.map((message) => {
+        const findMessage = activeChatDetails?.messages.find(
+          (m) => m._id === message._id
+        );
+        return {
+          ...findMessage?.sender,
+        };
+      });
 
-    const allSenderIsCurrentUser = allSenders
-      ? allSenders.every((sender) => sender?._id === user._id)
+    const allSenderIsCurrentUser = selectedMessageSenders
+      ? selectedMessageSenders.every((sender) => sender?._id === user._id)
       : false;
 
     setIsSelectedAllMessageFromCurrentUserSide(
@@ -111,18 +115,27 @@ const ChattingSection = () => {
   }, [selectedMessage, user._id]);
 
   const toggleCheckBox = (id: string, content: string) => {
-    const index = selectedMessage?.findIndex((message) => message._id === id)!;
+    // If message is already selected for delete than remove it
+    const index = selectedMessage
+      ? selectedMessage.messages.findIndex((message) => message._id === id)
+      : -1;
     if (index > -1) {
-      setSelectedMessage((prev) => {
-        if (!prev) return prev;
-        const copy = [...prev];
-        copy.splice(index, 1);
-        return copy.length > 0 ? copy : null;
-      });
+      const copy = [...selectedMessage!.messages];
+      copy.splice(index, 1);
+      setSelectedMessage({ ...selectedMessage!, messages: copy });
     } else {
+      // If message is not selected for delete than add it
+      const newSelectedMessage: InteractedMessage = {
+        _id: id,
+        content,
+      };
+
       setSelectedMessage((prev) => {
-        if (!prev) return [{ _id: id, type: "Delete", content }];
-        return [...prev, { _id: id, type: "Delete", content }];
+        if (!prev) return { messages: [newSelectedMessage], type: "Delete" };
+        return {
+          messages: [...prev.messages, newSelectedMessage],
+          type: "Delete",
+        };
       });
     }
   };
@@ -130,11 +143,13 @@ const ChattingSection = () => {
   const deleteMessageForSelectedParticipants = async (
     isDeletedForAll: boolean
   ) => {
-    const messageId = selectedMessage?.map((message) => message._id);
+    const messageIds = selectedMessage
+      ? selectedMessage.messages.map((m) => m._id)
+      : [];
 
     try {
       await deleteMessageForSelectedParticipantsApi(
-        messageId!,
+        messageIds,
         isDeletedForAll
       );
 
@@ -168,9 +183,10 @@ const ChattingSection = () => {
           const isSender = message.sender._id === user?._id;
           const isPrevMessageFromSameUser =
             prevMessage?.sender._id === message.sender._id;
-          const isCurrentMessageSelectedForDelete = selectedMessage?.some(
-            (msg) => msg._id === message._id && msg.type === "Delete"
-          );
+          const isCurrentMessageSelectedForDelete = selectedMessage
+            ? selectedMessage.messages.find((msg) => msg._id === message._id) &&
+              selectedMessage.type === "Delete"
+            : false;
 
           return (
             <MessageContainer
@@ -232,7 +248,10 @@ const ChattingSection = () => {
             setSelectedMessage(null);
           }}
         />
-        <p className="flex-grow">{selectedMessage?.length} Message Selected</p>
+        <p className="flex-grow">
+          {selectedMessage ? selectedMessage.messages.length : 0} Message
+          Selected
+        </p>
         <Trash2 size={18} onClick={() => setIsModalOpen(true)} />
       </div>
 

@@ -1,5 +1,5 @@
 import { ChatMessage } from "./ApiResponse.types";
-import { SelectedMessageType } from "./Common.types";
+import { SelectedMessagesForInteraction } from "./Common.types";
 
 // Interface for MessageContainer
 interface MessageContainerProps {
@@ -9,10 +9,10 @@ interface MessageContainerProps {
   isPrevMessageFromSameUser: boolean;
   isCurrentMessageSelectedForDelete: boolean;
   isCheckBoxForDelete: boolean;
-  selectedMessage: SelectedMessageType[] | null;
   toggleCheckBox: (id: string, content: string) => void;
+  selectedMessage: SelectedMessagesForInteraction | null;
   setSelectedMessage: React.Dispatch<
-    React.SetStateAction<SelectedMessageType[] | null>
+    React.SetStateAction<SelectedMessagesForInteraction | null>
   >;
   isCurrentChatIsGroupChat: boolean;
 }

@@ -4,7 +4,7 @@ import { useAppSelector } from "@/store/store";
 import { ChatMessage } from "@/types/ApiResponse.types";
 import {
   MessageUserInteractionType,
-  SelectedMessageType,
+  SelectedMessagesForInteraction,
 } from "@/types/Common.types";
 import { AttachmentLoader, MessageBox, SenderAvatar } from "./MessageLayout";
 import RenderAttachments from "./RenderAttachments";
@@ -13,9 +13,9 @@ interface MessageProps extends ChatMessage {
   isSeen: boolean;
   isSender: boolean;
   isPrevMessageFromSameUser: boolean;
-  selectedMessage: SelectedMessageType[] | null;
+  selectedMessage: SelectedMessagesForInteraction | null;
   setSelectedMessage: React.Dispatch<
-    React.SetStateAction<SelectedMessageType[] | null>
+    React.SetStateAction<SelectedMessagesForInteraction | null>
   >;
   isCurrentChatIsGroupChat: boolean;
   isCheckBoxForDelete: boolean;
@@ -55,13 +55,10 @@ const Message = ({
   ) => {
     switch (value) {
       case "Reply":
-        setSelectedMessage([
-          {
-            _id,
-            content,
-            type: "Reply",
-          },
-        ]);
+        setSelectedMessage({
+          type: "Reply",
+          messages: [{ _id, content }],
+        });
         break;
       case "React":
         break;
@@ -70,10 +67,7 @@ const Message = ({
       case "Pin":
         break;
       case "Delete":
-        setSelectedMessage((prev) => [
-          ...(prev ?? []),
-          { _id, content, type: "Delete" },
-        ]);
+        setSelectedMessage({ type: "Delete", messages: [{ _id, content }] });
         break;
 
       default:

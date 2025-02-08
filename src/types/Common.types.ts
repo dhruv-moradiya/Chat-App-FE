@@ -1,9 +1,17 @@
 type MessageUserInteractionType = "Reply" | "React" | "Star" | "Pin" | "Delete";
 
-type SelectedMessageType = {
+type InteractedMessage = {
   _id: string;
   content: string;
+};
+
+type SelectedMessagesForInteraction = {
+  messages: InteractedMessage[];
   type: MessageUserInteractionType;
 };
 
-export type { MessageUserInteractionType, SelectedMessageType };
+export type {
+  MessageUserInteractionType,
+  InteractedMessage,
+  SelectedMessagesForInteraction,
+};

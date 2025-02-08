@@ -38,7 +38,9 @@ function MessageContainer({
           >
             <CheckBox
               checked={
-                selectedMessage?.some((msg) => msg._id === message._id) ?? false
+                selectedMessage?.messages.some(
+                  (msg) => msg._id === message._id
+                ) ?? false
               }
               setChecked={() => toggleCheckBox(message._id, message.content)}
             />
