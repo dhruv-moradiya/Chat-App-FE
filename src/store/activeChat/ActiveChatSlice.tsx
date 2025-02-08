@@ -36,11 +36,44 @@ const activeChatSlice = createSlice({
 
     newMessageReceived: (state, action) => {
       if (state.activeChatDetails) {
-        state.activeChatDetails = {
-          ...state.activeChatDetails,
-          messages: [...state.activeChatDetails.messages, action.payload],
-        };
+        const isMessageExists = state.activeChatDetails.messages.find(
+          (message) => message._id === action.payload._id
+        );
+
+        console.log("isMessageExists", isMessageExists);
+
+        if (!isMessageExists) {
+          console.log("Condition is true");
+
+          state.activeChatDetails = {
+            ...state.activeChatDetails,
+            messages: [...state.activeChatDetails.messages, action.payload],
+          };
+        } else {
+          console.log("Condition is false");
+          const updatedMessages = state.activeChatDetails.messages.map(
+            (message) => {
+              if (message._id === action.payload._id) {
+                return action.payload;
+              } else {
+                return message;
+              }
+            }
+          );
+
+          state.activeChatDetails = {
+            ...state.activeChatDetails,
+            messages: updatedMessages,
+          };
+        }
       }
+
+      // if (state.activeChatDetails) {
+      //   state.activeChatDetails = {
+      //     ...state.activeChatDetails,
+      //     messages: [...state.activeChatDetails.messages, action.payload],
+      //   };
+      // }
     },
 
     newMessageUpdateWithAttachment: (state, action) => {
