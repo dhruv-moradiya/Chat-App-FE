@@ -162,6 +162,33 @@ const sendMessage = async (data: {
   }
 };
 
+const sendAttachments = async (data: {
+  attachments: File[];
+  chatId: string;
+  messageId: string;
+}) => {
+  console.log("sendAttachments -> data", data);
+  const formData = new FormData();
+
+  formData.append("chatId", data.chatId);
+  formData.append("messageId", data.messageId);
+
+  for (let i = 0; i < data.attachments.length; i++) {
+    formData.append("attachments", data.attachments[i]);
+  }
+
+  try {
+    const response = await apiClient.post(
+      "/message/save-attachments",
+      formData
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getChatMessagesBasedOnChatId = async (
   chatId: string,
   page: number,
@@ -212,6 +239,7 @@ const createGroupChat = async (data: {
   );
   return response.data;
 };
+
 const deleteMessageForSelectedParticipantsApi = async (
   messageIds: string[],
   isDeletedForAll: boolean
@@ -239,6 +267,7 @@ export {
   registerUser,
   sendFriendRequest,
   sendMessage,
+  sendAttachments,
   getChatMessagesBasedOnChatId,
   fetchMyFriendsList,
   createGroupChat,

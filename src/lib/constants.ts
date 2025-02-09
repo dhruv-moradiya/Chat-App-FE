@@ -17,6 +17,7 @@ const ChatEventEnum = Object.freeze({
   // Messaging
   DELETE_MESSAGE_FOR_EVERYONE_OR_SELF_EVENT: "deleteMessageForEveryoneOrSelf",
   UPDATED_MESSAGE_WITH_ATTACHMENT_EVENT: "updatedMessageWithAttachment",
+  MESSAGE_SEND_EVENT: "messageSent",
   MESSAGE_RECEIVED_EVENT: "messageReceived",
   MESSAGE_DELETE_EVENT: "messageDeleted",
   MESSAGE_EDIT_EVENT: "messageEdited",
@@ -61,9 +62,8 @@ const ChatEventEnum = Object.freeze({
 const ActionType = Object.freeze({
   CREATE_CONNECTION: "socket/createConnection",
   DISCONNECTED: "socket/disconnected",
-
+  SEND_MESSAGE: "activeChat/sendMessage",
   NEW_FRIEND_REQUEST_RECEIVE: "friendRequest/newFriendRequestReceive",
-
   CURRENT_ACTIVE_CHAT: "activeChat/setActiveChat",
 });
 

@@ -101,7 +101,7 @@ const socketMiddleware: Middleware = (storeAPI) => {
           });
 
           socket.on(ChatEventEnum.MESSAGE_RECEIVED_EVENT, (data) => {
-            console.log("📨 Message received:", data);
+            // console.log("📨 Message received:", data);
             // If message is not sent by current user means it is for receiver
             // if (state.auth.user._id !== data.sender._id) {
             storeAPI.dispatch(newMessageReceived(data.message));
@@ -182,6 +182,14 @@ const socketMiddleware: Middleware = (storeAPI) => {
           socket.emit(ChatEventEnum.CURRENT_ACTIVE_CHAT_EVENT, {
             chatId,
             userData: state.auth.user,
+          });
+        }
+        break;
+
+      case ActionType.SEND_MESSAGE:
+        if (socket) {
+          socket.emit(ChatEventEnum.MESSAGE_SEND_EVENT, {
+            messageData: action.payload,
           });
         }
         break;

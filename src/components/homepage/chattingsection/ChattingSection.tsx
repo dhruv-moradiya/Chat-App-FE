@@ -182,7 +182,7 @@ const ChattingSection = () => {
           const showNewDate = isNewDate(messages, index);
           const isSender = message.sender._id === user?._id;
           const isPrevMessageFromSameUser =
-            prevMessage?.sender._id === message.sender._id;
+            prevMessage?.sender._id === message.sender._id && !showNewDate;
           const isCurrentMessageSelectedForDelete = selectedMessage
             ? selectedMessage.messages.find((msg) => msg._id === message._id) &&
               selectedMessage.type === "Delete"

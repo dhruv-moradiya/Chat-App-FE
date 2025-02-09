@@ -1,11 +1,13 @@
-import { sendMessage } from "@/api";
 import { capitalizeFirstLetter, cn } from "@/lib/utils";
-import { useAppSelector } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import { Mic, Pin, Smile, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { showWarnToast } from "../ToastProvider";
 import { SelectedMessagesForInteraction } from "@/types/Common.types";
+import { sendMessage } from "@/store/activeChat/ActiveChatSlice";
+import { sendAttachments } from "@/api";
+import { AxiosError } from "axios";
 
 function CustomInput({
   selectedMessage,
@@ -74,7 +76,6 @@ function CustomInput({
             left: rect.left,
           });
           setShowPopup(true);
-          console.log(true);
           setSelectedIndex(-1);
         } catch (error) {
           console.error("Error retrieving range or position:", error);
@@ -152,6 +153,39 @@ function CustomInput({
       setShowPopup(false);
     }
   };
+
+  const dispatch = useAppDispatch();
+
+  const lastMessageId = useMemo(() => {
+    return activeChatDetails?.messages?.[activeChatDetails.messages.length - 1]
+      ?._id;
+  }, [activeChatDetails?.messages]);
+
+  useEffect(() => {
+    if (!lastMessageId) return;
+
+    if (fileInputValue && fileInputValue.length > 0) {
+      sendAttachments({
+        attachments: fileInputValue,
+        chatId: paramValue as string,
+        messageId: lastMessageId,
+      })
+        .then(() => {
+          setFileInputValue(null);
+        })
+        .catch((error) => {
+          if (error instanceof AxiosError) {
+            console.log(
+              "error.response?.data :>> ",
+              error.response?.data.message
+            );
+          } else {
+            console.log("error :>> ", error);
+          }
+        });
+    }
+  }, [lastMessageId]);
+
   const handleSentMessage = async (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (
       !showPopup &&
@@ -162,13 +196,12 @@ function CustomInput({
       !e.metaKey
     ) {
       e.preventDefault();
-      console.log("Message :- ", divRef.current?.innerHTML);
 
       const payload: {
         chatId: string;
         content: string;
         replyTo?: string;
-        attachments?: File[];
+        isAttachment?: boolean;
       } = {
         chatId: paramValue as string,
         content: divRef.current?.innerHTML as string,
@@ -179,17 +212,13 @@ function CustomInput({
       }
 
       if (fileInputValue && fileInputValue.length > 0) {
-        payload.attachments = fileInputValue;
+        payload.isAttachment = true;
       }
 
-      const response = await sendMessage(payload);
+      dispatch(sendMessage(payload));
 
-      if (response) {
-        setFileInputValue(null);
-        divRef.current!.textContent = "";
-        setSelectedMessage(null);
-      }
-      console.log("response :>> ", response);
+      divRef.current!.textContent = "";
+      setSelectedMessage(null);
     }
   };
 
@@ -198,7 +227,7 @@ function CustomInput({
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (fileInputValue && fileInputValue.length === 2) {
+    if (fileInputValue && fileInputValue.length >= 2) {
       showWarnToast("Only 2 files can be send at a time");
       return;
     }
@@ -385,6 +414,6 @@ const AudioRecorder = () => {
     </div>
   );
 };
-export default CustomInput;
+export default memo(CustomInput);
 // https://i.pinimg.com/736x/0a/86/e5/0a86e5d0c6d593e0091d197cfebcdd7d.jpg
 // https://i.pinimg.com/736x/0a/86/e5/0a86e5d0c6d593e0091d197cfebcdd7d.jpg

@@ -1,5 +1,5 @@
 import { ChatMessagesSummary } from "@/types/ApiResponse.types";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   fetchActiveChatMessages,
   fetchOldActiveChatMessages,
@@ -25,10 +25,21 @@ const initialState: ActiveChatState = {
   isLoadingOldMessages: false,
 };
 
+interface newMessageActionType {
+  chatId: string;
+  content: string;
+  replyTo?: string;
+  isAttachment?: boolean;
+}
+
 const activeChatSlice = createSlice({
   name: "activeChat",
   initialState,
   reducers: {
+    sendMessage: (state, action: PayloadAction<newMessageActionType>) => {
+      console.log("➡ Sending a new message.");
+    },
+
     setActiveChat: (state, action) => {
       state.activeChatId = action.payload.activeChatId;
       state.prevChatId = action.payload.prevChatId;
@@ -40,17 +51,12 @@ const activeChatSlice = createSlice({
           (message) => message._id === action.payload._id
         );
 
-        console.log("isMessageExists", isMessageExists);
-
         if (!isMessageExists) {
-          console.log("Condition is true");
-
           state.activeChatDetails = {
             ...state.activeChatDetails,
             messages: [...state.activeChatDetails.messages, action.payload],
           };
         } else {
-          console.log("Condition is false");
           const updatedMessages = state.activeChatDetails.messages.map(
             (message) => {
               if (message._id === action.payload._id) {
@@ -165,6 +171,7 @@ const activeChatSlice = createSlice({
 
 export const activeChatReducer = activeChatSlice.reducer;
 export const {
+  sendMessage,
   setActiveChat,
   newMessageReceived,
   newMessageUpdateWithAttachment,
