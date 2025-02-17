@@ -7,9 +7,11 @@ import { addNewChat, updateUnreadMessageCount } from "../myChats/ChatSlice";
 import { showNotificationToast } from "@/components/common/ToastProvider";
 import { playNotificationSound } from "@/lib/utils";
 import {
+  addReaction,
   deleteMessage,
   newMessageReceived,
   newMessageUpdateWithAttachment,
+  updateMessageWithReaction,
 } from "../activeChat/ActiveChatSlice";
 
 // const playNotificationSound = useNotificationSound("/to_the_point.mp3");
@@ -31,8 +33,13 @@ const removeSocketListeners = () => {
   if (socket) {
     console.log("🧹 Removing socket event listeners...");
     socket.off(ChatEventEnum.CONNECTED_EVENT);
+    socket.off(ChatEventEnum.ROOM_CREATED_EVENT);
     socket.off(ChatEventEnum.FRIEND_REQUEST_RECEIVE_EVENT);
     socket.off(ChatEventEnum.FRIEND_REQUEST_ACCEPT_EVENT);
+    socket.off(ChatEventEnum.MESSAGE_RECEIVED_EVENT);
+    socket.off(ChatEventEnum.UPDATED_MESSAGE_WITH_ATTACHMENT_EVENT);
+    socket.off(ChatEventEnum.UNREAD_MESSAGE_EVENT);
+    socket.off(ChatEventEnum.DELETE_MESSAGE_FOR_EVERYONE_OR_SELF_EVENT);
     socket.off(ChatEventEnum.DISCONNECT_EVENT);
     socket.off(ChatEventEnum.SOCKET_ERROR_EVENT);
   }
@@ -92,7 +99,6 @@ const socketMiddleware: Middleware = (storeAPI) => {
 
           // Listen for friend request accepted event
           socket.on(ChatEventEnum.FRIEND_REQUEST_ACCEPT_EVENT, (data) => {
-            console.log("😍 Friend request accepted:", data);
             showNotificationToast(
               `${data.acceptorDetails.username} accepted your friend request!`
             );
@@ -100,6 +106,7 @@ const socketMiddleware: Middleware = (storeAPI) => {
             storeAPI.dispatch(addNewChat(data.chatDetails));
           });
 
+          // Listen for message received event
           socket.on(ChatEventEnum.MESSAGE_RECEIVED_EVENT, (data) => {
             // console.log("📨 Message received:", data);
             // If message is not sent by current user means it is for receiver
@@ -108,29 +115,35 @@ const socketMiddleware: Middleware = (storeAPI) => {
             // }
           });
 
+          // Listen for updated message with attachment
           socket.on(
             ChatEventEnum.UPDATED_MESSAGE_WITH_ATTACHMENT_EVENT,
             (data) => {
-              console.log("UPDATED_MESSAGE_WITH_ATTACHMENT_EVENT :>> ", data);
               storeAPI.dispatch(newMessageUpdateWithAttachment(data.message));
             }
           );
 
+          // Listen for unread message
           socket.on(ChatEventEnum.UNREAD_MESSAGE_EVENT, (data) => {
-            console.log("UNREAD_MESSAGE_EVENT :>> ", data);
             const { chatId } = data;
             const userId = state.auth.user._id;
             storeAPI.dispatch(updateUnreadMessageCount({ chatId, userId }));
           });
 
+          // Listen for delete message
           socket.on(
             ChatEventEnum.DELETE_MESSAGE_FOR_EVERYONE_OR_SELF_EVENT,
             (data) => {
-              console.log(
-                "DELETE_MESSAGE_FOR_EVERYONE_OR_SELF_EVENT :>> ",
-                data
-              );
               storeAPI.dispatch(deleteMessage(data));
+            }
+          );
+
+          socket.on(
+            ChatEventEnum.MESSAGE_REACT_EVENT,
+            ({ chatId, messageId, emoji }) => {
+              storeAPI.dispatch(
+                updateMessageWithReaction({ chatId, messageId, emoji })
+              );
             }
           );
 
@@ -191,6 +204,12 @@ const socketMiddleware: Middleware = (storeAPI) => {
           socket.emit(ChatEventEnum.MESSAGE_SEND_EVENT, {
             messageData: action.payload,
           });
+        }
+        break;
+
+      case ActionType.ADD_REACTION:
+        if (socket) {
+          socket.emit(ChatEventEnum.MESSAGE_REACT_EVENT, action.payload);
         }
         break;
 

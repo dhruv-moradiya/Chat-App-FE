@@ -28,7 +28,8 @@ const ChatEventEnum = Object.freeze({
 
   // Reactions and interactions
   MESSAGE_LIKE_EVENT: "messageLiked",
-  MESSAGE_REACT_EVENT: "messageReacted",
+  MESSAGE_REACT_EVENT: "messageReact",
+  MESSAGE_REACTED_EVENT: "messageReacted",
   MESSAGE_REPLY_EVENT: "messageReplied",
   MESSAGE_MENTION_EVENT: "messageMentioned",
 
@@ -65,6 +66,7 @@ const ActionType = Object.freeze({
   SEND_MESSAGE: "activeChat/sendMessage",
   NEW_FRIEND_REQUEST_RECEIVE: "friendRequest/newFriendRequestReceive",
   CURRENT_ACTIVE_CHAT: "activeChat/setActiveChat",
+  ADD_REACTION: "activeChat/addReaction",
 });
 
 export { ChatEventEnum, ActionType };

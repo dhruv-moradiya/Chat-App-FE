@@ -18,7 +18,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div className="relative w-full">
         <div
           className={cn(
-            "relative w-full flex items-center gap-4 bg-[#2b2b2b] p-4 rounded-xl border-[1px] border-transparent focus-within:border-[1px] focus-within:border-primary hover:border-primary transition-all duration-150",
+            "relative w-full flex items-center gap-4 bg-secondary p-4 rounded-xl border-[1px] border-transparent focus-within:border-[1px] focus-within:border-primary hover:border-primary transition-all duration-150",
             className,
             error &&
               "border-red-500 focus-within:border-red-500 hover:border-red-500"
@@ -38,10 +38,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             className={`absolute left-10 transition-all px-2 rounded-lg text-sm
   ${
     props.value
-      ? "-top-2.5 text-sm text-white bg-[#2b2b2b]"
+      ? "-top-2.5 text-sm text-white bg-secondary"
       : "top-3.5 text-lg text-gray-400"
   } 
-  peer-focus:-top-2 peer-focus:text-sm peer-focus:text-white peer-focus:bg-[#2b2b2b]`}
+  peer-focus:-top-2 peer-focus:text-sm peer-focus:text-white peer-focus:bg-secondary`}
           >
             {label}
           </label>

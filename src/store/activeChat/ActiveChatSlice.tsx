@@ -1,4 +1,4 @@
-import { ChatMessagesSummary } from "@/types/ApiResponse.types";
+import { ChatMessage, ChatMessagesSummary } from "@/types/ApiResponse.types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   fetchActiveChatMessages,
@@ -31,6 +31,30 @@ interface newMessageActionType {
   replyTo?: string;
   isAttachment?: boolean;
 }
+
+interface addReactionType {
+  messageId: string;
+  emoji: string;
+  chatId: string;
+}
+
+const updateMessageReactions = (
+  messages: ChatMessage[],
+  messageId: string,
+  emoji: string
+) => {
+  return messages.map((message) =>
+    message._id === messageId
+      ? {
+          ...message,
+          reactions: [
+            ...message.reactions,
+            { emoji, _id: new Date().getTime() },
+          ],
+        }
+      : message
+  );
+};
 
 const activeChatSlice = createSlice({
   name: "activeChat",
@@ -73,13 +97,6 @@ const activeChatSlice = createSlice({
           };
         }
       }
-
-      // if (state.activeChatDetails) {
-      //   state.activeChatDetails = {
-      //     ...state.activeChatDetails,
-      //     messages: [...state.activeChatDetails.messages, action.payload],
-      //   };
-      // }
     },
 
     newMessageUpdateWithAttachment: (state, action) => {
@@ -112,6 +129,32 @@ const activeChatSlice = createSlice({
               return message;
             }
           }),
+        };
+      }
+    },
+
+    addReaction: (state, action: PayloadAction<addReactionType>) => {
+      if (state.activeChatDetails) {
+        state.activeChatDetails = {
+          ...state.activeChatDetails,
+          messages: updateMessageReactions(
+            state.activeChatDetails.messages,
+            action.payload.messageId,
+            action.payload.emoji
+          ),
+        };
+      }
+    },
+
+    updateMessageWithReaction: (state, action) => {
+      if (state.activeChatDetails) {
+        state.activeChatDetails = {
+          ...state.activeChatDetails,
+          messages: updateMessageReactions(
+            state.activeChatDetails.messages,
+            action.payload.messageId,
+            action.payload.emoji
+          ),
         };
       }
     },
@@ -176,5 +219,7 @@ export const {
   newMessageReceived,
   newMessageUpdateWithAttachment,
   deleteMessage,
+  addReaction,
+  updateMessageWithReaction,
 } = activeChatSlice.actions;
 export default activeChatSlice;

@@ -1,22 +1,27 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { AxiosError } from "axios";
-import { Trash2, X } from "lucide-react";
+import { deleteMessageForSelectedParticipantsApi } from "@/api";
+import CustomInput from "@/components/common/customInput/CustomInput";
+import Modal from "@/components/ui/Modal";
 import { cn, isNewDate } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { useSearchParams } from "react-router-dom";
+import { fetchOldActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
+import {
+  closeModel,
+  openModel,
+} from "@/store/chatDetailSidebar/ChatDetailSlice";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import {
   InteractedMessage,
   SelectedMessagesForInteraction,
 } from "@/types/Common.types";
-import { useAppDispatch, useAppSelector } from "@/store/store";
-import { fetchOldActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
-import { deleteMessageForSelectedParticipantsApi } from "@/api";
-import Header from "./Header";
-import Modal from "@/components/ui/Modal";
-import NoChatSelected from "./NoChatSelected";
+import { AxiosError } from "axios";
+import { Trash2, X } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import SkeletonLoader from "./ChatSkeletonLoader ";
+import Header from "./Header";
 import MessageContainer from "./messages/MessageContainer";
-import CustomInput from "@/components/common/customInput/CustomInput";
+import { DeleteMessageModalForSelectedParticipants } from "./models/DeleteMessageModalForSelectedParticipants";
+import { ReactMessageModal } from "./models/ReactMessageModal";
+import NoChatSelected from "./NoChatSelected";
 
 const ChattingSection = () => {
   const dispatch = useAppDispatch();
@@ -27,8 +32,7 @@ const ChattingSection = () => {
   // Message selection for delete, reply etc
   const [selectedMessage, setSelectedMessage] =
     useState<SelectedMessagesForInteraction | null>(null);
-  // For deleting messages model
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // For deleting multiple message selection
   const [isCheckBoxForDelete, setIsCheckBoxForDelete] = useState(false);
   // For selected message is current user's message
@@ -38,13 +42,20 @@ const ChattingSection = () => {
   ] = useState(false);
 
   const { user } = useAppSelector((state) => state.auth);
+
   const { activeChatId, activeChatDetails, isLoading, isLoadingOldMessages } =
     useAppSelector((state) => state.activeChat);
+
   const chatList = useAppSelector((state) => state.myChats.myChats);
+
+  const isModelOpen = useAppSelector((state) => state.chatDetail.isModelOpen);
+
   const isCurrentChatIsGroupChat =
     chatList.find((chat) => chat._id === activeChatId)?.isGroup ?? false;
 
-  const toggleModal = () => setIsModalOpen(!isModalOpen);
+  const closeModelFun = () => {
+    dispatch(closeModel());
+  };
 
   const handleScroll = useCallback(() => {
     const container = chatContainerRef.current;
@@ -154,7 +165,7 @@ const ChattingSection = () => {
       );
 
       setSelectedMessage(null);
-      setIsModalOpen(false);
+      closeModelFun();
     } catch (error) {
       if (error instanceof AxiosError) {
         console.log("error.response?.data :>> ", error.response?.data.message);
@@ -222,6 +233,29 @@ const ChattingSection = () => {
 
   if (!paramValue) return <NoChatSelected />;
 
+  const modelContent = () => {
+    switch (selectedMessage?.type) {
+      case "Delete":
+        return (
+          <DeleteMessageModalForSelectedParticipants
+            toggleModal={closeModelFun}
+            deleteMessageForSelectedParticipants={
+              deleteMessageForSelectedParticipants
+            }
+            isSelectedAllMessageFromCurrentUserSide={
+              isSelectedAllMessageFromCurrentUserSide
+            }
+          />
+        );
+
+      case "React":
+        return <ReactMessageModal selectedMessage={selectedMessage} />;
+
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="flex flex-col w-full md:w-[calc(100%-384px)] relative mb-5">
       <Header />
@@ -252,47 +286,16 @@ const ChattingSection = () => {
           {selectedMessage ? selectedMessage.messages.length : 0} Message
           Selected
         </p>
-        <Trash2 size={18} onClick={() => setIsModalOpen(true)} />
+        <Trash2 size={18} onClick={() => dispatch(openModel())} />
       </div>
 
       <Modal
-        isOpen={isModalOpen}
-        onClose={toggleModal}
+        isOpen={isModelOpen}
+        onClose={closeModelFun}
         closeOnOutsideClick={true}
-        backgroundStyle="transparent"
+        backgroundStyle="blur"
       >
-        <div className="flex flex-col gap-4 min-w-96">
-          <p className="text-md mb-4">Delete Message?</p>
-          <div
-            className={cn(
-              "self-end flex flex-row items-end gap-4",
-              isSelectedAllMessageFromCurrentUserSide ? "flex-col" : "flex-row"
-            )}
-          >
-            {isSelectedAllMessageFromCurrentUserSide && (
-              <Button
-                variant="outline"
-                onClick={() => deleteMessageForSelectedParticipants(true)}
-              >
-                Delete for everyone
-              </Button>
-            )}
-            <Button
-              variant="outline"
-              className={cn(
-                !isSelectedAllMessageFromCurrentUserSide &&
-                  "bg-primary/80 text-black/80 hover:bg-primary/90"
-              )}
-              onClick={() => deleteMessageForSelectedParticipants(false)}
-            >
-              Delete for me
-            </Button>
-
-            <Button variant="outline" onClick={toggleModal}>
-              Cancel
-            </Button>
-          </div>
-        </div>
+        {modelContent()}
       </Modal>
     </div>
   );
