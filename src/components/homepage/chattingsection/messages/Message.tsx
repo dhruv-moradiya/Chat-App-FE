@@ -122,7 +122,7 @@ const Message = ({
                 className="w-[24px] h-[20px] rounded-full bg-primary-foreground"
               >
                 <img
-                  src={reaction.emoji}
+                  src={reaction.emoji.replace("/src/assets", "")}
                   alt=""
                   className="w-full h-full mix-blend-lighten"
                 />

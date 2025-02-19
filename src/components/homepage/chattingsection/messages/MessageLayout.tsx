@@ -109,7 +109,7 @@ const MessageContent = ({
       <div className="absolute bottom-1 right-2 flex items-center justify-between w-[55px] text-justify hyphens-auto">
         <span
           className={cn(
-            "text-[10px] text-muted-foreground",
+            "w-full text-[10px] text-muted-foreground",
             isSender ? "text-white" : ""
           )}
         >

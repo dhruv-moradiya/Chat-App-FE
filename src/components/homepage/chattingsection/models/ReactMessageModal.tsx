@@ -112,7 +112,7 @@ const ReactMessageModal = ({
             )}
           >
             <img
-              src={_.path}
+              src={_.path.replace("/src/assets", "")}
               alt="Emoji"
               className="w-full h-full object-cover mix-blend-lighten"
             />
@@ -123,7 +123,10 @@ const ReactMessageModal = ({
       <div className="flex items-center gap-2">
         <div className="w-[40px] h-[40px]">
           <img
-            src={emojiData[currentSelectedElement].path}
+            src={emojiData[currentSelectedElement].path.replace(
+              "/src/assets",
+              ""
+            )}
             alt={emojiData[currentSelectedElement].slug}
             className="w-full h-full object-cover mix-blend-lighten"
           />
