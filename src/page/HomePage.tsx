@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useAppDispatch } from "@/store/store";
+import { emojiCategories } from "@/lib/constants";
 import { useSearchParams } from "react-router-dom";
+import { fetchEmojisByCategory } from "@/store/emoji/EmojiThunk";
 import { setActiveChat } from "@/store/activeChat/ActiveChatSlice";
 import { createConnection, disconnected } from "@/store/socket/SocketSlice";
 import { fetchActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
@@ -15,6 +17,11 @@ const HomePage = () => {
 
   useEffect(() => {
     dispatch(createConnection());
+
+    emojiCategories.forEach((category) => {
+      dispatch(fetchEmojisByCategory(category));
+    });
+
     return () => {
       dispatch(disconnected());
     };
@@ -40,8 +47,19 @@ const HomePage = () => {
 
   return (
     <div className="w-full h-full flex gap-2">
+      {/* <button onClick={() => dispatch(openModal({ type: "OTHER" }))}>
+        Open Model
+      </button> */}
       <Sidebar />
       <ChattingSection />
+      {/* <Modal
+        isOpen={open}
+        onClose={() => dispatch(closeModal({ type: "OTHER" }))}
+        closeOnOutsideClick={true}
+        backgroundStyle="blur"
+      >
+        <EmojiPicker />
+      </Modal> */}
     </div>
   );
 };

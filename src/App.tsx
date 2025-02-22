@@ -12,6 +12,7 @@ import { Button } from "./components/ui/button";
 import { useAppDispatch, useAppSelector } from "./store/store";
 import { isUserLoggedIn, logout } from "./store/auth/AuthSlice";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import ModalManager from "./components/common/modals/ModalManager";
 
 const Notification = ({
   message,
@@ -145,6 +146,7 @@ function App() {
           navigateUser={() => navigate("/signin")}
         />
       )}
+      <ModalManager />
     </>
   );
 }

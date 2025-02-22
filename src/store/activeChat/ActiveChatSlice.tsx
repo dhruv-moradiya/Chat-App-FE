@@ -43,6 +43,7 @@ const updateMessageReactions = (
   messageId: string,
   emoji: string
 ) => {
+  console.log("messageId :>> ", messageId);
   return messages.map((message) =>
     message._id === messageId
       ? {

@@ -35,13 +35,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           />
           <label
             htmlFor={uniqueId}
-            className={`absolute left-10 transition-all px-2 rounded-lg text-sm
-  ${
-    props.value
-      ? "-top-2.5 text-sm text-white bg-secondary"
-      : "top-3.5 text-lg text-gray-400"
-  } 
-  peer-focus:-top-2 peer-focus:text-sm peer-focus:text-white peer-focus:bg-secondary`}
+            className={cn(
+              "absolute transition-all px-2 rounded-lg",
+              "peer-focus:-top-2 peer-focus:text-sm peer-focus:text-white peer-focus:bg-secondary",
+              props.value
+                ? "-top-2.5 text-sm text-white bg-secondary"
+                : "top-3.5 text-sm text-gray-400",
+              Icon ? "left-10" : "left-5"
+            )}
           >
             {label}
           </label>

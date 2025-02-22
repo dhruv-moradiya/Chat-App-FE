@@ -1,30 +1,28 @@
-import * as React from "react"
-import * as TooltipPrimitive from "@radix-ui/react-tooltip"
+interface Props {
+  text: string;
+  position?: "top" | "bottom" | "left" | "right";
+  children: React.ReactNode;
+}
 
-import { cn } from "@/lib/utils"
+const Tooltip = ({ text, position = "top", children }: Props) => {
+  return (
+    <div className="relative inline-block group">
+      {children}
+      <div
+        className={`absolute whitespace-nowrap bg-black text-white text-[12px] p-1 px-3 rounded-xl shadow-lg opacity-0 group-hover:opacity-100 transition-transform duration-200 ease-out pointer-events-auto ${
+          position === "top"
+            ? "bottom-full mb-2 left-1/2 transform -translate-x-1/2 translate-y-2 group-hover:translate-y-0"
+            : position === "bottom"
+            ? "top-full mt-2 left-1/2 transform -translate-x-1/2 -translate-y-2 group-hover:translate-y-0"
+            : position === "left"
+            ? "right-full mr-2 top-1/2 transform -translate-y-1/2 translate-x-2 group-hover:translate-x-0"
+            : "left-full ml-2 top-1/2 transform -translate-y-1/2 -translate-x-2 group-hover:translate-x-0"
+        }`}
+      >
+        {text}
+      </div>
+    </div>
+  );
+};
 
-const TooltipProvider = TooltipPrimitive.Provider
-
-const Tooltip = TooltipPrimitive.Root
-
-const TooltipTrigger = TooltipPrimitive.Trigger
-
-const TooltipContent = React.forwardRef<
-  React.ElementRef<typeof TooltipPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
->(({ className, sideOffset = 4, ...props }, ref) => (
-  <TooltipPrimitive.Portal>
-    <TooltipPrimitive.Content
-      ref={ref}
-      sideOffset={sideOffset}
-      className={cn(
-        "z-50 overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-        className
-      )}
-      {...props}
-    />
-  </TooltipPrimitive.Portal>
-))
-TooltipContent.displayName = TooltipPrimitive.Content.displayName
-
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+export default Tooltip;

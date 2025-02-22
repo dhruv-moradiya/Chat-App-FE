@@ -69,4 +69,24 @@ const ActionType = Object.freeze({
   ADD_REACTION: "activeChat/addReaction",
 });
 
-export { ChatEventEnum, ActionType };
+const emojiCategories = [
+  "smileys-and-people",
+  "animals-and-nature",
+  "food-and-drink",
+  "travel-and-places",
+  "activities",
+  "objects",
+  "symbols",
+];
+
+const ModalType = Object.freeze({
+  REACT_MODEL: "react",
+  DELETE_MODEL: "delete",
+  CREATE_GROUP_CHAT_MODEL: "createGroupChat",
+  SEARCH_USERS_MODEL: "searchUsers",
+  CHECK_FRIEND_REQUEST_MODEL: "checkFriendRequest",
+  PROFILE_MODEL: "profile",
+  SETTING_MODEL: "setting",
+});
+
+export { ChatEventEnum, ActionType, emojiCategories, ModalType };

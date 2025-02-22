@@ -19,6 +19,8 @@ const ReactMessageModal = ({
   const elementsRef = useRef<(HTMLDivElement | null)[]>([]);
   const [currentSelectedElement, setCurrentSelectedElement] = useState(0);
 
+  const some = useAppSelector((state) => state.emoji.categories);
+  console.log("some :>> ", some);
   const open = useAppSelector((state) => state.chatDetail.isModelOpen);
 
   useEffect(() => {
@@ -107,7 +109,7 @@ const ReactMessageModal = ({
             key={index}
             ref={(el) => (elementsRef.current[index] = el)}
             className={cn(
-              "cursor-pointer flex justify-center rounded-lg transition-all duration-200 ring-2 ring-transparent hover:ring-primary hover:scale-100 text-sm p-1 w-[40px] h-[40px] overflow-hidden mix-blend-lighten",
+              "cursor-pointer flex justify-center rounded-lg transition-all duration-200 ring-2 ring-transparent hover:ring-primary hover:scale-100 text-sm p-1 w-[40px] h-[40px] overflow-hidden mix-blend-lighten border border-primary",
               index === currentSelectedElement && "scale-110 ring-primary"
             )}
           >

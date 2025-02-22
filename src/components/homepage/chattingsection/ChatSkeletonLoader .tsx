@@ -20,7 +20,7 @@ const SkeletonLoader = ({
             index % 2 === 0 ? "self-end" : "self-start"
           } rounded-lg`}
           style={{
-            width: generateRandomWidth(100, 450), // Random width between 250px and 300px
+            width: generateRandomWidth(100, 450),
           }}
         />
       ))}

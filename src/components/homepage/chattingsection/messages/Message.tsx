@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { ChatMessage } from "@/types/ApiResponse.types";
@@ -6,11 +5,12 @@ import {
   MessageUserInteractionType,
   SelectedMessagesForInteraction,
 } from "@/types/Common.types";
+import { useState } from "react";
 import { AttachmentLoader, MessageBox, SenderAvatar } from "./MessageLayout";
 
+import { ModalType } from "@/lib/constants";
+import { openModal } from "@/store/chatDetailSidebar/ChatDetailSlice";
 import RenderAttachments from "./RenderAttachments";
-import Modal from "@/components/ui/Modal";
-import { openModel } from "@/store/chatDetailSidebar/ChatDetailSlice";
 
 interface MessageProps extends ChatMessage {
   isSeen: boolean;
@@ -68,7 +68,12 @@ const Message = ({
           type: "React",
           messages: [{ _id, content }],
         });
-        dispatch(openModel());
+        dispatch(
+          openModal({
+            type: ModalType.REACT_MODEL,
+            props: { selectedMessage: [{ _id, content }] },
+          })
+        );
         break;
       case "Star":
         break;
@@ -115,17 +120,17 @@ const Message = ({
           isCurrentChatIsGroupChat={isCurrentChatIsGroupChat}
         />
         {reactions.length ? (
-          <div className="w-fit absolute -bottom-[18px] right-4 bg-zinc-800 rounded-full p-[1px] flex items-center gap-[1px]">
+          <div className="w-fit absolute -bottom-[24px] right-4 bg-zinc-800 rounded-full p-[1px] flex items-center gap-[1px] cursor-pointer">
             {reactions.map((reaction, index) => (
               <div
                 key={index}
-                className="w-[24px] h-[20px] rounded-full bg-primary-foreground"
+                className="rounded-full bg-primary-foreground flex items-center justify-center"
               >
-                <img
-                  src={reaction.emoji.replace("/src/assets", "")}
-                  alt=""
-                  className="w-full h-full mix-blend-lighten"
-                />
+                <p className="text-[18px]">
+                  {String.fromCodePoint(
+                    parseInt(reaction.emoji.replace("U+", ""), 16)
+                  )}
+                </p>
               </div>
             ))}
           </div>

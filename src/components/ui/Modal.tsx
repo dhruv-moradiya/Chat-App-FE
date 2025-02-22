@@ -1,23 +1,25 @@
 import React, { ReactNode } from "react";
+import { useAppDispatch } from "@/store/store";
+import { closeModal } from "@/store/chatDetailSidebar/ChatDetailSlice";
 
 interface ModalProps {
   isOpen: boolean;
-  onClose: () => void;
   closeOnOutsideClick?: boolean;
-  backgroundStyle?: "transparent" | "blur"; // Prop for background style
+  backgroundStyle?: "transparent" | "blur";
   children: ReactNode;
 }
 
 const Modal: React.FC<ModalProps> = ({
   isOpen,
-  onClose,
   closeOnOutsideClick = true,
   backgroundStyle = "blur",
   children,
 }) => {
+  const dispatch = useAppDispatch();
+
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (closeOnOutsideClick && e.target === e.currentTarget) {
-      onClose();
+      dispatch(closeModal());
     }
   };
 

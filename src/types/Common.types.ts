@@ -1,3 +1,5 @@
+import { ModalType } from "@/lib/constants";
+
 type MessageUserInteractionType = "Reply" | "React" | "Star" | "Pin" | "Delete";
 
 type InteractedMessage = {
@@ -10,8 +12,11 @@ type SelectedMessagesForInteraction = {
   type: MessageUserInteractionType;
 };
 
+type ModalTypeValue = (typeof ModalType)[keyof typeof ModalType];
+
 export type {
   MessageUserInteractionType,
   InteractedMessage,
   SelectedMessagesForInteraction,
+  ModalTypeValue,
 };

@@ -1,38 +1,36 @@
-import { deleteMessageForSelectedParticipantsApi } from "@/api";
-import CustomInput from "@/components/common/customInput/CustomInput";
-import Modal from "@/components/ui/Modal";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Trash2, X } from "lucide-react";
 import { cn, isNewDate } from "@/lib/utils";
-import { fetchOldActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
-import {
-  closeModel,
-  openModel,
-} from "@/store/chatDetailSidebar/ChatDetailSlice";
+import { ModalType } from "@/lib/constants";
+import { useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/store/store";
+import { fetchOldActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
+import { openModal } from "@/store/chatDetailSidebar/ChatDetailSlice";
 import {
   InteractedMessage,
   SelectedMessagesForInteraction,
 } from "@/types/Common.types";
-import { AxiosError } from "axios";
-import { Trash2, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import SkeletonLoader from "./ChatSkeletonLoader ";
 import Header from "./Header";
-import MessageContainer from "./messages/MessageContainer";
-import { DeleteMessageModalForSelectedParticipants } from "./models/DeleteMessageModalForSelectedParticipants";
-import { ReactMessageModal } from "./models/ReactMessageModal";
 import NoChatSelected from "./NoChatSelected";
+import SkeletonLoader from "./ChatSkeletonLoader ";
+import MessageContainer from "./messages/MessageContainer";
+import CustomInput from "@/components/common/customInput/CustomInput";
 
 const ChattingSection = () => {
   const dispatch = useAppDispatch();
   const params = useSearchParams();
   const paramValue = params[0].get("chatId");
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
+  const chatList = useAppSelector((state) => state.myChats.myChats);
+  const { user } = useAppSelector((state) => state.auth);
+  const { activeChatId, activeChatDetails, isLoading, isLoadingOldMessages } =
+    useAppSelector((state) => state.activeChat);
+  const isCurrentChatIsGroupChat =
+    chatList.find((chat) => chat._id === activeChatId)?.isGroup ?? false;
 
   // Message selection for delete, reply etc
   const [selectedMessage, setSelectedMessage] =
     useState<SelectedMessagesForInteraction | null>(null);
-
   // For deleting multiple message selection
   const [isCheckBoxForDelete, setIsCheckBoxForDelete] = useState(false);
   // For selected message is current user's message
@@ -40,22 +38,6 @@ const ChattingSection = () => {
     isSelectedAllMessageFromCurrentUserSide,
     setIsSelectedAllMessageFromCurrentUserSide,
   ] = useState(false);
-
-  const { user } = useAppSelector((state) => state.auth);
-
-  const { activeChatId, activeChatDetails, isLoading, isLoadingOldMessages } =
-    useAppSelector((state) => state.activeChat);
-
-  const chatList = useAppSelector((state) => state.myChats.myChats);
-
-  const isModelOpen = useAppSelector((state) => state.chatDetail.isModelOpen);
-
-  const isCurrentChatIsGroupChat =
-    chatList.find((chat) => chat._id === activeChatId)?.isGroup ?? false;
-
-  const closeModelFun = () => {
-    dispatch(closeModel());
-  };
 
   const handleScroll = useCallback(() => {
     const container = chatContainerRef.current;
@@ -151,33 +133,6 @@ const ChattingSection = () => {
     }
   };
 
-  const deleteMessageForSelectedParticipants = async (
-    isDeletedForAll: boolean
-  ) => {
-    const messageIds = selectedMessage
-      ? selectedMessage.messages.map((m) => m._id)
-      : [];
-
-    try {
-      await deleteMessageForSelectedParticipantsApi(
-        messageIds,
-        isDeletedForAll
-      );
-
-      setSelectedMessage(null);
-      closeModelFun();
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        console.log("error.response?.data :>> ", error.response?.data.message);
-      } else {
-        console.log(
-          "An unknown error occurred while accepting friend request :>> ",
-          error
-        );
-      }
-    }
-  };
-
   const renderMessages = useCallback(() => {
     if (isLoading) return <SkeletonLoader numberOfSkeletons={20} />;
 
@@ -233,29 +188,6 @@ const ChattingSection = () => {
 
   if (!paramValue) return <NoChatSelected />;
 
-  const modelContent = () => {
-    switch (selectedMessage?.type) {
-      case "Delete":
-        return (
-          <DeleteMessageModalForSelectedParticipants
-            toggleModal={closeModelFun}
-            deleteMessageForSelectedParticipants={
-              deleteMessageForSelectedParticipants
-            }
-            isSelectedAllMessageFromCurrentUserSide={
-              isSelectedAllMessageFromCurrentUserSide
-            }
-          />
-        );
-
-      case "React":
-        return <ReactMessageModal selectedMessage={selectedMessage} />;
-
-      default:
-        break;
-    }
-  };
-
   return (
     <div className="flex flex-col w-full md:w-[calc(100%-384px)] relative mb-5">
       <Header />
@@ -286,17 +218,24 @@ const ChattingSection = () => {
           {selectedMessage ? selectedMessage.messages.length : 0} Message
           Selected
         </p>
-        <Trash2 size={18} onClick={() => dispatch(openModel())} />
+        <Trash2
+          size={18}
+          onClick={() =>
+            dispatch(
+              openModal({
+                type: ModalType.DELETE_MODEL,
+                props: {
+                  selectedMessage: selectedMessage?.messages.map(
+                    (msg) => msg._id
+                  ),
+                  isSelectedAllMessageFromCurrentUserSide,
+                  setSelectedMessage,
+                },
+              })
+            )
+          }
+        />
       </div>
-
-      <Modal
-        isOpen={isModelOpen}
-        onClose={closeModelFun}
-        closeOnOutsideClick={true}
-        backgroundStyle="blur"
-      >
-        {modelContent()}
-      </Modal>
     </div>
   );
 };
