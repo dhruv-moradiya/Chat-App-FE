@@ -15,16 +15,18 @@ const ChatEntry = ({ chat }: ChatEntryProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
-  const { _id: userId } = useAppSelector((state) => state.auth.user);
+  const userId = user ? user._id : "";
 
   const [searchParams] = useSearchParams();
 
   const friend = chat.participants.find(
-    (participant) => participant._id !== user._id
+    (participant) => user && participant._id !== user._id
   );
   const handleCurrentChat = () => {
     navigate(`/?chatId=${chat._id}`);
-    dispatch(clearUnreadMessageCount({ chatId: chat._id, userId: user._id }));
+    if (user) {
+      dispatch(clearUnreadMessageCount({ chatId: chat._id, userId: user._id }));
+    }
   };
 
   return (

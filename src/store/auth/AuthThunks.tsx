@@ -15,7 +15,6 @@ export const loginUserThunk = createAsyncThunk(
   async (data: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const response: User = await loginUser(data);
-      console.log("response :>> ", response);
       return response;
     } catch (error) {
       if (error instanceof AxiosError) {

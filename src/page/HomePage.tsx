@@ -18,9 +18,9 @@ const HomePage = () => {
   useEffect(() => {
     dispatch(createConnection());
 
-    emojiCategories.forEach((category) => {
-      dispatch(fetchEmojisByCategory(category));
-    });
+    // emojiCategories.forEach((category) => {
+    //   dispatch(fetchEmojisByCategory(category));
+    // });
 
     return () => {
       dispatch(disconnected());
