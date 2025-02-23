@@ -1,11 +1,11 @@
 import { showErrorToast } from "@/components/common/ToastProvider";
 import { createSlice } from "@reduxjs/toolkit";
 import { loginUserThunk, registerUserThunk } from "./AuthThunks";
+import { User } from "@/types/Auth.types";
 
 interface AuthState {
   isAuthenticated: boolean;
-
-  user: any;
+  user: User | null;
   isLoading: boolean;
   error: string | null;
 }
@@ -13,7 +13,7 @@ interface AuthState {
 const initialState: AuthState = {
   isAuthenticated: false,
   user: null,
-  isLoading: true,
+  isLoading: false,
   error: null,
 };
 
@@ -21,22 +21,15 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    isUserLoggedIn(state, action) {
-      if (action.payload.token) {
-        state.isAuthenticated = true;
-        state.user = action.payload.user;
-      } else {
-        state.isAuthenticated = false;
-        state.user = action.payload.user;
-      }
-      state.isLoading = false;
-    },
-
     logout(state) {
       state.isAuthenticated = false;
       state.user = null;
       state.isLoading = false;
       state.error = null;
+    },
+
+    setUserData(state, action) {
+      state.user = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -49,7 +42,6 @@ const authSlice = createSlice({
       .addCase(loginUserThunk.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = true;
-        state.user = action.payload;
 
         if (action.payload.accessToken) {
           localStorage.setItem("token", action.payload.accessToken);
@@ -71,9 +63,8 @@ const authSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(registerUserThunk.fulfilled, (state, action) => {
+      .addCase(registerUserThunk.fulfilled, (state) => {
         state.isLoading = false;
-        state.user = action.payload;
         window.location.href = "/signin";
       })
       .addCase(registerUserThunk.rejected, (state, action) => {
@@ -93,5 +84,5 @@ const authSlice = createSlice({
 });
 
 const authReducer = authSlice.reducer;
-export const { logout, isUserLoggedIn } = authSlice.actions;
+export const { logout, setUserData } = authSlice.actions;
 export { authReducer };

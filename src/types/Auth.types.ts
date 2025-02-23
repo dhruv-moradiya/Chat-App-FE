@@ -1,5 +1,19 @@
 import { ApiResponseBase } from "./ApiResponse.types";
 
+type User = {
+  _id: string;
+  username: string;
+  email: string;
+  profilePicture: string;
+  createdAt: string;
+  updatedAt: string;
+  refreshToken?: string;
+  accessTokenIat: number;
+  accessTokenExp: number;
+  refreshTokenIat: number;
+  refreshTokenExp: number;
+};
+
 type UserAuth = {
   _id: string;
   username: string;
@@ -20,4 +34,4 @@ interface LoginUserResponse extends ApiResponseBase {
   };
 }
 
-export type { UserAuth, RegisterUserResponse, LoginUserResponse };
+export type { UserAuth, User, RegisterUserResponse, LoginUserResponse };

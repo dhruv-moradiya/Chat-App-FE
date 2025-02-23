@@ -14,7 +14,7 @@ import axios, { AxiosResponse } from "axios";
 import { LoginUserResponse, RegisterUserResponse } from "@/types/Auth.types";
 
 // Create an instance of axios with a base URL, credentials, and timeout.
-const apiClient = axios.create({
+export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_APP_SERVER_URL,
   withCredentials: true,
   timeout: 12000,
@@ -29,6 +29,25 @@ apiClient.interceptors.request.use(
     return config;
   },
   function (error) {
+    return Promise.reject(error);
+  }
+);
+
+// Add an interceptor to the response to handle the error.
+apiClient.interceptors.response.use(
+  function (response) {
+    return response;
+  },
+  async function (error) {
+    if (error.response?.status === 403) {
+      localStorage.removeItem("token");
+      const response = await apiClient.get("/user/refresh-token");
+      localStorage.setItem("token", response.data.data.accessToken);
+      error.config.headers[
+        "Authorization"
+      ] = `Bearer ${response.data.data.accessToken}`;
+      return apiClient.request(error.config);
+    }
     return Promise.reject(error);
   }
 );
@@ -57,6 +76,16 @@ const loginUser = async (data: { email: string; password: string }) => {
       "/user/login-user",
       data
     );
+    return response.data.data.user;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// GET CURRENT USER API
+const getCurrentUser = async () => {
+  try {
+    const response = await apiClient.get("/user/current-user");
     return response.data.data.user;
   } catch (error) {
     throw error;
@@ -107,7 +136,6 @@ const acceptFriendRequest = async (_id: string) => {
       await apiClient.post("/friendrequest/accept-friend-request", {
         friendRequestId: _id,
       });
-    console.log("response :>> ", response);
     return response.data.data;
   } catch (error) {
     throw error;
@@ -259,6 +287,7 @@ const deleteMessageForSelectedParticipantsApi = async (
 };
 
 export {
+  getCurrentUser,
   acceptFriendRequest,
   getAllChats,
   getAllFriendRequests,

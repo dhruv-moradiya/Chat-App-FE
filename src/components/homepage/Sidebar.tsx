@@ -84,8 +84,9 @@ const LoaderForChatEntry = () => {
       <div>
         <Skeleton className="w-12 h-12 rounded-lg" />
       </div>
-      <div className="w-[100px]">
-        <Skeleton className="flex-1 w-[100px] rounded-lg" />
+      <div className="w-full h-12 rounded-lg flex flex-col items-center gap-2">
+        <Skeleton className="flex-1 h-4 w-full rounded-lg" />
+        <Skeleton className="flex-1 h-4 w-full rounded-lg" />
       </div>
     </div>
   );

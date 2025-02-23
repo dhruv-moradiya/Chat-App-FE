@@ -56,7 +56,12 @@ const FriendRequestsList = ({
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
   if (isLoading && !error) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-20 text-gray-500">
+        <Loader className="animate-spin" size={18} />
+        <p className="ml-2 text-sm">Loading...</p>
+      </div>
+    );
   }
 
   if (error) {
