@@ -31,7 +31,7 @@ const Header = () => {
 
       <Tooltip text="Create Group Chat" position="bottom">
         <Button
-          className="hidden md:block bg- border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
+          className="hidden md:block bg-transparent border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
           onClick={() =>
             dispatch(openModal({ type: ModalType.CREATE_GROUP_CHAT_MODEL }))
           }
@@ -42,7 +42,7 @@ const Header = () => {
 
       <Tooltip text="Search Users" position="bottom">
         <Button
-          className="hidden md:block bg- border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
+          className="hidden md:block bg-transparent border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
           onClick={() =>
             dispatch(openModal({ type: ModalType.SEARCH_USERS_MODEL }))
           }
@@ -53,7 +53,7 @@ const Header = () => {
 
       <Tooltip text="Check Friend Requests" position="bottom">
         <Button
-          className="hidden md:block bg- border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
+          className="hidden md:block bg-transparent border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
           onClick={() =>
             dispatch(openModal({ type: ModalType.CHECK_FRIEND_REQUEST_MODEL }))
           }
