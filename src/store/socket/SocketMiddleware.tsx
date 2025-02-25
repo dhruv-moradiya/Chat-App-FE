@@ -204,6 +204,14 @@ const socketMiddleware: Middleware = (storeAPI) => {
           socket.emit(ChatEventEnum.MESSAGE_SEND_EVENT, {
             messageData: action.payload,
           });
+
+          const domParser = new DOMParser();
+
+          const htmlString = String(action.payload.content);
+
+          const doc = domParser.parseFromString(htmlString, "text/html");
+
+          const firstParagraph = doc.getElementsByClassName("chip")[0];
         }
         break;
 

@@ -89,7 +89,8 @@ const MessageContent = ({
   deletedBy,
   isDeletedForAll,
 }: MessageContentProps) => {
-  const userId = useAppSelector((state) => state.auth.user._id);
+  const user = useAppSelector((state) => state.auth.user);
+  const userId = user ? user._id : "";
   const isDeleted = deletedBy.includes(userId) || isDeletedForAll;
   const deletedMessageText =
     userId === sender._id
@@ -97,16 +98,16 @@ const MessageContent = ({
       : `${capitalizeFirstLetter(sender.username)} deleted this message`;
 
   return (
-    <div className="flex items-start gap-3 pr-[65px] px-2">
+    <div className="flex items-start gap-3 pr-[50px] px-2">
       <p
-        className="text-sm break-words whitespace-normal"
+        className="text-sm break-words whitespace-normal flex items-center flex-wrap gap-1"
         style={{ wordBreak: "break-word" }}
         dangerouslySetInnerHTML={{
           __html: isDeleted ? deletedMessageText : inputValue,
         }}
       />
 
-      <div className="absolute bottom-1 right-2 flex items-center justify-between w-[55px] text-justify hyphens-auto">
+      <div className="absolute bottom-0 right-2 flex items-center justify-between w-[60px] text-justify hyphens-auto">
         <span
           className={cn(
             "w-full text-[10px] text-muted-foreground",
@@ -146,11 +147,11 @@ const MessageBox = ({
   isDeletedForAll,
   deletedBy,
 }: MessageBoxProps) => {
-  const { _id: userId, username } = useAppSelector((state) => state.auth.user);
+  const { _id: userId, username } = useAppSelector((state) => state.auth.user)!;
   return (
     <div
       className={cn(
-        "relative w-fit max-w-sm px-1 py-2 pr-[70px]1 rounded-[10px] shadow-md group space-y-1",
+        "relative w-fit max-w-sm px-1 py-2 pb-4 rounded-[10px] shadow-md group space-y-1",
         isSender
           ? "bg-primary/40 text-white rounded-tr-none"
           : "bg-muted-foreground/10 rounded-tl-none",

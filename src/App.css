@@ -154,10 +154,40 @@
 
 /* CHIP */
 .chip {
-  background-color: #0e0074;
-  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #c3d4ff;
+  background: #1e293b;
+  border: 1px solid #6b8bfd50;
   font-size: 14px;
-  padding: 2px 6px 4px 6px;
-  border-radius: 5px;
+  padding: 2.5px 12px;
+  padding-bottom: 3.5px;
+  border-radius: 16px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   cursor: pointer;
+  box-shadow: inset 0px 0px 2px #6b8bfd50;
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+}
+
+.chip:hover {
+  background: #334155;
+  box-shadow: inset 0px 0px 4px #6b8bfd50;
+}
+
+.chip:active {
+  background: #475569;
+  box-shadow: inset 0px 0px 6px #6b8bfd50;
+}
+
+/* Optional: Close Icon */
+.chip .icon {
+  margin-left: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  color: #8ea2d9;
+}
+.chip .icon:hover {
+  color: #ffffff;
 }

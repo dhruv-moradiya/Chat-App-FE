@@ -3,7 +3,7 @@ import { useAppSelector } from "@/store/store";
 import Tooltip from "@/components/ui/tooltip";
 
 const UserIcon = () => {
-  const currentUser = useAppSelector((state) => state.auth.user);
+  const currentUser = useAppSelector((state) => state.auth.user)!;
 
   return (
     <Tooltip text={currentUser.username} position="bottom">

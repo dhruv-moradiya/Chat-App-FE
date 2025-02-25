@@ -51,7 +51,7 @@ const Notifications = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <div className="relative hidden md:block border-[1px] border-slate-800 hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl p-2 px-4">
+        <div className="relative hidden md:block border-[1px] border-slate-800 hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl p-2 px-4 outline-none">
           <Bell className="text-white" size={16} />
           <Badge className="rounded-full p-0 w-5 h-5 flex items-center justify-center absolute -top-3 -right-2">
             {notifications.length}

@@ -8,6 +8,7 @@ import { SelectedMessagesForInteraction } from "@/types/Common.types";
 import { sendMessage } from "@/store/activeChat/ActiveChatSlice";
 import { sendAttachments } from "@/api";
 import { AxiosError } from "axios";
+import { UserPreview } from "@/types/ApiResponse.types";
 
 function CustomInput({
   selectedMessage,
@@ -18,6 +19,7 @@ function CustomInput({
     React.SetStateAction<SelectedMessagesForInteraction | null>
   >;
 }) {
+  const dispatch = useAppDispatch();
   const divRef = useRef<HTMLDivElement | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -27,6 +29,7 @@ function CustomInput({
   const { activeChatDetails, activeChatId } = useAppSelector(
     (state) => state.activeChat
   );
+  const { user } = useAppSelector((state) => state.auth);
 
   const messageDetails = activeChatDetails?.messages.find(
     (message) =>
@@ -46,10 +49,30 @@ function CustomInput({
   const [cursorPosition, setCursorPosition] = useState<Range | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
-  const [users] = useState(["John Doe", "Jane Smith", "Alice Johnson"]);
+  const [users, setUsers] = useState<UserPreview[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isUserTyping, setIsUserTyping] = useState(false);
   const [fileInputValue, setFileInputValue] = useState<File[] | null>(null);
+
+  useEffect(() => {
+    const chat = myChats.find((chat) => chat._id === paramValue);
+    if (!chat) return;
+
+    const userData = chat.participants.filter(
+      (p) => p.username !== user!.username
+    );
+
+    if (chat.isGroup) {
+      userData.unshift({
+        _id: "all",
+        username: "all",
+        email: "all",
+        profilePicture: "",
+      });
+    }
+
+    setUsers(userData);
+  }, [paramValue, myChats]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -87,12 +110,14 @@ function CustomInput({
       setShowPopup(false);
     }
   };
+
   const handleCursorChange = () => {
     const selection = window.getSelection();
     if (selection && selection.rangeCount > 0) {
       setCursorPosition(selection.getRangeAt(0));
     }
   };
+
   const handleItemSelect = (name: string) => {
     if (!cursorPosition || !divRef.current) return;
     const range = cursorPosition;
@@ -126,6 +151,7 @@ function CustomInput({
     setShowPopup(false);
     handleCursorChange();
   };
+
   const handleKeyDown = (e: KeyboardEvent) => {
     if (showPopup) {
       if (e.key === "ArrowDown") {
@@ -137,13 +163,14 @@ function CustomInput({
       } else if (e.key === "Enter") {
         e.preventDefault();
         if (selectedIndex !== -1) {
-          handleItemSelect(users[selectedIndex]);
+          handleItemSelect(users[selectedIndex].username);
         }
       } else if (e.key === "Escape") {
         setShowPopup(false);
       }
     }
   };
+
   const handleClickOutside = (e: MouseEvent) => {
     if (
       popupRef.current &&
@@ -153,8 +180,6 @@ function CustomInput({
       setShowPopup(false);
     }
   };
-
-  const dispatch = useAppDispatch();
 
   const lastMessageId = useMemo(() => {
     return activeChatDetails?.messages?.[activeChatDetails.messages.length - 1]
@@ -325,32 +350,32 @@ function CustomInput({
         {showPopup && (
           <div
             ref={popupRef}
+            className="bg-secondary fixed p-3 rounded-lg space-y-2 shadow-lg transition-all duration-200 ease-in-out animate-fade-in"
             style={{
-              position: "fixed",
-              // top: popupPosition.top,
               bottom: window.screen.availHeight - popupPosition.top - 50,
               left: popupPosition.left,
-              background: "black",
-              boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
               zIndex: 1000,
-              padding: "10px",
-              borderRadius: "4px",
             }}
           >
             {users.map((item, index) => (
               <div
-                key={item}
-                onClick={() => handleItemSelect(item)}
-                style={{
-                  padding: "5px",
-                  cursor: "pointer",
-                  borderRadius: "4px",
-                  paddingLeft: "10px",
-                  backgroundColor:
-                    selectedIndex === index ? "#2b2b2b" : "black ",
-                }}
+                key={item._id}
+                className={cn(
+                  "w-full p-1 px-3 rounded-lg cursor-pointer flex items-center gap-3 hover:bg-primary/50 transition-all duration-200",
+                  selectedIndex === index ? "bg-primary/50" : ""
+                )}
+                onClick={() => handleItemSelect(item.username)}
               >
-                {item}
+                <div className="w-6 h-6 rounded-lg overflow-hidden bg-gray-200">
+                  {item.username !== "all" && (
+                    <img
+                      src={item.profilePicture}
+                      alt={item.username}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                </div>
+                <p>{item.username}</p>
               </div>
             ))}
           </div>
@@ -360,6 +385,7 @@ function CustomInput({
   );
 }
 
+// -------------------------- AudioRecorder.tsx --------------------------
 const AudioRecorder = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);

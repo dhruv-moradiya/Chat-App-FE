@@ -69,8 +69,10 @@ function MessageContainer({
 }
 
 const MessageDate = ({ date }: { date: string }) => (
-  <div className="w-full flex justify-center text-sm text-muted-foreground">
-    <p>{moment(date).format("DD MMM YYYY")}</p>
+  <div className="w-full flex justify-center text-gray-400 text-sm">
+    <p className="border-[1px] border-primary/20 p-1 px-3 rounded-lg shadow-sm shadow-primary-foreground">
+      {moment(date).format("DD MMM YYYY")}
+    </p>
   </div>
 );
 
