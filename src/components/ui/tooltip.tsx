@@ -1,12 +1,15 @@
+import { cn } from "@/lib/utils";
+
 interface Props {
   text: string;
   position?: "top" | "bottom" | "left" | "right";
   children: React.ReactNode;
+  className?: string;
 }
 
-const Tooltip = ({ text, position = "top", children }: Props) => {
+const Tooltip = ({ text, position = "top", children, className }: Props) => {
   return (
-    <div className="relative inline-block group">
+    <div className={cn("relative inline-block group", className)}>
       {children}
       <div
         className={`absolute whitespace-nowrap bg-black text-white text-[12px] p-1 px-3 rounded-xl shadow-lg opacity-0 group-hover:opacity-100 transition-transform duration-200 ease-out pointer-events-auto ${

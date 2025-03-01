@@ -30,6 +30,7 @@ interface newMessageActionType {
   content: string;
   replyTo?: string;
   isAttachment?: boolean;
+  mentionedUsers?: string[];
 }
 
 interface addReactionType {

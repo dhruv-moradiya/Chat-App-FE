@@ -97,15 +97,16 @@ const ChattingSection = () => {
         };
       });
 
-    const allSenderIsCurrentUser = selectedMessageSenders
-      ? selectedMessageSenders.every((sender) => sender?._id === user._id)
-      : false;
+    const allSenderIsCurrentUser =
+      selectedMessageSenders && user
+        ? selectedMessageSenders.every((sender) => sender?._id === user._id)
+        : false;
 
     setIsSelectedAllMessageFromCurrentUserSide(
       allSenderIsCurrentUser && !!hasDeleteType
     );
     setIsCheckBoxForDelete(!!hasDeleteType);
-  }, [selectedMessage, user._id]);
+  }, [selectedMessage, user?._id]);
 
   const toggleCheckBox = (id: string, content: string) => {
     // If message is already selected for delete than remove it

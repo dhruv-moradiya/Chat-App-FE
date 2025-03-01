@@ -39,7 +39,9 @@ const Sidebar = () => {
       defaultValue="all"
       className={cn(
         "fixed h-full top-12 left-14 z-10 md:static md:w-96 md:flex flex-col gap-1 transition-all duration-150",
-        isChatListSideBarOpen ? "translate-x-0" : "translate-x-[-150%]",
+        isChatListSideBarOpen
+          ? "translate-x-0 w-full bg-primary-foreground w-60"
+          : "translate-x-[-150%]",
         "md:translate-x-0"
       )}
     >

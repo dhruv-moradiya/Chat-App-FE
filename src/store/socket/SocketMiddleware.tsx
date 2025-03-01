@@ -4,7 +4,10 @@ import { io, Socket } from "socket.io-client";
 import { newFriendRequestReceive } from "../friendRequest/FriendRequestSlice";
 import { FriendRequestData } from "@/types/ApiResponse.types";
 import { addNewChat, updateUnreadMessageCount } from "../myChats/ChatSlice";
-import { showNotificationToast } from "@/components/common/ToastProvider";
+import {
+  showInfoToast,
+  showNotificationToast,
+} from "@/components/common/ToastProvider";
 import { playNotificationSound } from "@/lib/utils";
 import {
   addReaction,
@@ -147,6 +150,12 @@ const socketMiddleware: Middleware = (storeAPI) => {
             }
           );
 
+          socket.on(ChatEventEnum.NOTIFICATION_EVENT, (data) => {
+            console.log("NOTIFICATION_EVENT :>> ", data);
+            showInfoToast(data.content);
+            // playNotificationSound();
+          });
+
           // Listen for socket disconnection
           socket.on(ChatEventEnum.DISCONNECT_EVENT, () => {
             console.log("💔 Socket disconnected");
@@ -204,14 +213,6 @@ const socketMiddleware: Middleware = (storeAPI) => {
           socket.emit(ChatEventEnum.MESSAGE_SEND_EVENT, {
             messageData: action.payload,
           });
-
-          const domParser = new DOMParser();
-
-          const htmlString = String(action.payload.content);
-
-          const doc = domParser.parseFromString(htmlString, "text/html");
-
-          const firstParagraph = doc.getElementsByClassName("chip")[0];
         }
         break;
 

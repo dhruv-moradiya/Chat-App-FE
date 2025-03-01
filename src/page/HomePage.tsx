@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useAppDispatch } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import { emojiCategories } from "@/lib/constants";
 import { useSearchParams } from "react-router-dom";
 import { fetchEmojisByCategory } from "@/store/emoji/EmojiThunk";
@@ -14,6 +14,9 @@ const HomePage = () => {
   const [searchParams] = useSearchParams();
   const paramValue = searchParams.get("chatId");
   const prevParamValue = useRef<string | null>(null);
+
+  const ID = useAppSelector((state) => state.auth.user?._id);
+  console.log("ID :>> ", ID);
 
   useEffect(() => {
     dispatch(createConnection());

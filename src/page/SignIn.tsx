@@ -97,7 +97,7 @@ const SignIn = () => {
       /> */}
       <div className="absolute flex flex-col gap-6 items-center justify-center p-4 rounded-xl shadow-lg">
         <div className="flex flex-col items-center gap-1">
-          <h2 className="text-2xl font-bold my-2">
+          <h2 className="text-2xl font-bold my-2 text-center">
             💬 Welcome to DM ChatZone! 🚀
           </h2>
           <p className="text-sm text-gray-400 flex flex-col gap-1 text-center">
@@ -109,7 +109,7 @@ const SignIn = () => {
         </div>
 
         <form
-          className="w-96 flex flex-col gap-6 border-lime-200"
+          className="min-w-52 sm:min-w-72 md:min-w-96 flex flex-col items-center gap-6"
           onSubmit={handleSubmit}
         >
           <Input

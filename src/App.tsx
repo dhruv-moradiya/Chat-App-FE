@@ -22,6 +22,11 @@ import SignIn from "./page/SignIn";
 import Layout from "./layout/Layout";
 import HomePage from "./page/HomePage";
 import ModalManager from "./components/common/modals/ModalManager";
+import Text from "./page/Text";
+import { useMediaQuery } from "react-responsive";
+import MobileLayout from "./layout/mobile-layout/MobileLayout";
+import HomeScreenMobile from "./page/mobile/HomeScreenMobile";
+import ChatScreenMobile from "./page/mobile/ChatScreenMobile";
 
 const ProtectedRoute = ({
   children,
@@ -97,28 +102,53 @@ const ProtectedRoute = ({
 
 function App() {
   const location = useLocation();
+  const isMobileScreen = useMediaQuery({ maxWidth: 767 });
 
   const [showSessionExpiryModal, setShowSessionExpiryModal] = useState(false);
 
   return (
     <>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute
-              setShowSessionExpiryModal={setShowSessionExpiryModal}
-            >
-              <Layout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<HomePage />} />
-        </Route>
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="*" element={<div>404 Not Found</div>} />
-      </Routes>
+      {isMobileScreen ? (
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute
+                setShowSessionExpiryModal={setShowSessionExpiryModal}
+              >
+                <MobileLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<HomeScreenMobile />} />
+            <Route path="/chat/:chatId" element={<ChatScreenMobile />} />
+          </Route>
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/test" element={<Text />} />
+          <Route path="*" element={<div>404 Not Found</div>} />
+        </Routes>
+      ) : (
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute
+                setShowSessionExpiryModal={setShowSessionExpiryModal}
+              >
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<HomePage />} />
+          </Route>
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/test" element={<Text />} />
+          <Route path="*" element={<div>404 Not Found</div>} />
+        </Routes>
+      )}
+
       <ToastProvider />
       {showSessionExpiryModal && location.pathname !== "/signin" && (
         <SessionExpireModal />
