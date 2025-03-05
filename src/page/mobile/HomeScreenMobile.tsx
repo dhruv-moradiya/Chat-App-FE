@@ -1,37 +1,89 @@
-import { useNavigate } from "react-router-dom";
+import LoaderForChatEntry from "@/components/common/LoaderForChatEntry";
+import ChatEntry from "@/components/homepage/ChatEntry";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { setActiveChat } from "@/store/activeChat/ActiveChatSlice";
+import { fetchActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
+import { fetchMyChats } from "@/store/myChats/ChatSlice";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
 
 const HomeScreenMobile = () => {
-  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const prevParamValue = useRef<string | null>(null);
+
+  const { chatId } = useParams();
+  const { myChats, isLoading, isError } = useAppSelector(
+    (state) => state.myChats
+  );
+
+  useEffect(() => {
+    if (prevParamValue.current && prevParamValue.current !== chatId) {
+    }
+
+    if (chatId) {
+      dispatch(fetchActiveChatMessages({ chatId: chatId, page: 1, limit: 20 }));
+      dispatch(
+        setActiveChat({
+          activeChatId: chatId,
+          prevChatId: prevParamValue.current,
+        })
+      );
+    }
+    prevParamValue.current = chatId ?? null;
+  }, [chatId]);
+
+  useEffect(() => {
+    dispatch(fetchMyChats());
+  }, [dispatch]);
+
+  const renderLoading = () => (
+    <>
+      {[...Array(4)].map((_, index) => (
+        <LoaderForChatEntry key={index} />
+      ))}
+    </>
+  );
+
+  const renderChats = (filterFn?: (chat: any) => boolean) => {
+    const filteredChats = filterFn ? myChats.filter(filterFn) : myChats;
+    return filteredChats.map((chat, index) => (
+      <ChatEntry key={index} chat={chat} />
+    ));
+  };
 
   return (
     <>
-      {new Array(10).fill(0).map((_, index) => (
-        <div
-          key={index}
-          className="flex items-center gap-3 px-4 py-3 my-11px hover:bg-accent-foreground/5 rounded-lg transition-colors duration-200 cursor-pointer"
-          onClick={() => navigate("/chat/123")}
-        >
-          <div className="w-9 h-9 rounded-full overflow-hidden">
-            <img
-              className="w-full h-full object-cover"
-              src="https://i.pinimg.com/736x/57/ff/d2/57ffd2de1067686f07d41a56b2eb76df.jpg"
-              alt=""
-            />
-          </div>
-          <div className="flex-1 overflow-hidden">
-            <div className="mb-1 flex items-center justify-between">
-              <h3 className="text-base">Chat Name</h3>
-              <span className="text-[11px] text-muted-foreground">
-                12-03-2025
-              </span>
-            </div>
-            <p className="whitespace-nowrap text-ellipsis overflow-hidden text-[12px] text-muted-foreground">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-              Reprehenderit, voluptatum!
-            </p>
-          </div>
-        </div>
-      ))}
+      <div className="w-full p-2 bg-zinc-900">
+        <Tabs defaultValue="all">
+          <TabsList className="w-full absolute bottom-2 left-0  grid grid-cols-3 place-items-center">
+            <TabsTrigger value="all" className="w-full rounded-xl">
+              All
+            </TabsTrigger>
+            <TabsTrigger value="direct" className="w-full rounded-xl">
+              Direct
+            </TabsTrigger>
+            <TabsTrigger value="groups" className="w-full rounded-xl">
+              Groups
+            </TabsTrigger>
+          </TabsList>
+          {isLoading ? (
+            renderLoading()
+          ) : isError ? (
+            <p className="text-muted-foreground">Failed to load chats.</p>
+          ) : (
+            <>
+              <TabsContent value="all">{renderChats()}</TabsContent>
+              <TabsContent value="direct">
+                {renderChats((chat) => !chat.isGroup)}
+              </TabsContent>
+              <TabsContent value="groups">
+                {renderChats((chat) => chat.isGroup)}
+              </TabsContent>
+            </>
+          )}
+        </Tabs>
+      </div>
     </>
   );
 };

@@ -98,7 +98,7 @@ const MessageContent = ({
       : `${capitalizeFirstLetter(sender.username)} deleted this message`;
 
   return (
-    <div className="flex items-start gap-3 pr-[50px] px-2">
+    <div className="flex items-start gap-3 px-2 pr-10 min-w-20">
       <p
         className="text-sm break-words whitespace-normal flex items-center flex-wrap gap-1"
         style={{ wordBreak: "break-word" }}

@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/store/store";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatEntry from "./ChatEntry";
 import { cn } from "@/lib/utils";
+import LoaderForChatEntry from "../common/LoaderForChatEntry";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
@@ -79,17 +80,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
-const LoaderForChatEntry = () => {
-  return (
-    <div className="flex items-center gap-3 px-4 py-3 ">
-      <div>
-        <Skeleton className="w-12 h-12 rounded-lg" />
-      </div>
-      <div className="w-full h-12 rounded-lg flex flex-col items-center gap-2">
-        <Skeleton className="flex-1 h-4 w-full rounded-lg" />
-        <Skeleton className="flex-1 h-4 w-full rounded-lg" />
-      </div>
-    </div>
-  );
-};

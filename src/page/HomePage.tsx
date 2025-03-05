@@ -15,9 +15,6 @@ const HomePage = () => {
   const paramValue = searchParams.get("chatId");
   const prevParamValue = useRef<string | null>(null);
 
-  const ID = useAppSelector((state) => state.auth.user?._id);
-  console.log("ID :>> ", ID);
-
   useEffect(() => {
     dispatch(createConnection());
 
@@ -31,9 +28,6 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    if (prevParamValue.current && prevParamValue.current !== paramValue) {
-    }
-
     if (paramValue) {
       dispatch(
         fetchActiveChatMessages({ chatId: paramValue, page: 1, limit: 20 })
@@ -50,19 +44,8 @@ const HomePage = () => {
 
   return (
     <div className="w-full h-full flex gap-2">
-      {/* <button onClick={() => dispatch(openModal({ type: "OTHER" }))}>
-        Open Model
-      </button> */}
       <Sidebar />
       <ChattingSection />
-      {/* <Modal
-        isOpen={open}
-        onClose={() => dispatch(closeModal({ type: "OTHER" }))}
-        closeOnOutsideClick={true}
-        backgroundStyle="blur"
-      >
-        <EmojiPicker />
-      </Modal> */}
     </div>
   );
 };

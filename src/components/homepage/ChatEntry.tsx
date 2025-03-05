@@ -6,6 +6,7 @@ import { memo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Badge } from "../ui/badge";
 import { clearUnreadMessageCount } from "@/store/myChats/ChatSlice";
+import { useMediaQuery } from "react-responsive";
 
 interface ChatEntryProps {
   chat: ChatDetails;
@@ -16,6 +17,7 @@ const ChatEntry = ({ chat }: ChatEntryProps) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const userId = user ? user._id : "";
+  const isMobileScreen = useMediaQuery({ maxWidth: 767 });
 
   const [searchParams] = useSearchParams();
 
@@ -23,7 +25,11 @@ const ChatEntry = ({ chat }: ChatEntryProps) => {
     (participant) => user && participant._id !== user._id
   );
   const handleCurrentChat = () => {
-    navigate(`/?chatId=${chat._id}`);
+    if (isMobileScreen) {
+      navigate(`/chat/${chat._id}`);
+    } else {
+      navigate(`/?chatId=${chat._id}`);
+    }
     if (user) {
       dispatch(clearUnreadMessageCount({ chatId: chat._id, userId: user._id }));
     }
@@ -32,7 +38,7 @@ const ChatEntry = ({ chat }: ChatEntryProps) => {
   return (
     <div
       className={cn(
-        "flex items-center gap-3 px-4 py-3 hover:bg-accent-foreground/5 rounded-lg transition-colors duration-200 cursor-pointer",
+        "flex items-center gap-3 px-2 md:px-4 py-3 hover:bg-accent-foreground/5 rounded-lg transition-colors duration-200 cursor-pointer",
         { "bg-accent-foreground/5": searchParams.get("chatId") === chat._id }
       )}
       onClick={handleCurrentChat}
@@ -48,7 +54,7 @@ const ChatEntry = ({ chat }: ChatEntryProps) => {
 
       {/* Chat Text */}
       <div className="flex-1 overflow-hidden">
-        <h3 className="mb-1">
+        <h3 className="mb-1 text-[14px] md:text-base">
           {chat.isGroup
             ? chat.chatName
             : capitalizeFirstLetter(friend?.username as string)}

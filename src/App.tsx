@@ -22,11 +22,12 @@ import SignIn from "./page/SignIn";
 import Layout from "./layout/Layout";
 import HomePage from "./page/HomePage";
 import ModalManager from "./components/common/modals/ModalManager";
-import Text from "./page/Text";
+import Text from "@/page/Text";
 import { useMediaQuery } from "react-responsive";
-import MobileLayout from "./layout/mobile-layout/MobileLayout";
-import HomeScreenMobile from "./page/mobile/HomeScreenMobile";
-import ChatScreenMobile from "./page/mobile/ChatScreenMobile";
+import MobileLayout from "@/layout/mobile-layout/MobileLayout";
+import HomeScreenMobile from "@/page/mobile/HomeScreenMobile";
+import ChatScreenMobile from "@/page/mobile/ChatScreenMobile";
+import { createConnection, disconnected } from "@/store/socket/SocketSlice";
 
 const ProtectedRoute = ({
   children,
@@ -102,9 +103,21 @@ const ProtectedRoute = ({
 
 function App() {
   const location = useLocation();
-  const isMobileScreen = useMediaQuery({ maxWidth: 767 });
+  const dispatch = useAppDispatch();
 
+  const isMobileScreen = useMediaQuery({ maxWidth: 767 });
   const [showSessionExpiryModal, setShowSessionExpiryModal] = useState(false);
+  const user = useAppSelector((state) => state.auth.user);
+
+  useEffect(() => {
+    if (user) {
+      dispatch(createConnection());
+    }
+
+    return () => {
+      dispatch(disconnected());
+    };
+  }, [user]);
 
   return (
     <>

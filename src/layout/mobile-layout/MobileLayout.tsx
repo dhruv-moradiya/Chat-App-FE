@@ -1,9 +1,14 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, EllipsisVertical, Phone, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ArrowLeft, EllipsisVertical, Phone, Search } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import CustomInput from "@/components/common/customInput/CustomInput";
 
 const MobileLayout = () => {
@@ -28,31 +33,13 @@ const MobileLayout = () => {
       <div
         className={cn(
           "overflow-y-auto scrollbar",
-          location.pathname === "/"
-            ? "h-[calc(100%-141.6px)]"
-            : "h-[calc(100%-29.6px)]"
-        )} // 81.6px
+          location.pathname === "/" ? "h-[calc(100%-141.6px)]" : ""
+        )} // 81.6px || 29.6px
       >
         <Outlet />
       </div>
-      {location.pathname === "/" ? (
-        <div className="absolute bottom-0 left-0 w-full p-2 bg-zinc-900">
-          <Tabs defaultValue="all">
-            <TabsList className="grid grid-cols-3 place-items-center">
-              <TabsTrigger value="all" className="w-full rounded-xl">
-                All
-              </TabsTrigger>
-              <TabsTrigger value="direct" className="w-full rounded-xl">
-                Direct
-              </TabsTrigger>
-              <TabsTrigger value="groups" className="w-full rounded-xl">
-                Groups
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-      ) : (
-        <CustomInput />
+      {location.pathname.startsWith("/chat") && (
+        <CustomInput selectedMessage={null} setSelectedMessage={() => {}} />
       )}
     </div>
   );
@@ -100,16 +87,24 @@ const MobileChatSectionRouteHeader = () => {
         </div>
         <h3 className="text-[14px]">Chat Name</h3>
       </div>
-      <div className="space-x-2">
+      <div className="flex gap-2 items-center">
         <ChatSectionIconButton onClick={() => {}}>
           <Search className="text-white" />
         </ChatSectionIconButton>
         <ChatSectionIconButton onClick={() => {}}>
           <Phone className="text-white" />
         </ChatSectionIconButton>
-        <ChatSectionIconButton onClick={() => {}}>
-          <EllipsisVertical className="text-white" />
-        </ChatSectionIconButton>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="bg-transparent hover:bg-primary/10 border-[1px] border-primary/5 active:scale-95 transition-all duration-150 rounded-xl px-2.5 py-1.5 border-none! bg-[#1e1e1e] outline-none">
+            <EllipsisVertical className="text-white" size={22} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem>Chat Detail</DropdownMenuItem>
+            <DropdownMenuItem>Pin</DropdownMenuItem>
+            <DropdownMenuItem>Mute</DropdownMenuItem>
+            <DropdownMenuItem>Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
@@ -125,7 +120,7 @@ const ChatSectionIconButton = ({
   return (
     <Button
       onClick={onClick}
-      className="bg-transparent hover:bg-primary/10 border-[1px] border-primary/5 active:scale-95 transition-all duration-150 rounded-xl px-2.5 py-1 "
+      className="bg-transparent hover:bg-primary/10 border-[1px] border-primary/5 active:scale-95 transition-all duration-150 rounded-xl px-2.5 py-1"
     >
       {children}
     </Button>

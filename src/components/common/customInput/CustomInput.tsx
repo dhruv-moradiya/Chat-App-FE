@@ -1,14 +1,14 @@
-import { capitalizeFirstLetter, cn } from "@/lib/utils";
-import { useAppDispatch, useAppSelector } from "@/store/store";
-import { Mic, Pin, Send, Smile, X } from "lucide-react";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { showWarnToast } from "../ToastProvider";
-import { SelectedMessagesForInteraction } from "@/types/Common.types";
-import { sendMessage } from "@/store/activeChat/ActiveChatSlice";
-import { sendAttachments } from "@/api";
 import { AxiosError } from "axios";
+import { sendAttachments } from "@/api";
+import { capitalizeFirstLetter, cn } from "@/lib/utils";
+import { sendMessage } from "@/store/activeChat/ActiveChatSlice";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import { UserPreview } from "@/types/ApiResponse.types";
+import { SelectedMessagesForInteraction } from "@/types/Common.types";
+import { Mic, Pin, Send, X } from "lucide-react";
+import { showWarnToast } from "../ToastProvider";
 
 function CustomInput({
   selectedMessage,
