@@ -22,7 +22,6 @@ const useDeleteMessageForSelectedParticipants =
       isDeletedForAll: boolean,
       onSuccess?: () => void
     ): Promise<void> => {
-      console.log("selectedMessages :>> ", selectedMessages);
       try {
         setIsDeleting(true);
         await deleteMessageForSelectedParticipantsApi(

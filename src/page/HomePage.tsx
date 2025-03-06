@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useAppDispatch } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import { emojiCategories } from "@/lib/constants";
 import { useSearchParams } from "react-router-dom";
 import { fetchEmojisByCategory } from "@/store/emoji/EmojiThunk";
@@ -28,9 +28,6 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    if (prevParamValue.current && prevParamValue.current !== paramValue) {
-    }
-
     if (paramValue) {
       dispatch(
         fetchActiveChatMessages({ chatId: paramValue, page: 1, limit: 20 })
@@ -47,19 +44,8 @@ const HomePage = () => {
 
   return (
     <div className="w-full h-full flex gap-2">
-      {/* <button onClick={() => dispatch(openModal({ type: "OTHER" }))}>
-        Open Model
-      </button> */}
       <Sidebar />
       <ChattingSection />
-      {/* <Modal
-        isOpen={open}
-        onClose={() => dispatch(closeModal({ type: "OTHER" }))}
-        closeOnOutsideClick={true}
-        backgroundStyle="blur"
-      >
-        <EmojiPicker />
-      </Modal> */}
     </div>
   );
 };

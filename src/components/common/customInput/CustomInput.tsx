@@ -1,14 +1,14 @@
-import { capitalizeFirstLetter, cn } from "@/lib/utils";
-import { useAppDispatch, useAppSelector } from "@/store/store";
-import { Mic, Pin, Smile, X } from "lucide-react";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { showWarnToast } from "../ToastProvider";
-import { SelectedMessagesForInteraction } from "@/types/Common.types";
-import { sendMessage } from "@/store/activeChat/ActiveChatSlice";
-import { sendAttachments } from "@/api";
 import { AxiosError } from "axios";
+import { sendAttachments } from "@/api";
+import { capitalizeFirstLetter, cn } from "@/lib/utils";
+import { sendMessage } from "@/store/activeChat/ActiveChatSlice";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import { UserPreview } from "@/types/ApiResponse.types";
+import { SelectedMessagesForInteraction } from "@/types/Common.types";
+import { Mic, Pin, Send, X } from "lucide-react";
+import { showWarnToast } from "../ToastProvider";
 
 function CustomInput({
   selectedMessage,
@@ -46,11 +46,14 @@ function CustomInput({
         (participant) => participant._id === messageDetails?.sender._id
       )?.username || "Anonymous";
 
-  const [cursorPosition, setCursorPosition] = useState<Range | null>(null);
-  const [showPopup, setShowPopup] = useState(false);
+  const [users, setUsers] = useState<UserPreview[]>([]); // Users details to mention
+  const [showPopup, setShowPopup] = useState(false); // Show mention popup
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
-  const [users, setUsers] = useState<UserPreview[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [cursorPosition, setCursorPosition] = useState<Range | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState(-1); // Selected user index in popup
+  const [listOfMentionedUsers, setListOfMentionedUsers] = useState<string[]>(
+    []
+  );
   const [isUserTyping, setIsUserTyping] = useState(false);
   const [fileInputValue, setFileInputValue] = useState<File[] | null>(null);
 
@@ -152,25 +155,37 @@ function CustomInput({
     handleCursorChange();
   };
 
+  // Handle keyboard events for popup
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (showPopup) {
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setSelectedIndex((prev) => (prev + 1) % users.length);
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setSelectedIndex((prev) => (prev - 1 + users.length) % users.length);
-      } else if (e.key === "Enter") {
-        e.preventDefault();
+    if (!showPopup) return;
+
+    e.preventDefault();
+    let newIndex = selectedIndex;
+
+    switch (e.key) {
+      case "ArrowDown":
+        newIndex = (selectedIndex + 1) % users.length;
+        break;
+      case "ArrowUp":
+        newIndex = (selectedIndex - 1 + users.length) % users.length;
+        break;
+      case "Enter":
         if (selectedIndex !== -1) {
           handleItemSelect(users[selectedIndex].username);
+          setListOfMentionedUsers((prev) => [...prev, users[newIndex]._id]);
         }
-      } else if (e.key === "Escape") {
+        break;
+      case "Escape":
         setShowPopup(false);
-      }
+        return;
+      default:
+        return;
     }
+
+    setSelectedIndex(newIndex);
   };
 
+  // Close popup when clicked outside
   const handleClickOutside = (e: MouseEvent) => {
     if (
       popupRef.current &&
@@ -211,9 +226,39 @@ function CustomInput({
     }
   }, [lastMessageId]);
 
-  const handleSentMessage = async (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const sendMessageHandler = () => {
+    if (showPopup) return;
+
+    const payload: {
+      chatId: string;
+      content: string;
+      replyTo?: string;
+      isAttachment?: boolean;
+      mentionedUsers?: string[];
+    } = {
+      chatId: paramValue as string,
+      content: divRef.current?.innerHTML as string,
+      mentionedUsers: listOfMentionedUsers,
+    };
+
+    if (selectedMessage && selectedMessage.type === "Reply") {
+      payload.replyTo = selectedMessage.messages[0]._id;
+    }
+
+    if (fileInputValue && fileInputValue.length > 0) {
+      payload.isAttachment = true;
+    }
+
+    dispatch(sendMessage(payload));
+
+    divRef.current!.textContent = "";
+    setSelectedMessage(null);
+    setListOfMentionedUsers([]);
+    setFileInputValue(null);
+  };
+
+  const handleSentMessage = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (
-      !showPopup &&
       e.key === "Enter" &&
       !e.shiftKey &&
       !e.ctrlKey &&
@@ -221,29 +266,7 @@ function CustomInput({
       !e.metaKey
     ) {
       e.preventDefault();
-
-      const payload: {
-        chatId: string;
-        content: string;
-        replyTo?: string;
-        isAttachment?: boolean;
-      } = {
-        chatId: paramValue as string,
-        content: divRef.current?.innerHTML as string,
-      };
-
-      if (selectedMessage && selectedMessage.type === "Reply") {
-        payload.replyTo = selectedMessage.messages[0]._id;
-      }
-
-      if (fileInputValue && fileInputValue.length > 0) {
-        payload.isAttachment = true;
-      }
-
-      dispatch(sendMessage(payload));
-
-      divRef.current!.textContent = "";
-      setSelectedMessage(null);
+      sendMessageHandler();
     }
   };
 
@@ -323,9 +346,9 @@ function CustomInput({
       )}
 
       <div className="w-full flex items-center gap-3 p-2">
-        <button ref={buttonRef}>
+        {/* <button ref={buttonRef}>
           <Smile />
-        </button>
+        </button> */}
         <button onClick={handleFileButtonClick}>
           <Pin />
           <input
@@ -346,6 +369,13 @@ function CustomInput({
           onKeyUp={handleCursorChange}
           onKeyDown={handleSentMessage}
         ></div>
+
+        <Button
+          onClick={sendMessageHandler}
+          className="bg-transparent border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
+        >
+          <Send className="text-white" />
+        </Button>
         <AudioRecorder />
         {showPopup && (
           <div
@@ -386,36 +416,47 @@ function CustomInput({
 }
 
 // -------------------------- AudioRecorder.tsx --------------------------
+import { LiveAudioVisualizer } from "react-audio-visualize";
+import { Button } from "@/components/ui/button";
+
 const AudioRecorder = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder>();
+
   const handleStartRecording = async () => {
     console.log("START RECORDING");
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
+
+      setMediaRecorder(mediaRecorder);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
+
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           audioChunksRef.current.push(event.data);
         }
       };
+
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, {
-          type: "audio/mp3",
-        });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        setAudioUrl(audioUrl);
+        const blob = new Blob(audioChunksRef.current, { type: "audio/mp3" });
+        const url = URL.createObjectURL(blob);
+        setAudioBlob(blob);
+        setAudioUrl(url);
       };
+
       mediaRecorder.start();
       setIsRecording(true);
     } catch (error) {
       console.error("Error accessing microphone:", error);
     }
   };
+
   const handleStopRecording = () => {
     console.log("STOP RECORDING");
     if (mediaRecorderRef.current) {
@@ -423,6 +464,7 @@ const AudioRecorder = () => {
       setIsRecording(false);
     }
   };
+
   return (
     <div className="audio-recorder">
       <div className="controls">
@@ -436,10 +478,24 @@ const AudioRecorder = () => {
           </button>
         )}
       </div>
-      {audioUrl && <div className="playback"></div>}
+
+      {audioBlob && (
+        <LiveAudioVisualizer
+          mediaRecorder={mediaRecorder!}
+          width={500}
+          height={75}
+          backgroundColor="#000"
+          barColor="#fff"
+          gap={3}
+        />
+      )}
+
+      {audioUrl && (
+        <div className="playback">
+          <audio controls src={audioUrl} />
+        </div>
+      )}
     </div>
   );
 };
 export default memo(CustomInput);
-// https://i.pinimg.com/736x/0a/86/e5/0a86e5d0c6d593e0091d197cfebcdd7d.jpg
-// https://i.pinimg.com/736x/0a/86/e5/0a86e5d0c6d593e0091d197cfebcdd7d.jpg

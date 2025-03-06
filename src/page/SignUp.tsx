@@ -1,10 +1,9 @@
 import { showErrorToast } from "@/components/common/ToastProvider";
 import { Button } from "@/components/ui/button";
-import { IconInput } from "@/components/ui/icon-input";
 import { Input } from "@/components/ui/input";
 import { registerUserThunk } from "@/store/auth/AuthThunks";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { Key, Loader, Lock, Mail, User } from "lucide-react";
+import { Loader, Lock, Mail, User } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 

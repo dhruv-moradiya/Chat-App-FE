@@ -19,17 +19,22 @@ const Header = () => {
   );
 
   return (
-    <div className="flex items-center justify-end gap-6">
+    <div className="flex items-center justify-between md:justify-end md:gap-6">
       {isChatListSideBarOpen ? (
         <X onClick={() => dispatch(closeChatListSideBar())} />
       ) : (
         <LucideMenu
+          size={18}
           onClick={() => dispatch(openChatListSideBar())}
           className="md:hidden"
         />
       )}
 
-      <Tooltip text="Create Group Chat" position="bottom">
+      <Tooltip
+        text="Create Group Chat"
+        position="bottom"
+        className="hidden md:block"
+      >
         <Button
           className="hidden md:block bg-transparent border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
           onClick={() =>
@@ -40,9 +45,13 @@ const Header = () => {
         </Button>
       </Tooltip>
 
-      <Tooltip text="Search Users" position="bottom">
+      <Tooltip
+        text="Search Users"
+        position="bottom"
+        className="hidden md:block"
+      >
         <Button
-          className="hidden md:block bg-transparent border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
+          className="bg-transparent border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
           onClick={() =>
             dispatch(openModal({ type: ModalType.SEARCH_USERS_MODEL }))
           }
@@ -51,9 +60,13 @@ const Header = () => {
         </Button>
       </Tooltip>
 
-      <Tooltip text="Check Friend Requests" position="bottom">
+      <Tooltip
+        text="Check Friend Requests"
+        position="bottom"
+        className="hidden md:block"
+      >
         <Button
-          className="hidden md:block bg-transparent border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
+          className="bg-transparent border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
           onClick={() =>
             dispatch(openModal({ type: ModalType.CHECK_FRIEND_REQUEST_MODEL }))
           }

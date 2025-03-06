@@ -4,7 +4,6 @@ import { cn, isNewDate } from "@/lib/utils";
 import { ModalType } from "@/lib/constants";
 import { useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { fetchOldActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
 import { openModal } from "@/store/chatDetailSidebar/ChatDetailSlice";
 import {
   InteractedMessage,
@@ -15,6 +14,8 @@ import NoChatSelected from "./NoChatSelected";
 import SkeletonLoader from "./ChatSkeletonLoader ";
 import MessageContainer from "./messages/MessageContainer";
 import CustomInput from "@/components/common/customInput/CustomInput";
+import useInfiniteScroll from "@/hooks/useInfiniteScroll";
+import { ChatMessagesSummary } from "@/types/ApiResponse.types";
 
 const ChattingSection = () => {
   const dispatch = useAppDispatch();
@@ -39,38 +40,11 @@ const ChattingSection = () => {
     setIsSelectedAllMessageFromCurrentUserSide,
   ] = useState(false);
 
-  const handleScroll = useCallback(() => {
-    const container = chatContainerRef.current;
-
-    if (!isLoadingOldMessages && container && container.scrollTop === 0) {
-      if (
-        activeChatDetails &&
-        activeChatDetails.currentPage + 1 <= activeChatDetails.totalPages
-      ) {
-        dispatch(
-          fetchOldActiveChatMessages({
-            chatId: activeChatId as string,
-            page: activeChatDetails.currentPage + 1,
-            limit: 20,
-          })
-        );
-      }
-    }
-  }, [activeChatDetails, activeChatId, dispatch, isLoadingOldMessages]);
-
-  useEffect(() => {
-    const container = chatContainerRef.current;
-
-    if (container) {
-      container.addEventListener("scroll", handleScroll);
-    }
-
-    return () => {
-      if (container) {
-        container.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, [handleScroll]);
+  useInfiniteScroll(
+    activeChatId as string,
+    activeChatDetails as ChatMessagesSummary,
+    chatContainerRef
+  );
 
   useEffect(() => {
     if (
@@ -97,15 +71,16 @@ const ChattingSection = () => {
         };
       });
 
-    const allSenderIsCurrentUser = selectedMessageSenders
-      ? selectedMessageSenders.every((sender) => sender?._id === user._id)
-      : false;
+    const allSenderIsCurrentUser =
+      selectedMessageSenders && user
+        ? selectedMessageSenders.every((sender) => sender?._id === user._id)
+        : false;
 
     setIsSelectedAllMessageFromCurrentUserSide(
       allSenderIsCurrentUser && !!hasDeleteType
     );
     setIsCheckBoxForDelete(!!hasDeleteType);
-  }, [selectedMessage, user._id]);
+  }, [selectedMessage, user?._id]);
 
   const toggleCheckBox = (id: string, content: string) => {
     // If message is already selected for delete than remove it

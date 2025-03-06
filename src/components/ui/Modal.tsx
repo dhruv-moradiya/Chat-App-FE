@@ -31,7 +31,7 @@ const Modal: React.FC<ModalProps> = ({
       onClick={handleBackdropClick}
     >
       <div
-        className={`bg-[#252733] p-6 rounded-lg shadow-lg transform transition-transform duration-300 ${
+        className={`scrollbar bg-[#252733] p-4 md:p-6 max-h-[80%] max-w-[90%] md:max-w-[50%] overflow-y-auto rounded-lg shadow-lg transform transition-transform duration-300 ${
           isOpen ? "scale-100" : "scale-95"
         }`}
       >

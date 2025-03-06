@@ -17,11 +17,11 @@ function MessageContainer({
   isCurrentChatIsGroupChat,
 }: MessageContainerProps) {
   return (
-    <div className={cn("w-full px-10 transition-all duration-300")}>
+    <div className={cn("w-full px-1 md:px-10")}>
       {showNewDate && <MessageDate date={message.createdAt} />}
       <div
         className={cn(
-          "w-full flex items-center gap-2 transition-all duration-300",
+          "flex items-center gap-2",
           isCurrentMessageSelectedForDelete && "bg-primary/5 rounded-lg",
           isCheckBoxForDelete ? "translate-x-0" : "-translate-x-2rem"
         )}
@@ -49,7 +49,7 @@ function MessageContainer({
         <div
           className={cn(
             "w-full transition-all duration-300 ease-in-out",
-            isCheckBoxForDelete && "ml-8"
+            isCheckBoxForDelete && "ml-2 md:ml-8"
           )}
         >
           <Message
@@ -69,8 +69,8 @@ function MessageContainer({
 }
 
 const MessageDate = ({ date }: { date: string }) => (
-  <div className="w-full flex justify-center text-gray-400 text-sm">
-    <p className="border-[1px] border-primary/20 p-1 px-3 rounded-lg shadow-sm shadow-primary-foreground">
+  <div className="w-full flex justify-center text-gray-400 text-xs md:text-sm my-2">
+    <p className="border-[1px] border-primary/20 p-1 px-3 rounded-lg">
       {moment(date).format("DD MMM YYYY")}
     </p>
   </div>

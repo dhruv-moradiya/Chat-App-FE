@@ -19,8 +19,6 @@ const ReactMessageModal = ({
   const elementsRef = useRef<(HTMLDivElement | null)[]>([]);
   const [currentSelectedElement, setCurrentSelectedElement] = useState(0);
 
-  const some = useAppSelector((state) => state.emoji.categories);
-  console.log("some :>> ", some);
   const open = useAppSelector((state) => state.chatDetail.isModelOpen);
 
   useEffect(() => {

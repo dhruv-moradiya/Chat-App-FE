@@ -21,8 +21,6 @@ const InputSection: React.FC = () => {
   const editorRef = useRef<HTMLDivElement | null>(null);
   const quillRef = useRef<Quill | null>(null);
 
-  console.log("editorRef :>> ", editorRef.current?.innerHTML);
-
   useEffect(() => {
     if (!quillRef.current && editorRef.current) {
       quillRef.current = new Quill(editorRef.current, {

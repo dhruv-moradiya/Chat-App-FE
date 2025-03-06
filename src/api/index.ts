@@ -195,7 +195,6 @@ const sendAttachments = async (data: {
   chatId: string;
   messageId: string;
 }) => {
-  console.log("sendAttachments -> data", data);
   const formData = new FormData();
 
   formData.append("chatId", data.chatId);

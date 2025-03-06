@@ -61,7 +61,7 @@ const GroupChat = () => {
   }
 
   return (
-    <div className="flex flex-col gap-2 min-w-[450px]">
+    <div className="w-full flex flex-col gap-2">
       <h2 className="text-xl font-bold mb-4">Group Chat</h2>
       {directChats.length < 2 ? (
         <p className="text-gray-500 text-center flex flex-col">
@@ -139,11 +139,11 @@ const FriendList: React.FC<FriendListProps> = ({
   handleSelect,
 }) => {
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="w-full grid grid-cols-3 md:grid-cols-6 gap-4">
       {friendsList?.map((friend) => (
         <div
           key={friend._id}
-          className="flex items-center gap-4 px-3 py-3 rounded-lg cursor-pointer transition-all duration-150 hover:bg-gray-900/10 hover:shadow-md"
+          className="flex flex-col md:flex-row items-center gap-2 md:gap-4 px-3 py-3 rounded-lg cursor-pointer transition-all duration-150 hover:bg-gray-900/10 hover:shadow-md"
           onClick={() => handleSelect(friend)}
         >
           <div className="w-10 h-10 rounded-lg overflow-hidden">
@@ -153,7 +153,7 @@ const FriendList: React.FC<FriendListProps> = ({
               alt={friend.username}
             />
           </div>
-          <p className="text-gray-300">
+          <p className="text-gray-300 text-[13.5px] md:text-base">
             {capitalizeFirstLetter(friend.username)}
           </p>
         </div>
@@ -173,11 +173,11 @@ const SelectedFriendsList = ({
   showRemoveBtn?: boolean;
 }) => {
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 md:gap-4">
       {friendsList?.map((friend) => (
         <div
           key={friend._id}
-          className="flex items-center justify-between gap-2 px-3 py-3 rounded-lg cursor-pointer transition-all duration-150  border-2 border-primary/10 animate-pop-up"
+          className="flex items-center justify-between gap-2 px-1 md:px-3 py-3 rounded-lg cursor-pointer transition-all duration-150  border-2 border-primary/10 animate-pop-up"
         >
           <div className="flex gap-3">
             <div className="w-6 h-6 rounded-lg overflow-hidden">
@@ -187,19 +187,21 @@ const SelectedFriendsList = ({
                 alt={friend.username}
               />
             </div>
-            <p>{capitalizeFirstLetter(friend.username)}</p>
+            <p className="text-[13.5px] text-base max-w-7 truncate">
+              {capitalizeFirstLetter(friend.username)}
+            </p>
           </div>
 
           {showRemoveBtn && (
             <button
               type="button"
-              className="p-1 rounded-full bg-white text-red-600 hover:bg-gray-200 transition-all"
+              className="p-[0.5px] md:p-1 rounded-full bg-white text-red-600 hover:bg-gray-200 transition-all"
               onClick={(e) => {
                 e.stopPropagation();
                 handleRemove(friend._id);
               }}
             >
-              <X size={16} />
+              <X size={14} />
             </button>
           )}
         </div>
