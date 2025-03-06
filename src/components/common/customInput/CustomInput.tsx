@@ -226,9 +226,39 @@ function CustomInput({
     }
   }, [lastMessageId]);
 
-  const handleSentMessage = async (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const sendMessageHandler = () => {
+    if (showPopup) return;
+
+    const payload: {
+      chatId: string;
+      content: string;
+      replyTo?: string;
+      isAttachment?: boolean;
+      mentionedUsers?: string[];
+    } = {
+      chatId: paramValue as string,
+      content: divRef.current?.innerHTML as string,
+      mentionedUsers: listOfMentionedUsers,
+    };
+
+    if (selectedMessage && selectedMessage.type === "Reply") {
+      payload.replyTo = selectedMessage.messages[0]._id;
+    }
+
+    if (fileInputValue && fileInputValue.length > 0) {
+      payload.isAttachment = true;
+    }
+
+    dispatch(sendMessage(payload));
+
+    divRef.current!.textContent = "";
+    setSelectedMessage(null);
+    setListOfMentionedUsers([]);
+    setFileInputValue(null);
+  };
+
+  const handleSentMessage = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (
-      !showPopup &&
       e.key === "Enter" &&
       !e.shiftKey &&
       !e.ctrlKey &&
@@ -236,33 +266,7 @@ function CustomInput({
       !e.metaKey
     ) {
       e.preventDefault();
-
-      const payload: {
-        chatId: string;
-        content: string;
-        replyTo?: string;
-        isAttachment?: boolean;
-        mentionedUsers?: string[];
-      } = {
-        chatId: paramValue as string,
-        content: divRef.current?.innerHTML as string,
-        mentionedUsers: listOfMentionedUsers,
-      };
-
-      if (selectedMessage && selectedMessage.type === "Reply") {
-        payload.replyTo = selectedMessage.messages[0]._id;
-      }
-
-      if (fileInputValue && fileInputValue.length > 0) {
-        payload.isAttachment = true;
-      }
-
-      dispatch(sendMessage(payload));
-
-      divRef.current!.textContent = "";
-      setSelectedMessage(null);
-      setListOfMentionedUsers([]);
-      setFileInputValue(null);
+      sendMessageHandler();
     }
   };
 
@@ -365,7 +369,13 @@ function CustomInput({
           onKeyUp={handleCursorChange}
           onKeyDown={handleSentMessage}
         ></div>
-        <Send />
+
+        <Button
+          onClick={sendMessageHandler}
+          className="bg-transparent border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
+        >
+          <Send className="text-white" />
+        </Button>
         <AudioRecorder />
         {showPopup && (
           <div
@@ -407,6 +417,7 @@ function CustomInput({
 
 // -------------------------- AudioRecorder.tsx --------------------------
 import { LiveAudioVisualizer } from "react-audio-visualize";
+import { Button } from "@/components/ui/button";
 
 const AudioRecorder = () => {
   const [isRecording, setIsRecording] = useState(false);

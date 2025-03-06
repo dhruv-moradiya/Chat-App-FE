@@ -98,9 +98,12 @@ const FriendRequestsList = ({
   };
 
   return friendRequests.map((request) => (
-    <div key={request._id} className="py-2 flex items-center gap-6">
+    <div
+      key={request._id}
+      className="py-2 flex flex-col sm:flex-row items-start md:items-center justify-center gap-3 md:gap-6"
+    >
       <div className="flex items-center gap-4">
-        <div className="w-14 h-14 ml-auto rounded-lg overflow-hidden">
+        <div className="w-8 h-8 md:w-14 md:h-14 ml-auto rounded-lg overflow-hidden flex-shrink-0">
           <img
             src={request.from.profilePicture}
             alt={request.from.username}
@@ -114,14 +117,14 @@ const FriendRequestsList = ({
           sent you a friend request
         </p>
       </div>
-      <div className="ml-auto flex items-center gap-2">
+      <div className="md:ml-auto flex items-center gap-2">
         {acceptedRequests.includes(request._id) ? (
           <Button
             disabled
             variant="outline"
             className="p-0 px-4 text-gray-500 border-gray-400 cursor-not-allowed rounded-xl"
           >
-            <Check /> Accepted
+            <Check /> <span className="hidden md:block">Accepted</span>
           </Button>
         ) : (
           <Button
@@ -135,14 +138,16 @@ const FriendRequestsList = ({
             ) : (
               <Check />
             )}
-            {loadingId === request._id ? "Accepting..." : "Accept"}
+            <span className="hidden md:block">
+              {loadingId === request._id ? "Accepting..." : "Accept"}
+            </span>
           </Button>
         )}
         <Button
           variant="outline"
           className="p-0 px-4 text-red-500 transition-colors duration-150 hover:bg-red-500 hover:text-white rounded-xl"
         >
-          <X /> Decline
+          <X /> <span className="hidden md:block">Decline</span>
         </Button>
       </div>
     </div>

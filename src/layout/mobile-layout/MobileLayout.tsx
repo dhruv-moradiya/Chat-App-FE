@@ -10,6 +10,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import CustomInput from "@/components/common/customInput/CustomInput";
+import { useAppDispatch } from "@/store/store";
+import { ModalType } from "@/lib/constants";
+import { openModal } from "@/store/chatDetailSidebar/ChatDetailSlice";
 
 const MobileLayout = () => {
   const location = useLocation();
@@ -48,17 +51,52 @@ const MobileLayout = () => {
 export default MobileLayout;
 
 const MobileHomeRouteHeader = () => {
+  const dispatch = useAppDispatch();
+
   return (
     <div className="flex flex-col items-center justify-between gap-2">
       <div className="w-full flex items-center justify-between">
         <h2 className="text-xl">DM Chat</h2>
-        <div className="w-9 h-9 rounded-full overflow-hidden">
+        {/* <div className="w-9 h-9 rounded-full overflow-hidden">
           <img
             className="w-full h-full object-cover"
             src="https://i.pinimg.com/736x/57/ff/d2/57ffd2de1067686f07d41a56b2eb76df.jpg"
             alt=""
           />
-        </div>
+        </div> */}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="bg-transparent hover:bg-primary/10 border-[1px] border-primary/5 active:scale-95 transition-all duration-150 rounded-xl px-2.5 py-1">
+            <EllipsisVertical size={18} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="border-none bg-[#1e1e1e]">
+            <DropdownMenuItem
+              className="active:bg-primary/10 rounded-lg"
+              onClick={() =>
+                dispatch(openModal({ type: ModalType.CREATE_GROUP_CHAT_MODEL }))
+              }
+            >
+              Create Group Chat
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="active:bg-primary/10 rounded-lg"
+              onClick={() =>
+                dispatch(openModal({ type: ModalType.SEARCH_USERS_MODEL }))
+              }
+            >
+              Search Users
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="active:bg-primary/10 rounded-lg"
+              onClick={() =>
+                dispatch(
+                  openModal({ type: ModalType.CHECK_FRIEND_REQUEST_MODEL })
+                )
+              }
+            >
+              Check Friend Request
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <Input icon={Search} className="rounded-full py-3 bg-zinc-900" />
     </div>
