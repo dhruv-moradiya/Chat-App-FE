@@ -1,5 +1,5 @@
 import { memo, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { AxiosError } from "axios";
 import { sendAttachments } from "@/api";
 import { capitalizeFirstLetter, cn } from "@/lib/utils";
@@ -24,7 +24,9 @@ function CustomInput({
   const popupRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [searchParams] = useSearchParams();
+  const isMobileScreen = useMediaQuery({ maxWidth: 767 });
   const paramValue = searchParams.get("chatId");
+  const mobileParamValue = useParams().chatId;
 
   const { activeChatDetails, activeChatId } = useAppSelector(
     (state) => state.activeChat
@@ -58,7 +60,9 @@ function CustomInput({
   const [fileInputValue, setFileInputValue] = useState<File[] | null>(null);
 
   useEffect(() => {
-    const chat = myChats.find((chat) => chat._id === paramValue);
+    const chat = myChats.find(
+      (chat) => chat._id === (isMobileScreen ? mobileParamValue : paramValue)
+    );
     if (!chat) return;
 
     const userData = chat.participants.filter(
@@ -75,7 +79,7 @@ function CustomInput({
     }
 
     setUsers(userData);
-  }, [paramValue, myChats]);
+  }, [paramValue, mobileParamValue, myChats]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -207,7 +211,9 @@ function CustomInput({
     if (fileInputValue && fileInputValue.length > 0) {
       sendAttachments({
         attachments: fileInputValue,
-        chatId: paramValue as string,
+        chatId: isMobileScreen
+          ? (mobileParamValue as string)
+          : (paramValue as string),
         messageId: lastMessageId,
       })
         .then(() => {
@@ -236,7 +242,9 @@ function CustomInput({
       isAttachment?: boolean;
       mentionedUsers?: string[];
     } = {
-      chatId: paramValue as string,
+      chatId: isMobileScreen
+        ? (mobileParamValue as string)
+        : (paramValue as string),
       content: divRef.current?.innerHTML as string,
       mentionedUsers: listOfMentionedUsers,
     };
@@ -418,6 +426,7 @@ function CustomInput({
 // -------------------------- AudioRecorder.tsx --------------------------
 import { LiveAudioVisualizer } from "react-audio-visualize";
 import { Button } from "@/components/ui/button";
+import { useMediaQuery } from "react-responsive";
 
 const AudioRecorder = () => {
   const [isRecording, setIsRecording] = useState(false);
