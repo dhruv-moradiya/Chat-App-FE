@@ -1,17 +1,9 @@
 import "./App.css";
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
-import {
-  Route,
-  Routes,
-  Navigate,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Route, Routes, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { getCurrentUser } from "./api";
-import ToastProvider, {
-  showErrorToast,
-} from "./components/common/ToastProvider";
+import ToastProvider, { showErrorToast } from "./components/common/ToastProvider";
 import { Button } from "./components/ui/button";
 import { setUserData } from "./store/auth/AuthSlice";
 import { CircleLoader } from "./components/common/Loader";
@@ -93,7 +85,7 @@ const ProtectedRoute = ({
 
   if (loading)
     return (
-      <div className="w-screen h-screen flex justify-center items-center">
+      <div className="flex h-screen w-screen items-center justify-center">
         <CircleLoader />
       </div>
     );
@@ -126,9 +118,7 @@ function App() {
           <Route
             path="/"
             element={
-              <ProtectedRoute
-                setShowSessionExpiryModal={setShowSessionExpiryModal}
-              >
+              <ProtectedRoute setShowSessionExpiryModal={setShowSessionExpiryModal}>
                 <MobileLayout />
               </ProtectedRoute>
             }
@@ -146,9 +136,7 @@ function App() {
           <Route
             path="/"
             element={
-              <ProtectedRoute
-                setShowSessionExpiryModal={setShowSessionExpiryModal}
-              >
+              <ProtectedRoute setShowSessionExpiryModal={setShowSessionExpiryModal}>
                 <Layout />
               </ProtectedRoute>
             }
@@ -163,9 +151,7 @@ function App() {
       )}
 
       <ToastProvider />
-      {showSessionExpiryModal && location.pathname !== "/signin" && (
-        <SessionExpireModal />
-      )}
+      {showSessionExpiryModal && location.pathname !== "/signin" && <SessionExpireModal />}
 
       <ModalManager />
     </>
@@ -178,17 +164,16 @@ const SessionExpireModal = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 backdrop-blur-md">
-      <div className="bg-primary-foreground p-6 rounded-lg shadow-lg flex flex-col items-center gap-5">
-        <p className="text-white text-center">
-          🔒 **Your session has expired!** ⏳ Please log in again to continue.
-          😊✨
+    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md transition-opacity duration-300">
+      <div className="flex flex-col items-center gap-5 rounded-lg bg-primary-foreground p-6 shadow-lg">
+        <p className="text-center text-white">
+          🔒 **Your session has expired!** ⏳ Please log in again to continue. 😊✨
         </p>
 
         <Button
           variant="outline"
           onClick={() => navigate("/signin")}
-          className="p-0 px-6 py-2 transition-all duration-200 bg-transparent border border-primary/50 hover:bg-primary/20 text-white w-fit rounded-lg flex items-center justify-center relative group active:scale-95"
+          className="group relative flex w-fit items-center justify-center rounded-lg border border-primary/50 bg-transparent p-0 px-6 py-2 text-white transition-all duration-200 hover:bg-primary/20 active:scale-95"
         >
           Login
         </Button>

@@ -22,7 +22,7 @@ function MessageContainer({
       <div
         className={cn(
           "flex items-center gap-2",
-          isCurrentMessageSelectedForDelete && "bg-primary/5 rounded-lg",
+          isCurrentMessageSelectedForDelete && "rounded-lg bg-primary/5",
           isCheckBoxForDelete ? "translate-x-0" : "-translate-x-2rem"
         )}
         // onClick={() => toggleCheckBox(message._id, message.content)}
@@ -31,17 +31,11 @@ function MessageContainer({
           <div
             className={cn(
               "transition-all duration-300 ease-in-out",
-              isCheckBoxForDelete
-                ? "opacity-100 scale-100"
-                : "opacity-0 scale-75"
+              isCheckBoxForDelete ? "scale-100 opacity-100" : "scale-75 opacity-0"
             )}
           >
             <CheckBox
-              checked={
-                selectedMessage?.messages.some(
-                  (msg) => msg._id === message._id
-                ) ?? false
-              }
+              checked={selectedMessage?.messages.some((msg) => msg._id === message._id) ?? false}
               setChecked={() => toggleCheckBox(message._id, message.content)}
             />
           </div>
@@ -69,8 +63,8 @@ function MessageContainer({
 }
 
 const MessageDate = ({ date }: { date: string }) => (
-  <div className="w-full flex justify-center text-gray-400 text-xs md:text-sm my-2">
-    <p className="border-[1px] border-primary/20 p-1 px-3 rounded-lg">
+  <div className="my-2 flex w-full justify-center text-xs text-gray-400 md:text-sm">
+    <p className="rounded-lg border-[1px] border-primary/20 p-1 px-3">
       {moment(date).format("DD MMM YYYY")}
     </p>
   </div>

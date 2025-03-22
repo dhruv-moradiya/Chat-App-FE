@@ -34,11 +34,7 @@ const InputSection: React.FC = () => {
           ],
           mention: {
             mentionDenotationChars: ["@", "#"],
-            source: function (
-              searchTerm: string,
-              renderList: Function,
-              mentionChar: string
-            ) {
+            source: function (searchTerm: string, renderList: Function, mentionChar: string) {
               const values = mentionChar === "@" ? atValues : hashValues;
 
               if (!searchTerm) {

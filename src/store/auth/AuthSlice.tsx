@@ -50,11 +50,8 @@ const authSlice = createSlice({
       })
       .addCase(loginUserThunk.rejected, (state, action) => {
         state.isLoading = false;
-        state.error =
-          typeof action.payload === "string" ? action.payload : "Login failed.";
-        showErrorToast(
-          typeof action.payload === "string" ? action.payload : "Login failed."
-        );
+        state.error = typeof action.payload === "string" ? action.payload : "Login failed.";
+        showErrorToast(typeof action.payload === "string" ? action.payload : "Login failed.");
       });
 
     // REGISTER THUNK
@@ -69,15 +66,10 @@ const authSlice = createSlice({
       })
       .addCase(registerUserThunk.rejected, (state, action) => {
         state.isLoading = false;
-        state.error =
-          typeof action.payload === "string"
-            ? action.payload
-            : "Registration failed.";
+        state.error = typeof action.payload === "string" ? action.payload : "Registration failed.";
 
         showErrorToast(
-          typeof action.payload === "string"
-            ? action.payload
-            : "Registration failed."
+          typeof action.payload === "string" ? action.payload : "Registration failed."
         );
       });
   },

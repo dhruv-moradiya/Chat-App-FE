@@ -15,7 +15,7 @@ const ShinyText = ({
 
   return (
     <div
-      className={`text-[#b5b5b5a4] bg-clip-text inline-block ${
+      className={`inline-block bg-clip-text text-[#b5b5b5a4] ${
         disabled ? "" : "animate-shine"
       } ${className}`}
       style={{

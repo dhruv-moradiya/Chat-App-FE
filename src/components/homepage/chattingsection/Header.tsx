@@ -13,14 +13,12 @@ const Header = () => {
   const dispatch = useDispatch();
 
   return (
-    <div className="w-full flex justify-between items-center p-4">
+    <div className="flex w-full items-center justify-between p-4">
       <div>
-        <h3 className="text-base md:text-xl mb-1">Office Chat</h3>
-        <p className="text-[12px] text-muted-foreground">
-          45 members, 24 online
-        </p>
+        <h3 className="mb-1 text-base md:text-xl">Office Chat</h3>
+        <p className="text-[12px] text-muted-foreground">45 members, 24 online</p>
       </div>
-      <div className="hidden md:flex items-center gap-6">
+      <div className="hidden items-center gap-6 md:flex">
         <Button className="p-2 hover:bg-slate-800/80" variant="ghost">
           <Search size={18} />
         </Button>

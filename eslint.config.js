@@ -29,10 +29,7 @@ export default tseslint.config(
           argsIgnorePattern: "^_",
         },
       ],
-      "react-refresh/only-export-components": [
-        "warn",
-        { allowConstantExport: true },
-      ],
+      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     },
   }
 );

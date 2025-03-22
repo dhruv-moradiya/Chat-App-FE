@@ -29,9 +29,7 @@ const HomePage = () => {
 
   useEffect(() => {
     if (paramValue) {
-      dispatch(
-        fetchActiveChatMessages({ chatId: paramValue, page: 1, limit: 20 })
-      );
+      dispatch(fetchActiveChatMessages({ chatId: paramValue, page: 1, limit: 20 }));
       dispatch(
         setActiveChat({
           activeChatId: paramValue,
@@ -43,7 +41,7 @@ const HomePage = () => {
   }, [paramValue]);
 
   return (
-    <div className="w-full h-full flex gap-2">
+    <div className="flex h-full w-full gap-2">
       <Sidebar />
       <ChattingSection />
     </div>

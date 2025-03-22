@@ -31,11 +31,11 @@ const MobileLayout = () => {
   const headerContent = getHeaderComponent();
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden flex flex-col gap-2 p-2 bg-[#14151b]">
+    <div className="relative flex h-screen w-screen flex-col gap-2 overflow-hidden bg-[#14151b] p-2">
       {headerContent || <h2 className="text-xl">DM Chat</h2>}
       <div
         className={cn(
-          "overflow-y-auto scrollbar",
+          "scrollbar overflow-y-auto",
           location.pathname === "/" ? "h-[calc(100%-141.6px)]" : ""
         )} // 81.6px || 29.6px
       >
@@ -55,7 +55,7 @@ const MobileHomeRouteHeader = () => {
 
   return (
     <div className="flex flex-col items-center justify-between gap-2">
-      <div className="w-full flex items-center justify-between">
+      <div className="flex w-full items-center justify-between">
         <h2 className="text-xl">DM Chat</h2>
         {/* <div className="w-9 h-9 rounded-full overflow-hidden">
           <img
@@ -65,40 +65,32 @@ const MobileHomeRouteHeader = () => {
           />
         </div> */}
         <DropdownMenu>
-          <DropdownMenuTrigger className="bg-transparent hover:bg-primary/10 border-[1px] border-primary/5 active:scale-95 transition-all duration-150 rounded-xl px-2.5 py-1">
+          <DropdownMenuTrigger className="rounded-xl border-[1px] border-primary/5 bg-transparent px-2.5 py-1 transition-all duration-150 hover:bg-primary/10 active:scale-95">
             <EllipsisVertical size={18} />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="border-none bg-[#1e1e1e]">
             <DropdownMenuItem
-              className="active:bg-primary/10 rounded-lg"
-              onClick={() =>
-                dispatch(openModal({ type: ModalType.CREATE_GROUP_CHAT_MODEL }))
-              }
+              className="rounded-lg active:bg-primary/10"
+              onClick={() => dispatch(openModal({ type: ModalType.CREATE_GROUP_CHAT_MODEL }))}
             >
               Create Group Chat
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="active:bg-primary/10 rounded-lg"
-              onClick={() =>
-                dispatch(openModal({ type: ModalType.SEARCH_USERS_MODEL }))
-              }
+              className="rounded-lg active:bg-primary/10"
+              onClick={() => dispatch(openModal({ type: ModalType.SEARCH_USERS_MODEL }))}
             >
               Search Users
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="active:bg-primary/10 rounded-lg"
-              onClick={() =>
-                dispatch(
-                  openModal({ type: ModalType.CHECK_FRIEND_REQUEST_MODEL })
-                )
-              }
+              className="rounded-lg active:bg-primary/10"
+              onClick={() => dispatch(openModal({ type: ModalType.CHECK_FRIEND_REQUEST_MODEL }))}
             >
               Check Friend Request
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <Input icon={Search} className="rounded-full py-3 bg-zinc-900" />
+      <Input icon={Search} className="rounded-full bg-zinc-900 py-3" />
     </div>
   );
 };
@@ -107,7 +99,7 @@ const MobileChatSectionRouteHeader = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full flex items-center justify-between my-1">
+    <div className="my-1 flex w-full items-center justify-between">
       <div className="flex items-center gap-2">
         <ChatSectionIconButton
           onClick={() => {
@@ -116,16 +108,16 @@ const MobileChatSectionRouteHeader = () => {
         >
           <ArrowLeft className="text-white" />
         </ChatSectionIconButton>
-        <div className="w-8 h-8 rounded-full overflow-hidden">
+        <div className="h-8 w-8 overflow-hidden rounded-full">
           <img
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
             src="https://i.pinimg.com/736x/57/ff/d2/57ffd2de1067686f07d41a56b2eb76df.jpg"
             alt=""
           />
         </div>
         <h3 className="text-[14px]">Chat Name</h3>
       </div>
-      <div className="flex gap-2 items-center">
+      <div className="flex items-center gap-2">
         <ChatSectionIconButton onClick={() => {}}>
           <Search className="text-white" />
         </ChatSectionIconButton>
@@ -133,7 +125,7 @@ const MobileChatSectionRouteHeader = () => {
           <Phone className="text-white" />
         </ChatSectionIconButton>
         <DropdownMenu>
-          <DropdownMenuTrigger className="bg-transparent hover:bg-primary/10 border-[1px] border-primary/5 active:scale-95 transition-all duration-150 rounded-xl px-2.5 py-1.5 border-none! bg-[#1e1e1e] outline-none">
+          <DropdownMenuTrigger className="border-none! rounded-xl border-[1px] border-primary/5 bg-[#1e1e1e] bg-transparent px-2.5 py-1.5 outline-none transition-all duration-150 hover:bg-primary/10 active:scale-95">
             <EllipsisVertical className="text-white" size={22} />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
@@ -158,7 +150,7 @@ const ChatSectionIconButton = ({
   return (
     <Button
       onClick={onClick}
-      className="bg-transparent hover:bg-primary/10 border-[1px] border-primary/5 active:scale-95 transition-all duration-150 rounded-xl px-2.5 py-1"
+      className="rounded-xl border-[1px] border-primary/5 bg-transparent px-2.5 py-1 transition-all duration-150 hover:bg-primary/10 active:scale-95"
     >
       {children}
     </Button>

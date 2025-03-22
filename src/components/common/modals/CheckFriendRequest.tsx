@@ -23,8 +23,8 @@ const CheckFriendRequest = () => {
   }, []);
 
   return (
-    <div className="scrollbar flex flex-col gap-2 min-w-[450px] max-h-[80vh] overflow-y-auto pr-2">
-      <h2 className="text-xl font-bold mb-4">Friend Requests</h2>
+    <div className="scrollbar flex max-h-[80vh] min-w-[450px] flex-col gap-2 overflow-y-auto pr-2">
+      <h2 className="mb-4 text-xl font-bold">Friend Requests</h2>
       <div className="flex flex-col gap-2">
         <FriendRequestsList
           friendRequests={friendRequests}
@@ -46,18 +46,14 @@ interface FriendRequestsListProps {
   error: string | null;
 }
 
-const FriendRequestsList = ({
-  friendRequests,
-  isLoading,
-  error,
-}: FriendRequestsListProps) => {
+const FriendRequestsList = ({ friendRequests, isLoading, error }: FriendRequestsListProps) => {
   const dispatch = useAppDispatch();
   const [acceptedRequests, setAcceptedRequests] = useState<string[]>([]);
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
   if (isLoading && !error) {
     return (
-      <div className="flex justify-center items-center min-h-20 text-gray-500">
+      <div className="flex min-h-20 items-center justify-center text-gray-500">
         <Loader className="animate-spin" size={18} />
         <p className="ml-2 text-sm">Loading...</p>
       </div>
@@ -70,7 +66,7 @@ const FriendRequestsList = ({
 
   if (!friendRequests || friendRequests.length === 0) {
     return (
-      <p className="text-gray-500 text-center">
+      <p className="text-center text-gray-500">
         🚫 No friend requests yet! Send invites and start connecting. 🤝
       </p>
     );
@@ -88,9 +84,7 @@ const FriendRequestsList = ({
         showErrorToast(error.response?.data.message);
       } else {
         console.log("Unknown error:", error);
-        showErrorToast(
-          "An unknown error occurred while accepting the request."
-        );
+        showErrorToast("An unknown error occurred while accepting the request.");
       }
     } finally {
       setLoadingId(null);
@@ -100,44 +94,38 @@ const FriendRequestsList = ({
   return friendRequests.map((request) => (
     <div
       key={request._id}
-      className="py-2 flex flex-col sm:flex-row items-start md:items-center justify-center gap-3 md:gap-6"
+      className="flex flex-col items-start justify-center gap-3 py-2 sm:flex-row md:items-center md:gap-6"
     >
       <div className="flex items-center gap-4">
-        <div className="w-8 h-8 md:w-14 md:h-14 ml-auto rounded-lg overflow-hidden flex-shrink-0">
+        <div className="ml-auto h-8 w-8 flex-shrink-0 overflow-hidden rounded-lg md:h-14 md:w-14">
           <img
             src={request.from.profilePicture}
             alt={request.from.username}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
         </div>
         <p className="text-gray-200">
-          {`${request.from.username
-            .charAt(0)
-            .toUpperCase()}${request.from.username.slice(1)}`}{" "}
-          sent you a friend request
+          {`${request.from.username.charAt(0).toUpperCase()}${request.from.username.slice(1)}`} sent
+          you a friend request
         </p>
       </div>
-      <div className="md:ml-auto flex items-center gap-2">
+      <div className="flex items-center gap-2 md:ml-auto">
         {acceptedRequests.includes(request._id) ? (
           <Button
             disabled
             variant="outline"
-            className="p-0 px-4 text-gray-500 border-gray-400 cursor-not-allowed rounded-xl"
+            className="cursor-not-allowed rounded-xl border-gray-400 p-0 px-4 text-gray-500"
           >
             <Check /> <span className="hidden md:block">Accepted</span>
           </Button>
         ) : (
           <Button
             variant="outline"
-            className="p-0 px-4 text-green-500 transition-colors duration-150 hover:bg-green-500 hover:text-white rounded-xl"
+            className="rounded-xl p-0 px-4 text-green-500 transition-colors duration-150 hover:bg-green-500 hover:text-white"
             onClick={() => handleAcceptFriendRequest(request._id)}
             disabled={loadingId === request._id}
           >
-            {loadingId === request._id ? (
-              <Loader size={18} className="animate-spin" />
-            ) : (
-              <Check />
-            )}
+            {loadingId === request._id ? <Loader size={18} className="animate-spin" /> : <Check />}
             <span className="hidden md:block">
               {loadingId === request._id ? "Accepting..." : "Accept"}
             </span>
@@ -145,7 +133,7 @@ const FriendRequestsList = ({
         )}
         <Button
           variant="outline"
-          className="p-0 px-4 text-red-500 transition-colors duration-150 hover:bg-red-500 hover:text-white rounded-xl"
+          className="rounded-xl p-0 px-4 text-red-500 transition-colors duration-150 hover:bg-red-500 hover:text-white"
         >
           <X /> <span className="hidden md:block">Decline</span>
         </Button>

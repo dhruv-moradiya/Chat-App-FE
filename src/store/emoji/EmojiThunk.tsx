@@ -12,9 +12,7 @@ export const fetchEmojisByCategory = createAsyncThunk(
   "emoji/fetchEmojisByCategory",
   async (category: string, { rejectWithValue }) => {
     try {
-      const response = await fetch(
-        `https://emojihub.yurace.pro/api/all/category/${category}`
-      );
+      const response = await fetch(`https://emojihub.yurace.pro/api/all/category/${category}`);
       if (!response.ok) {
         throw new Error("Failed to fetch emojis");
       }

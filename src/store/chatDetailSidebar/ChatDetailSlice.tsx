@@ -45,10 +45,7 @@ const counterSlice = createSlice({
     closeModel: (state) => {
       state.isModelOpen = false;
     },
-    openModal: (
-      state,
-      action: PayloadAction<{ type: ModalTypeValue; props?: any }>
-    ) => {
+    openModal: (state, action: PayloadAction<{ type: ModalTypeValue; props?: any }>) => {
       state.modalConfig = {
         isOpen: true,
         type: action.payload.type,

@@ -69,10 +69,7 @@ const emojiSlice = createSlice({
       })
       .addCase(
         fetchEmojisByCategory.fulfilled,
-        (
-          state,
-          action: PayloadAction<{ category: string; emojis: Emoji[] }>
-        ) => {
+        (state, action: PayloadAction<{ category: string; emojis: Emoji[] }>) => {
           const { category, emojis } = action.payload;
           if (state.categories[category]) {
             state.categories[category].emojis = emojis;

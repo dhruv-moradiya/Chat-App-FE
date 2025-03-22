@@ -28,11 +28,7 @@ const InputSection: React.FC = () => {
           toolbar: "#custom-toolbar",
           mention: {
             mentionDenotationChars: ["@", "#"],
-            source: function (
-              searchTerm: string,
-              renderList: Function,
-              mentionChar: string
-            ) {
+            source: function (searchTerm: string, renderList: Function, mentionChar: string) {
               const values = mentionChar === "@" ? atValues : hashValues;
               if (!searchTerm) {
                 renderList(values, searchTerm);
@@ -60,7 +56,7 @@ const InputSection: React.FC = () => {
   }, []);
 
   return (
-    <div className="border border-white rounded-lg absolute bottom-10 w-full">
+    <div className="absolute bottom-10 w-full rounded-lg border border-white">
       {/* Custom Toolbar */}
       <div id="custom-toolbar" className="!border-none">
         {/* Basic Tools */}
@@ -106,7 +102,7 @@ const InputSection: React.FC = () => {
         <button className="ql-clean" title="Clear Formatting"></button>
       </div>
 
-      <div className="border-none max-h-16" key="editor" ref={editorRef}></div>
+      <div className="max-h-16 border-none" key="editor" ref={editorRef}></div>
     </div>
   );
 };

@@ -24,10 +24,7 @@ const fetchMyChats = createAsyncThunk(
       return response;
     } catch (error) {
       if (error instanceof AxiosError) {
-        console.log(
-          "Error during fetching my chats:",
-          error.response?.data.message
-        );
+        console.log("Error during fetching my chats:", error.response?.data.message);
         return rejectWithValue(error.response?.data.message);
       } else {
         console.error("Unexpected error:", error);
@@ -52,17 +49,11 @@ const myChatsSlice = createSlice({
       state.myChats.push(action.payload);
     },
 
-    setUnreadMessageCount: (
-      state,
-      action: { payload: UnReadMessageCount[] }
-    ) => {
+    setUnreadMessageCount: (state, action: { payload: UnReadMessageCount[] }) => {
       state.unreadMessageCount = action.payload;
     },
 
-    updateUnreadMessageCount: (
-      state,
-      action: { payload: { chatId: string; userId: string } }
-    ) => {
+    updateUnreadMessageCount: (state, action: { payload: { chatId: string; userId: string } }) => {
       const userId = action.payload.userId;
       state.myChats = state.myChats.map((item) => {
         if (item._id === action.payload.chatId) {
@@ -79,10 +70,7 @@ const myChatsSlice = createSlice({
       });
     },
 
-    clearUnreadMessageCount: (
-      state,
-      action: { payload: { chatId: string; userId: string } }
-    ) => {
+    clearUnreadMessageCount: (state, action: { payload: { chatId: string; userId: string } }) => {
       state.myChats = state.myChats.map((item) => {
         if (item._id === action.payload.chatId) {
           return {
@@ -110,9 +98,7 @@ const myChatsSlice = createSlice({
     builder.addCase(fetchMyChats.rejected, (state, action) => {
       state.isLoading = false;
       state.isError =
-        typeof action.payload === "string"
-          ? action.payload
-          : "An unknown error occurred.";
+        typeof action.payload === "string" ? action.payload : "An unknown error occurred.";
     });
 
     // builder.addCase(fetchMessages.pending, (state) => {

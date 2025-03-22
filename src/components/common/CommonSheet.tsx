@@ -18,7 +18,7 @@ const CommonSheet = ({
           {name}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-80 border-none rounded-t-xl" side={position}>
+      <SheetContent className="w-80 rounded-t-xl border-none" side={position}>
         {content}
       </SheetContent>
     </Sheet>

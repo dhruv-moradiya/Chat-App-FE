@@ -18,10 +18,7 @@ const fetchFriendRequests = createAsyncThunk(
       return response;
     } catch (error) {
       if (error instanceof AxiosError) {
-        console.error(
-          "Error during fetching friend requests:",
-          error.response?.data.message
-        );
+        console.error("Error during fetching friend requests:", error.response?.data.message);
         return rejectWithValue(error.response?.data.message);
       } else {
         console.error("Unexpected error:", error);
@@ -43,9 +40,7 @@ const friendRequestSlice = createSlice({
   reducers: {
     newFriendRequestReceive: (state, action) => {
       state.requests.push(action.payload);
-      showNotificationToast(
-        action.payload.from.username + " " + " sent you a friend request."
-      );
+      showNotificationToast(action.payload.from.username + " " + " sent you a friend request.");
     },
   },
   extraReducers: (builder) => {
@@ -60,9 +55,7 @@ const friendRequestSlice = createSlice({
     builder.addCase(fetchFriendRequests.rejected, (state, action) => {
       state.isLoading = false;
       state.isError =
-        typeof action.payload === "string"
-          ? action.payload
-          : "An unknown error occurred.";
+        typeof action.payload === "string" ? action.payload : "An unknown error occurred.";
     });
   },
 });

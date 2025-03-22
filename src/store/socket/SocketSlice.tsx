@@ -53,11 +53,7 @@ const socketSlice = createSlice({
   },
 });
 
-export const {
-  createConnection,
-  disconnected,
-  connectionError,
-  clearConnectionHistory,
-} = socketSlice.actions;
+export const { createConnection, disconnected, connectionError, clearConnectionHistory } =
+  socketSlice.actions;
 
 export const socketReducer = socketSlice.reducer;

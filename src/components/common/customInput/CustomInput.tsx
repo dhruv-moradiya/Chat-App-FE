@@ -15,9 +15,7 @@ function CustomInput({
   setSelectedMessage,
 }: {
   selectedMessage: SelectedMessagesForInteraction | null;
-  setSelectedMessage: React.Dispatch<
-    React.SetStateAction<SelectedMessagesForInteraction | null>
-  >;
+  setSelectedMessage: React.Dispatch<React.SetStateAction<SelectedMessagesForInteraction | null>>;
 }) {
   const dispatch = useAppDispatch();
   const divRef = useRef<HTMLDivElement | null>(null);
@@ -28,9 +26,7 @@ function CustomInput({
   const paramValue = searchParams.get("chatId");
   const mobileParamValue = useParams().chatId;
 
-  const { activeChatDetails, activeChatId } = useAppSelector(
-    (state) => state.activeChat
-  );
+  const { activeChatDetails, activeChatId } = useAppSelector((state) => state.activeChat);
   const { user } = useAppSelector((state) => state.auth);
 
   const messageDetails = activeChatDetails?.messages.find(
@@ -44,18 +40,15 @@ function CustomInput({
   const senderName =
     myChats
       .find((chat) => chat._id === activeChatId)
-      ?.participants.find(
-        (participant) => participant._id === messageDetails?.sender._id
-      )?.username || "Anonymous";
+      ?.participants.find((participant) => participant._id === messageDetails?.sender._id)
+      ?.username || "Anonymous";
 
   const [users, setUsers] = useState<UserPreview[]>([]); // Users details to mention
   const [showPopup, setShowPopup] = useState(false); // Show mention popup
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
   const [cursorPosition, setCursorPosition] = useState<Range | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(-1); // Selected user index in popup
-  const [listOfMentionedUsers, setListOfMentionedUsers] = useState<string[]>(
-    []
-  );
+  const [listOfMentionedUsers, setListOfMentionedUsers] = useState<string[]>([]);
   const [isUserTyping, setIsUserTyping] = useState(false);
   const [fileInputValue, setFileInputValue] = useState<File[] | null>(null);
 
@@ -65,9 +58,7 @@ function CustomInput({
     );
     if (!chat) return;
 
-    const userData = chat.participants.filter(
-      (p) => p.username !== user!.username
-    );
+    const userData = chat.participants.filter((p) => p.username !== user!.username);
 
     if (chat.isGroup) {
       userData.unshift({
@@ -93,10 +84,7 @@ function CustomInput({
     setIsUserTyping(true);
     const selection: Selection | null = window.getSelection();
     if (selection?.anchorNode) {
-      const textBeforeCursor = selection.anchorNode.textContent?.slice(
-        0,
-        selection.anchorOffset
-      );
+      const textBeforeCursor = selection.anchorNode.textContent?.slice(0, selection.anchorOffset);
       if (textBeforeCursor?.endsWith("@")) {
         try {
           const range = selection.getRangeAt(0);
@@ -134,8 +122,7 @@ function CustomInput({
     const textNode = range.startContainer;
     if (textNode.nodeType === Node.TEXT_NODE) {
       const textContent = textNode.textContent as string;
-      const updatedText =
-        textContent.slice(0, startOffset - 1) + textContent.slice(startOffset); // Remove '@'
+      const updatedText = textContent.slice(0, startOffset - 1) + textContent.slice(startOffset); // Remove '@'
       textNode.textContent = updatedText;
       // Adjust the range after text update
       range.setStart(textNode, startOffset - 1);
@@ -201,8 +188,7 @@ function CustomInput({
   };
 
   const lastMessageId = useMemo(() => {
-    return activeChatDetails?.messages?.[activeChatDetails.messages.length - 1]
-      ?._id;
+    return activeChatDetails?.messages?.[activeChatDetails.messages.length - 1]?._id;
   }, [activeChatDetails?.messages]);
 
   useEffect(() => {
@@ -211,9 +197,7 @@ function CustomInput({
     if (fileInputValue && fileInputValue.length > 0) {
       sendAttachments({
         attachments: fileInputValue,
-        chatId: isMobileScreen
-          ? (mobileParamValue as string)
-          : (paramValue as string),
+        chatId: isMobileScreen ? (mobileParamValue as string) : (paramValue as string),
         messageId: lastMessageId,
       })
         .then(() => {
@@ -221,10 +205,7 @@ function CustomInput({
         })
         .catch((error) => {
           if (error instanceof AxiosError) {
-            console.log(
-              "error.response?.data :>> ",
-              error.response?.data.message
-            );
+            console.log("error.response?.data :>> ", error.response?.data.message);
           } else {
             console.log("error :>> ", error);
           }
@@ -242,9 +223,7 @@ function CustomInput({
       isAttachment?: boolean;
       mentionedUsers?: string[];
     } = {
-      chatId: isMobileScreen
-        ? (mobileParamValue as string)
-        : (paramValue as string),
+      chatId: isMobileScreen ? (mobileParamValue as string) : (paramValue as string),
       content: divRef.current?.innerHTML as string,
       mentionedUsers: listOfMentionedUsers,
     };
@@ -266,13 +245,7 @@ function CustomInput({
   };
 
   const handleSentMessage = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (
-      e.key === "Enter" &&
-      !e.shiftKey &&
-      !e.ctrlKey &&
-      !e.altKey &&
-      !e.metaKey
-    ) {
+    if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
       e.preventDefault();
       sendMessageHandler();
     }
@@ -316,44 +289,44 @@ function CustomInput({
   const buttonRef = useRef(null);
 
   return (
-    <div className="w-full grid grid-flow-row bg-primary-foreground relative">
+    <div className="relative grid w-full grid-flow-row bg-primary-foreground">
       <div
         className={cn(
-          "w-full flex items-center overflow-hidden transform transition-all duration-150",
+          "flex w-full transform items-center overflow-hidden transition-all duration-150",
           selectedMessage && selectedMessage.type === "Reply"
-            ? "opacity-100 h-auto p-2 pb-0"
-            : "opacity-0 h-0 p-0"
+            ? "h-auto p-2 pb-0 opacity-100"
+            : "h-0 p-0 opacity-0"
         )}
       >
-        <div className="min-w-[50px] flex items-center justify-center">1</div>
-        <div className="flex-1 bg-black border-l-4 h-full border-primary rounded-lg text-sm py-2 flex flex-col gap-[0.5px] justify-center px-3">
+        <div className="flex min-w-[50px] items-center justify-center">1</div>
+        <div className="flex h-full flex-1 flex-col justify-center gap-[0.5px] rounded-lg border-l-4 border-primary bg-black px-3 py-2 text-sm">
           <p className="text-primary">{capitalizeFirstLetter(senderName)}</p>
           <p>{messageDetails?.content}</p>
         </div>
-        <div className="min-w-[50px] flex items-center justify-center">
+        <div className="flex min-w-[50px] items-center justify-center">
           <X onClick={() => setSelectedMessage(null)} />
         </div>
       </div>
 
       {fileInputValue && (
-        <div className="absolute left-0 -top-full grid grid-cols-2 gap-2">
+        <div className="absolute -top-full left-0 grid grid-cols-2 gap-2">
           {fileInputValue.map((file, index) => (
             <div
               key={index}
-              className="w-16 h-16 overflow-hidden rounded-lg"
+              className="h-16 w-16 overflow-hidden rounded-lg"
               onClick={() => removeSelectedFile(index)}
             >
               <img
                 src={URL.createObjectURL(file)}
                 alt="Image"
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
               />
             </div>
           ))}
         </div>
       )}
 
-      <div className="w-full flex items-center gap-3 p-2">
+      <div className="flex w-full items-center gap-3 p-2">
         {/* <button ref={buttonRef}>
           <Smile />
         </button> */}
@@ -369,7 +342,7 @@ function CustomInput({
         </button>
 
         <div
-          className="flex-1 scrollbar min-h-12 max-h-20 overflow-auto bg-slate-800 text-white rounded-lg p-3"
+          className="scrollbar max-h-20 min-h-12 flex-1 overflow-auto rounded-lg bg-slate-800 p-3 text-white"
           ref={divRef}
           contentEditable
           onInput={handleOnInput}
@@ -380,7 +353,7 @@ function CustomInput({
 
         <Button
           onClick={sendMessageHandler}
-          className="bg-transparent border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
+          className="rounded-xl border-[1px] bg-transparent transition-all duration-150 hover:bg-primary/10 active:scale-95"
         >
           <Send className="text-white" />
         </Button>
@@ -388,7 +361,7 @@ function CustomInput({
         {showPopup && (
           <div
             ref={popupRef}
-            className="bg-secondary fixed p-3 rounded-lg space-y-2 shadow-lg transition-all duration-200 ease-in-out animate-fade-in"
+            className="animate-fade-in fixed space-y-2 rounded-lg bg-secondary p-3 shadow-lg transition-all duration-200 ease-in-out"
             style={{
               bottom: window.screen.availHeight - popupPosition.top - 50,
               left: popupPosition.left,
@@ -399,17 +372,17 @@ function CustomInput({
               <div
                 key={item._id}
                 className={cn(
-                  "w-full p-1 px-3 rounded-lg cursor-pointer flex items-center gap-3 hover:bg-primary/50 transition-all duration-200",
+                  "flex w-full cursor-pointer items-center gap-3 rounded-lg p-1 px-3 transition-all duration-200 hover:bg-primary/50",
                   selectedIndex === index ? "bg-primary/50" : ""
                 )}
                 onClick={() => handleItemSelect(item.username)}
               >
-                <div className="w-6 h-6 rounded-lg overflow-hidden bg-gray-200">
+                <div className="h-6 w-6 overflow-hidden rounded-lg bg-gray-200">
                   {item.username !== "all" && (
                     <img
                       src={item.profilePicture}
                       alt={item.username}
-                      className="w-full h-full object-cover"
+                      className="h-full w-full object-cover"
                     />
                   )}
                 </div>

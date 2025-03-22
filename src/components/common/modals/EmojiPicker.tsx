@@ -35,9 +35,7 @@ const EmojiPicker = ({
 
   useEffect(() => {
     const imageClickHandler = (e: MouseEvent) => {
-      const targetPera = (e.target as HTMLElement).closest(
-        "p"
-      ) as HTMLParagraphElement | null;
+      const targetPera = (e.target as HTMLElement).closest("p") as HTMLParagraphElement | null;
 
       if (!targetPera) return;
 
@@ -49,9 +47,7 @@ const EmojiPicker = ({
       const path = filteredEmojis[index].unicode[0];
       const messageId = (selectedMessage && selectedMessage[0]._id) || "";
 
-      dispatch(
-        addReaction({ messageId, emoji: path, chatId: paramValue as string })
-      );
+      dispatch(addReaction({ messageId, emoji: path, chatId: paramValue as string }));
 
       setTimeout(() => {
         dispatch(closeModal());
@@ -102,13 +98,13 @@ const EmojiPicker = ({
   }, [currentSelectedElement, selectedMessage, paramValue]);
 
   return (
-    <div className="flex flex-col gap-4 w-[450px] h-[500px] rounded-xl">
+    <div className="flex h-[500px] w-[450px] flex-col gap-4 rounded-xl">
       {/* Search Input */}
       <input
         type="text"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
-        className="border border-primary/20 px-4 py-2 rounded-xl w-full bg-secondary focus:outline-none"
+        className="w-full rounded-xl border border-primary/20 bg-secondary px-4 py-2 focus:outline-none"
         placeholder="Search emoji..."
       />
 
@@ -118,10 +114,7 @@ const EmojiPicker = ({
           <p
             key={category}
             onClick={() => setActiveEmojiSet(category)}
-            className={cn(
-              "cursor-pointer",
-              activeEmojiSet === category ? "text-primary" : ""
-            )}
+            className={cn("cursor-pointer", activeEmojiSet === category ? "text-primary" : "")}
           >
             {category}
           </p>
@@ -130,7 +123,7 @@ const EmojiPicker = ({
 
       {/* Emoji Grid */}
       <div
-        className="scrollbar-hidden overflow-y-auto scroll-smooth grid grid-cols-8 gap-4 max-h-[80vh] p-4 custom-scrollbar border border-primary/20 rounded-xl"
+        className="scrollbar-hidden custom-scrollbar grid max-h-[80vh] grid-cols-8 gap-4 overflow-y-auto scroll-smooth rounded-xl border border-primary/20 p-4"
         ref={elementContainerRef}
         tabIndex={0}
       >
@@ -141,13 +134,11 @@ const EmojiPicker = ({
               elementsRef.current[index] = el;
             }}
             className={cn(
-              "text-2xl bg-primary/20 rounded-xl flex items-center justify-center hover:scale-110 transition-all duration-200 cursor-pointer shadow-xl border-2 border-transparent hover:border-primary",
+              "flex cursor-pointer items-center justify-center rounded-xl border-2 border-transparent bg-primary/20 text-2xl shadow-xl transition-all duration-200 hover:scale-110 hover:border-primary",
               currentSelectedElement === index ? "border-2 border-primary" : ""
             )}
           >
-            {String.fromCodePoint(
-              parseInt(emoji.unicode[0].replace("U+", ""), 16)
-            )}
+            {String.fromCodePoint(parseInt(emoji.unicode[0].replace("U+", ""), 16))}
           </p>
         ))}
       </div>

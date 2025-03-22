@@ -70,9 +70,4 @@ const isNewDate = (messages: ChatMessage[], index: number) => {
   return currentDate !== prevDate;
 };
 
-export {
-  requestHandler,
-  capitalizeFirstLetter,
-  playNotificationSound,
-  isNewDate,
-};
+export { requestHandler, capitalizeFirstLetter, playNotificationSound, isNewDate };

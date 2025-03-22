@@ -13,10 +13,7 @@ const fetchActiveChatMessages = createAsyncThunk(
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
-        console.log(
-          "Error during fetching my chats:",
-          error.response?.data.message
-        );
+        console.log("Error during fetching my chats:", error.response?.data.message);
         return rejectWithValue(error.response?.data.message);
       } else {
         console.error("Unexpected error:", error);
@@ -37,10 +34,7 @@ const fetchOldActiveChatMessages = createAsyncThunk(
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
-        console.log(
-          "Error during fetching my chats:",
-          error.response?.data.message
-        );
+        console.log("Error during fetching my chats:", error.response?.data.message);
         return rejectWithValue(error.response?.data.message);
       } else {
         console.error("Unexpected error:", error);

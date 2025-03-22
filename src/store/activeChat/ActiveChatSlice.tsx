@@ -1,9 +1,6 @@
 import { ChatMessage, ChatMessagesSummary } from "@/types/ApiResponse.types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  fetchActiveChatMessages,
-  fetchOldActiveChatMessages,
-} from "./ActiveChatThunk";
+import { fetchActiveChatMessages, fetchOldActiveChatMessages } from "./ActiveChatThunk";
 
 interface ActiveChatState {
   isLoading: boolean;
@@ -39,19 +36,12 @@ interface addReactionType {
   chatId: string;
 }
 
-const updateMessageReactions = (
-  messages: ChatMessage[],
-  messageId: string,
-  emoji: string
-) => {
+const updateMessageReactions = (messages: ChatMessage[], messageId: string, emoji: string) => {
   return messages.map((message) =>
     message._id === messageId
       ? {
           ...message,
-          reactions: [
-            ...message.reactions,
-            { emoji, _id: new Date().getTime() },
-          ],
+          reactions: [...message.reactions, { emoji, _id: new Date().getTime() }],
         }
       : message
   );
@@ -82,15 +72,13 @@ const activeChatSlice = createSlice({
             messages: [...state.activeChatDetails.messages, action.payload],
           };
         } else {
-          const updatedMessages = state.activeChatDetails.messages.map(
-            (message) => {
-              if (message._id === action.payload._id) {
-                return action.payload;
-              } else {
-                return message;
-              }
+          const updatedMessages = state.activeChatDetails.messages.map((message) => {
+            if (message._id === action.payload._id) {
+              return action.payload;
+            } else {
+              return message;
             }
-          );
+          });
 
           state.activeChatDetails = {
             ...state.activeChatDetails,
@@ -175,17 +163,14 @@ const activeChatSlice = createSlice({
         limit: action.payload.limit,
       };
       state.activeChatDetails = chatDetails;
-      state.hasMoreMessages =
-        action.payload.currentPage < action.payload.totalPages;
+      state.hasMoreMessages = action.payload.currentPage < action.payload.totalPages;
       state.isLoading = false;
       state.isError = null;
     });
     builder.addCase(fetchActiveChatMessages.rejected, (state, action) => {
       state.isLoading = false;
       state.isError =
-        typeof action.payload === "string"
-          ? action.payload
-          : "An unknown error occurred.";
+        typeof action.payload === "string" ? action.payload : "An unknown error occurred.";
     });
 
     builder.addCase(fetchOldActiveChatMessages.pending, (state) => {
@@ -206,9 +191,7 @@ const activeChatSlice = createSlice({
     builder.addCase(fetchOldActiveChatMessages.rejected, (state, action) => {
       state.isLoadingOldMessages = false;
       state.isError =
-        typeof action.payload === "string"
-          ? action.payload
-          : "An unknown error occurred.";
+        typeof action.payload === "string" ? action.payload : "An unknown error occurred.";
     });
   },
 });

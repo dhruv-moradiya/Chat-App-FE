@@ -5,10 +5,7 @@ import { capitalizeFirstLetter, cn } from "@/lib/utils";
 import { UserPreview } from "@/types/ApiResponse.types";
 import { createGroupChat, fetchMyFriendsList } from "@/api";
 import { ArrowLeft, ArrowRight, Check, Loader, X } from "lucide-react";
-import {
-  showErrorToast,
-  showInfoToast,
-} from "@/components/common/ToastProvider";
+import { showErrorToast, showInfoToast } from "@/components/common/ToastProvider";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { closeModal } from "@/store/chatDetailSidebar/ChatDetailSlice";
@@ -30,9 +27,7 @@ const GroupChat = () => {
   };
 
   const handleRemove = (id: string) => {
-    setSelectedFriends((prev) =>
-      prev.filter((selectedFriend) => selectedFriend._id !== id)
-    );
+    setSelectedFriends((prev) => prev.filter((selectedFriend) => selectedFriend._id !== id));
   };
 
   useEffect(() => {
@@ -54,20 +49,18 @@ const GroupChat = () => {
 
   if (loading) {
     return (
-      <div className="min-w-[450px] flex justify-center items-center">
+      <div className="flex min-w-[450px] items-center justify-center">
         <Loader className="animate-spin" size={18} />
       </div>
     );
   }
 
   return (
-    <div className="w-full flex flex-col gap-2">
-      <h2 className="text-xl font-bold mb-4">Group Chat</h2>
+    <div className="flex w-full flex-col gap-2">
+      <h2 className="mb-4 text-xl font-bold">Group Chat</h2>
       {directChats.length < 2 ? (
-        <p className="text-gray-500 text-center flex flex-col">
-          <span>
-            🚫 Oops! You need at least 2 friends to start a group chat. 👫👭
-          </span>
+        <p className="flex flex-col text-center text-gray-500">
+          <span>🚫 Oops! You need at least 2 friends to start a group chat. 👫👭</span>
           <span>Add more friends and try again! 🎉💬</span>
         </p>
       ) : (
@@ -82,33 +75,24 @@ const GroupChat = () => {
                 />
               ) : null}
 
-              {selectedFriends.length ? (
-                <hr className="border-gray-900/50 mt-2" />
-              ) : null}
+              {selectedFriends.length ? <hr className="mt-2 border-gray-900/50" /> : null}
 
-              <FriendList
-                friendsList={friendsList}
-                handleSelect={handleSelect}
-              />
+              <FriendList friendsList={friendsList} handleSelect={handleSelect} />
 
               <Button
-                className="p-0 px-6 transition-all duration-200 bg-transparent border border-primary/50 hover:bg-primary/10 text-white w-fit rounded-lg flex items-center justify-center relative group active:scale-95"
+                className="group relative flex w-fit items-center justify-center rounded-lg border border-primary/50 bg-transparent p-0 px-6 text-white transition-all duration-200 hover:bg-primary/10 active:scale-95"
                 onClick={() => {
                   if (selectedFriends.length < 2) {
-                    showInfoToast(
-                      "You need at least 2 friends to create a group chat."
-                    );
+                    showInfoToast("You need at least 2 friends to create a group chat.");
                   } else {
                     setTab(1);
                   }
                 }}
               >
                 <span className="relative flex items-center">
-                  <span className="transition-all duration-200 group-hover:pr-5 text-sm">
-                    Next
-                  </span>
+                  <span className="text-sm transition-all duration-200 group-hover:pr-5">Next</span>
                   <ArrowRight
-                    className="absolute right-0 opacity-0 translate-x-[-10px] transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
+                    className="absolute right-0 translate-x-[-10px] opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
                     size={20}
                   />
                 </span>
@@ -116,10 +100,7 @@ const GroupChat = () => {
             </>
           ) : (
             <>
-              <GroupChatForm
-                setTab={setTab}
-                selectedFriends={selectedFriends}
-              />
+              <GroupChatForm setTab={setTab} selectedFriends={selectedFriends} />
             </>
           )}
         </>
@@ -134,26 +115,23 @@ type FriendListProps = {
   handleSelect: (friend: UserPreview) => void;
 };
 
-const FriendList: React.FC<FriendListProps> = ({
-  friendsList,
-  handleSelect,
-}) => {
+const FriendList: React.FC<FriendListProps> = ({ friendsList, handleSelect }) => {
   return (
-    <div className="w-full grid grid-cols-3 md:grid-cols-6 gap-4">
+    <div className="grid w-full grid-cols-3 gap-4 md:grid-cols-6">
       {friendsList?.map((friend) => (
         <div
           key={friend._id}
-          className="flex flex-col md:flex-row items-center gap-2 md:gap-4 px-3 py-3 rounded-lg cursor-pointer transition-all duration-150 hover:bg-gray-900/10 hover:shadow-md"
+          className="flex cursor-pointer flex-col items-center gap-2 rounded-lg px-3 py-3 transition-all duration-150 hover:bg-gray-900/10 hover:shadow-md md:flex-row md:gap-4"
           onClick={() => handleSelect(friend)}
         >
-          <div className="w-10 h-10 rounded-lg overflow-hidden">
+          <div className="h-10 w-10 overflow-hidden rounded-lg">
             <img
-              className="w-full h-full object-cover"
+              className="h-full w-full object-cover"
               src={friend.profilePicture}
               alt={friend.username}
             />
           </div>
-          <p className="text-gray-300 text-[13.5px] md:text-base">
+          <p className="text-[13.5px] text-gray-300 md:text-base">
             {capitalizeFirstLetter(friend.username)}
           </p>
         </div>
@@ -173,21 +151,21 @@ const SelectedFriendsList = ({
   showRemoveBtn?: boolean;
 }) => {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 md:gap-4">
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 md:gap-4">
       {friendsList?.map((friend) => (
         <div
           key={friend._id}
-          className="flex items-center justify-between gap-2 px-1 md:px-3 py-3 rounded-lg cursor-pointer transition-all duration-150  border-2 border-primary/10 animate-pop-up"
+          className="flex animate-pop-up cursor-pointer items-center justify-between gap-2 rounded-lg border-2 border-primary/10 px-1 py-3 transition-all duration-150 md:px-3"
         >
           <div className="flex gap-3">
-            <div className="w-6 h-6 rounded-lg overflow-hidden">
+            <div className="h-6 w-6 overflow-hidden rounded-lg">
               <img
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
                 src={friend.profilePicture}
                 alt={friend.username}
               />
             </div>
-            <p className="text-[13.5px] text-base max-w-7 truncate">
+            <p className="max-w-7 truncate text-[13.5px] text-base">
               {capitalizeFirstLetter(friend.username)}
             </p>
           </div>
@@ -195,7 +173,7 @@ const SelectedFriendsList = ({
           {showRemoveBtn && (
             <button
               type="button"
-              className="p-[0.5px] md:p-1 rounded-full bg-white text-red-600 hover:bg-gray-200 transition-all"
+              className="rounded-full bg-white p-[0.5px] text-red-600 transition-all hover:bg-gray-200 md:p-1"
               onClick={(e) => {
                 e.stopPropagation();
                 handleRemove(friend._id);
@@ -259,9 +237,7 @@ const GroupChatForm = ({
         if (error instanceof AxiosError) {
           showErrorToast(error.response?.data.message);
         } else {
-          showErrorToast(
-            "An unexpected error occurred. Please try again later."
-          );
+          showErrorToast("An unexpected error occurred. Please try again later.");
         }
       })
       .finally(() => {
@@ -282,12 +258,12 @@ const GroupChatForm = ({
           onChange={handleImageChange}
           className="hidden"
         />
-        <div className="w-28 h-28 rounded-xl p-2 overflow-hidden border-2 border-dashed border-gray-500 flex items-center justify-center transition-all hover:border-gray-300">
+        <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-gray-500 p-2 transition-all hover:border-gray-300">
           {image ? (
             <img
               src={URL.createObjectURL(image)}
               alt="Selected"
-              className="w-full h-full object-cover rounded-lg"
+              className="h-full w-full rounded-lg object-cover"
             />
           ) : (
             <span className="text-gray-500">Select Image</span>
@@ -300,7 +276,7 @@ const GroupChatForm = ({
         <button
           type="button"
           onClick={removeImage}
-          className="animate-pop-up flex items-center gap-2 text-red-500 border border-red-500 px-3 py-1 rounded-lg transition-all hover:bg-red-500 hover:text-white active:scale-95"
+          className="flex animate-pop-up items-center gap-2 rounded-lg border border-red-500 px-3 py-1 text-red-500 transition-all hover:bg-red-500 hover:text-white active:scale-95"
         >
           <X size={18} /> Remove Image
         </button>
@@ -326,27 +302,25 @@ const GroupChatForm = ({
 
       <div className="flex gap-4">
         <Button
-          className="p-0 px-6 transition-all duration-200 bg-transparent border border-primary/50 hover:bg-primary/10 text-white w-fit rounded-lg flex items-center justify-center relative group active:scale-95"
+          className="group relative flex w-fit items-center justify-center rounded-lg border border-primary/50 bg-transparent p-0 px-6 text-white transition-all duration-200 hover:bg-primary/10 active:scale-95"
           onClick={() => setTab(0)}
         >
           <span className="relative flex items-center">
             <ArrowLeft
-              className="absolute left-0 opacity-0 -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
+              className="absolute left-0 -translate-x-2 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
               size={20}
             />
-            <span className="transition-all duration-200 group-hover:pl-5 text-sm">
-              Back
-            </span>
+            <span className="text-sm transition-all duration-200 group-hover:pl-5">Back</span>
           </span>
         </Button>
         <Button
-          className="p-0 px-6 py-2 transition-all duration-200 bg-transparent border border-primary/50 hover:bg-primary/20 text-white w-fit rounded-lg flex items-center justify-center relative group active:scale-95"
+          className="group relative flex w-fit items-center justify-center rounded-lg border border-primary/50 bg-transparent p-0 px-6 py-2 text-white transition-all duration-200 hover:bg-primary/20 active:scale-95"
           type="submit"
         >
           <span className="relative flex items-center">
             <span
               className={cn(
-                "transition-all duration-200 flex items-center gap-2",
+                "flex items-center gap-2 transition-all duration-200",
                 !loading && "group-hover:pr-5"
               )}
             >
@@ -355,7 +329,7 @@ const GroupChatForm = ({
             </span>
             {!loading && (
               <Check
-                className="absolute right-0 opacity-0 translate-x-[-10px] transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
+                className="absolute right-0 translate-x-[-10px] opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
                 size={20}
               />
             )}

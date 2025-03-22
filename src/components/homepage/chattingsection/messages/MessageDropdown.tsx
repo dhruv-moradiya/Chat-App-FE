@@ -17,34 +17,28 @@ const MessageDropdown = ({
   isSender: boolean;
   onClick: (value: MessageUserInteractionType) => void;
 }) => {
-  const options: MessageUserInteractionType[] = [
-    "Reply",
-    "React",
-    "Star",
-    "Pin",
-    "Delete",
-  ];
+  const options: MessageUserInteractionType[] = ["Reply", "React", "Star", "Pin", "Delete"];
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div
           className={cn(
-            "p-0 h-fit absolute top-1 right-3 shadow-lg cursor-pointer group-hover:block rounded-xl",
-            "transition-all duration-300 ease-in-out opacity-0 group-hover:opacity-100 ",
+            "absolute right-3 top-1 h-fit cursor-pointer rounded-xl p-0 shadow-lg group-hover:block",
+            "opacity-0 transition-all duration-300 ease-in-out group-hover:opacity-100",
             isSender
-              ? "bg-[#34406B] shadow-[0_8px_15px_rgba(52,64,107,0.5)] bg-transparent"
-              : "bg-[#21232A] shadow-[0_8px_15px_rgba(33,35,42,0.5)] bg-transparent"
+              ? "bg-[#34406B] bg-transparent shadow-[0_8px_15px_rgba(52,64,107,0.5)]"
+              : "bg-[#21232A] bg-transparent shadow-[0_8px_15px_rgba(33,35,42,0.5)]"
           )}
         >
           <ChevronDown size={20} />
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="shadow-lg bg-[#21232A] border-none rounded-lg">
+      <DropdownMenuContent className="rounded-lg border-none bg-[#21232A] shadow-lg">
         <DropdownMenuGroup>
           {options.map((item, index) => (
             <DropdownMenuItem
               key={index}
-              className="hover:bg-black cursor-pointer"
+              className="cursor-pointer hover:bg-black"
               onClick={() => onClick(item)}
             >
               {item}
@@ -71,10 +65,7 @@ const Popover = ({
   const togglePopover = () => setIsOpen((prev) => !prev);
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (
-      popoverRef.current &&
-      !popoverRef.current.contains(event.target as Node)
-    ) {
+    if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
       setIsOpen(false);
     }
   };
@@ -104,7 +95,7 @@ const Popover = ({
       </div>
       {isOpen && (
         <div
-          className={`absolute z-50 ${getPositionClasses()} bg-white shadow-lg rounded-lg border p-3 w-64 transition-opacity duration-300 opacity-0 animate-fadeIn`}
+          className={`absolute z-50 ${getPositionClasses()} animate-fadeIn w-64 rounded-lg border bg-white p-3 opacity-0 shadow-lg transition-opacity duration-300`}
         >
           {children}
         </div>

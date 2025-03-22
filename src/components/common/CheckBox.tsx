@@ -10,12 +10,12 @@ type CheckBoxProps = {
 const CheckBox: React.FC<CheckBoxProps> = ({ label, checked, setChecked }) => {
   return (
     <div
-      className="flex items-center space-x-2 cursor-pointer"
+      className="flex cursor-pointer items-center space-x-2"
       onClick={() => setChecked(!checked)}
     >
       <div
-        className={`w-5 h-5 border-2 rounded flex items-center justify-center ${
-          checked ? "bg-primary border-primary" : "bg-white border-gray-400"
+        className={`flex h-5 w-5 items-center justify-center rounded border-2 ${
+          checked ? "border-primary bg-primary" : "border-gray-400 bg-white"
         }`}
       >
         {checked && <Check size={14} color="#fff" />}

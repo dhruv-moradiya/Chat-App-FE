@@ -13,9 +13,7 @@ const HomeScreenMobile = () => {
   const prevParamValue = useRef<string | null>(null);
 
   const { chatId } = useParams();
-  const { myChats, isLoading, isError } = useAppSelector(
-    (state) => state.myChats
-  );
+  const { myChats, isLoading, isError } = useAppSelector((state) => state.myChats);
 
   useEffect(() => {
     if (prevParamValue.current && prevParamValue.current !== chatId) {
@@ -47,16 +45,14 @@ const HomeScreenMobile = () => {
 
   const renderChats = (filterFn?: (chat: any) => boolean) => {
     const filteredChats = filterFn ? myChats.filter(filterFn) : myChats;
-    return filteredChats.map((chat, index) => (
-      <ChatEntry key={index} chat={chat} />
-    ));
+    return filteredChats.map((chat, index) => <ChatEntry key={index} chat={chat} />);
   };
 
   return (
     <>
-      <div className="w-full p-2 bg-zinc-900">
+      <div className="w-full bg-zinc-900 p-2">
         <Tabs defaultValue="all">
-          <TabsList className="w-full absolute bottom-2 left-0  grid grid-cols-3 place-items-center">
+          <TabsList className="absolute bottom-2 left-0 grid w-full grid-cols-3 place-items-center">
             <TabsTrigger value="all" className="w-full rounded-xl">
               All
             </TabsTrigger>
@@ -74,12 +70,8 @@ const HomeScreenMobile = () => {
           ) : (
             <>
               <TabsContent value="all">{renderChats()}</TabsContent>
-              <TabsContent value="direct">
-                {renderChats((chat) => !chat.isGroup)}
-              </TabsContent>
-              <TabsContent value="groups">
-                {renderChats((chat) => chat.isGroup)}
-              </TabsContent>
+              <TabsContent value="direct">{renderChats((chat) => !chat.isGroup)}</TabsContent>
+              <TabsContent value="groups">{renderChats((chat) => chat.isGroup)}</TabsContent>
             </>
           )}
         </Tabs>

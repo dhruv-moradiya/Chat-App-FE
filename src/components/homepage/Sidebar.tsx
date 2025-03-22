@@ -9,12 +9,8 @@ import LoaderForChatEntry from "../common/LoaderForChatEntry";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
-  const { myChats, isLoading, isError } = useAppSelector(
-    (state) => state.myChats
-  );
-  const isChatListSideBarOpen = useAppSelector(
-    (state) => state.chatDetail.isChatListSideBarOpen
-  );
+  const { myChats, isLoading, isError } = useAppSelector((state) => state.myChats);
+  const isChatListSideBarOpen = useAppSelector((state) => state.chatDetail.isChatListSideBarOpen);
 
   const renderLoading = () => (
     <>
@@ -26,9 +22,7 @@ const Sidebar = () => {
 
   const renderChats = (filterFn?: (chat: any) => boolean) => {
     const filteredChats = filterFn ? myChats.filter(filterFn) : myChats;
-    return filteredChats.map((chat, index) => (
-      <ChatEntry key={index} chat={chat} />
-    ));
+    return filteredChats.map((chat, index) => <ChatEntry key={index} chat={chat} />);
   };
 
   useEffect(() => {
@@ -39,9 +33,9 @@ const Sidebar = () => {
     <Tabs
       defaultValue="all"
       className={cn(
-        "fixed h-full top-12 left-14 z-10 md:static md:w-96 md:flex flex-col gap-1 transition-all duration-150",
+        "fixed left-14 top-12 z-10 h-full flex-col gap-1 transition-all duration-150 md:static md:flex md:w-96",
         isChatListSideBarOpen
-          ? "translate-x-0 w-full bg-primary-foreground w-60"
+          ? "w-60 w-full translate-x-0 bg-primary-foreground"
           : "translate-x-[-150%]",
         "md:translate-x-0"
       )}
@@ -58,7 +52,7 @@ const Sidebar = () => {
         </TabsTrigger>
       </TabsList>
 
-      <div className="scrollbar overflow-y-scroll flex flex-col gap-1 p-4 pl-0 rounded-lg">
+      <div className="scrollbar flex flex-col gap-1 overflow-y-scroll rounded-lg p-4 pl-0">
         {isLoading ? (
           renderLoading()
         ) : isError ? (
@@ -66,12 +60,8 @@ const Sidebar = () => {
         ) : (
           <>
             <TabsContent value="all">{renderChats()}</TabsContent>
-            <TabsContent value="direct">
-              {renderChats((chat) => !chat.isGroup)}
-            </TabsContent>
-            <TabsContent value="groups">
-              {renderChats((chat) => chat.isGroup)}
-            </TabsContent>
+            <TabsContent value="direct">{renderChats((chat) => !chat.isGroup)}</TabsContent>
+            <TabsContent value="groups">{renderChats((chat) => chat.isGroup)}</TabsContent>
           </>
         )}
       </div>

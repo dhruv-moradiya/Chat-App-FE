@@ -5,10 +5,7 @@ import { ModalType } from "@/lib/constants";
 import { useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { openModal } from "@/store/chatDetailSidebar/ChatDetailSlice";
-import {
-  InteractedMessage,
-  SelectedMessagesForInteraction,
-} from "@/types/Common.types";
+import { InteractedMessage, SelectedMessagesForInteraction } from "@/types/Common.types";
 import Header from "./Header";
 import NoChatSelected from "./NoChatSelected";
 import SkeletonLoader from "./ChatSkeletonLoader ";
@@ -24,21 +21,21 @@ const ChattingSection = () => {
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const chatList = useAppSelector((state) => state.myChats.myChats);
   const { user } = useAppSelector((state) => state.auth);
-  const { activeChatId, activeChatDetails, isLoading, isLoadingOldMessages } =
-    useAppSelector((state) => state.activeChat);
+  const { activeChatId, activeChatDetails, isLoading, isLoadingOldMessages } = useAppSelector(
+    (state) => state.activeChat
+  );
   const isCurrentChatIsGroupChat =
     chatList.find((chat) => chat._id === activeChatId)?.isGroup ?? false;
 
   // Message selection for delete, reply etc
-  const [selectedMessage, setSelectedMessage] =
-    useState<SelectedMessagesForInteraction | null>(null);
+  const [selectedMessage, setSelectedMessage] = useState<SelectedMessagesForInteraction | null>(
+    null
+  );
   // For deleting multiple message selection
   const [isCheckBoxForDelete, setIsCheckBoxForDelete] = useState(false);
   // For selected message is current user's message
-  const [
-    isSelectedAllMessageFromCurrentUserSide,
-    setIsSelectedAllMessageFromCurrentUserSide,
-  ] = useState(false);
+  const [isSelectedAllMessageFromCurrentUserSide, setIsSelectedAllMessageFromCurrentUserSide] =
+    useState(false);
 
   useInfiniteScroll(
     activeChatId as string,
@@ -47,13 +44,8 @@ const ChattingSection = () => {
   );
 
   useEffect(() => {
-    if (
-      !isLoadingOldMessages &&
-      chatContainerRef.current &&
-      activeChatDetails?.currentPage === 1
-    ) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
+    if (!isLoadingOldMessages && chatContainerRef.current && activeChatDetails?.currentPage === 1) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [activeChatDetails, isLoadingOldMessages]);
 
@@ -63,9 +55,7 @@ const ChattingSection = () => {
     const selectedMessageSenders =
       selectedMessage &&
       selectedMessage.messages.map((message) => {
-        const findMessage = activeChatDetails?.messages.find(
-          (m) => m._id === message._id
-        );
+        const findMessage = activeChatDetails?.messages.find((m) => m._id === message._id);
         return {
           ...findMessage?.sender,
         };
@@ -76,9 +66,7 @@ const ChattingSection = () => {
         ? selectedMessageSenders.every((sender) => sender?._id === user._id)
         : false;
 
-    setIsSelectedAllMessageFromCurrentUserSide(
-      allSenderIsCurrentUser && !!hasDeleteType
-    );
+    setIsSelectedAllMessageFromCurrentUserSide(allSenderIsCurrentUser && !!hasDeleteType);
     setIsCheckBoxForDelete(!!hasDeleteType);
   }, [selectedMessage, user?._id]);
 
@@ -115,9 +103,7 @@ const ChattingSection = () => {
 
     return (
       <>
-        {isLoadingOldMessages && (
-          <p className="w-full text-start text-sm">Loading....</p>
-        )}
+        {isLoadingOldMessages && <p className="w-full text-start text-sm">Loading....</p>}
         {messages.map((message, index) => {
           const prevMessage = messages[index - 1];
           const showNewDate = isNewDate(messages, index);
@@ -136,9 +122,7 @@ const ChattingSection = () => {
               showNewDate={showNewDate}
               isSender={isSender}
               isPrevMessageFromSameUser={isPrevMessageFromSameUser}
-              isCurrentMessageSelectedForDelete={
-                isCurrentMessageSelectedForDelete ?? false
-              }
+              isCurrentMessageSelectedForDelete={isCurrentMessageSelectedForDelete ?? false}
               isCheckBoxForDelete={isCheckBoxForDelete}
               selectedMessage={selectedMessage}
               toggleCheckBox={toggleCheckBox}
@@ -164,23 +148,20 @@ const ChattingSection = () => {
   if (!paramValue) return <NoChatSelected />;
 
   return (
-    <div className="flex flex-col w-full md:w-[calc(100%-384px)] relative mb-5">
+    <div className="relative mb-5 flex w-full flex-col md:w-[calc(100%-384px)]">
       <Header />
       <div
-        className="scrollbar flex-grow w-full px-2 overflow-y-scroll flex flex-col items-center gap-2 mb-2"
+        className="scrollbar mb-2 flex w-full flex-grow flex-col items-center gap-2 overflow-y-scroll px-2"
         ref={chatContainerRef}
       >
         {renderMessages()}
       </div>
-      <CustomInput
-        selectedMessage={selectedMessage}
-        setSelectedMessage={setSelectedMessage}
-      />
+      <CustomInput selectedMessage={selectedMessage} setSelectedMessage={setSelectedMessage} />
 
       <div
         className={cn(
-          "h-0 overflow-hidden w-full absolute bottom-0 bg-primary-foreground flex items-center justify-between gap-4 transition-all duration-200",
-          isCheckBoxForDelete ? "opacity-100 h-auto px-4 py-5" : "opacity-0"
+          "absolute bottom-0 flex h-0 w-full items-center justify-between gap-4 overflow-hidden bg-primary-foreground transition-all duration-200",
+          isCheckBoxForDelete ? "h-auto px-4 py-5 opacity-100" : "opacity-0"
         )}
       >
         <X
@@ -190,8 +171,7 @@ const ChattingSection = () => {
           }}
         />
         <p className="flex-grow">
-          {selectedMessage ? selectedMessage.messages.length : 0} Message
-          Selected
+          {selectedMessage ? selectedMessage.messages.length : 0} Message Selected
         </p>
         <Trash2
           size={18}
@@ -200,9 +180,7 @@ const ChattingSection = () => {
               openModal({
                 type: ModalType.DELETE_MODEL,
                 props: {
-                  selectedMessage: selectedMessage?.messages.map(
-                    (msg) => msg._id
-                  ),
+                  selectedMessage: selectedMessage?.messages.map((msg) => msg._id),
                   isSelectedAllMessageFromCurrentUserSide,
                   setSelectedMessage,
                 },

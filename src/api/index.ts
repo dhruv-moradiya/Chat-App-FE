@@ -43,9 +43,7 @@ apiClient.interceptors.response.use(
       localStorage.removeItem("token");
       const response = await apiClient.get("/user/refresh-token");
       localStorage.setItem("token", response.data.data.accessToken);
-      error.config.headers[
-        "Authorization"
-      ] = `Bearer ${response.data.data.accessToken}`;
+      error.config.headers["Authorization"] = `Bearer ${response.data.data.accessToken}`;
       return apiClient.request(error.config);
     }
     return Promise.reject(error);
@@ -53,11 +51,7 @@ apiClient.interceptors.response.use(
 );
 
 // REGISTER USER API
-const registerUser = async (data: {
-  username: string;
-  email: string;
-  password: string;
-}) => {
+const registerUser = async (data: { username: string; email: string; password: string }) => {
   try {
     const response: AxiosResponse<RegisterUserResponse> = await apiClient.post(
       "/user/create-user",
@@ -95,8 +89,9 @@ const getCurrentUser = async () => {
 // GET USERS EXCLUDING FRIENDS API
 const getUsersExcludingFriendsBasedOnQuery = async (query: string) => {
   try {
-    const response: AxiosResponse<ExcludedFriendsUsersResponse> =
-      await apiClient.get(`/user/excluding-friends-search?search=${query}`);
+    const response: AxiosResponse<ExcludedFriendsUsersResponse> = await apiClient.get(
+      `/user/excluding-friends-search?search=${query}`
+    );
 
     return response.data.data.users;
   } catch (error) {
@@ -107,10 +102,12 @@ const getUsersExcludingFriendsBasedOnQuery = async (query: string) => {
 // SEND FRIEND REQUEST API
 const sendFriendRequest = async (_id: string) => {
   try {
-    const response: AxiosResponse<SentFriendRequestResponse> =
-      await apiClient.post(`/friendrequest/send-friend-request`, {
+    const response: AxiosResponse<SentFriendRequestResponse> = await apiClient.post(
+      `/friendrequest/send-friend-request`,
+      {
         receiverId: _id,
-      });
+      }
+    );
     return response.data.data;
   } catch (error) {
     throw error;
@@ -132,10 +129,12 @@ const getAllFriendRequests = async () => {
 // ACCEPT FRIEND REQUEST API
 const acceptFriendRequest = async (_id: string) => {
   try {
-    const response: AxiosResponse<AcceptFriendRequestResponse> =
-      await apiClient.post("/friendrequest/accept-friend-request", {
+    const response: AxiosResponse<AcceptFriendRequestResponse> = await apiClient.post(
+      "/friendrequest/accept-friend-request",
+      {
         friendRequestId: _id,
-      });
+      }
+    );
     return response.data.data;
   } catch (error) {
     throw error;
@@ -144,9 +143,7 @@ const acceptFriendRequest = async (_id: string) => {
 
 const getAllChats = async () => {
   try {
-    const response: AxiosResponse<ChatDetailResponse> = await apiClient.get(
-      "/chat/my-chats"
-    );
+    const response: AxiosResponse<ChatDetailResponse> = await apiClient.get("/chat/my-chats");
 
     return response.data.data;
   } catch (error) {
@@ -205,10 +202,7 @@ const sendAttachments = async (data: {
   }
 
   try {
-    const response = await apiClient.post(
-      "/message/save-attachments",
-      formData
-    );
+    const response = await apiClient.post("/message/save-attachments", formData);
 
     return response.data;
   } catch (error) {
@@ -216,11 +210,7 @@ const sendAttachments = async (data: {
   }
 };
 
-const getChatMessagesBasedOnChatId = async (
-  chatId: string,
-  page: number,
-  limit: number
-) => {
+const getChatMessagesBasedOnChatId = async (chatId: string, page: number, limit: number) => {
   try {
     const response: AxiosResponse<MessageResponse> = await apiClient.get(
       `/message/get-messages-by-chat/${chatId}?page=${page}&limit=${limit}`

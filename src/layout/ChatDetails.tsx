@@ -1,19 +1,14 @@
 import CommonSheet from "@/components/common/CommonSheet";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import {
-  chatDetailSelector,
-  closeChatDetail,
-} from "@/store/chatDetailSidebar/ChatDetailSlice";
+import { chatDetailSelector, closeChatDetail } from "@/store/chatDetailSidebar/ChatDetailSlice";
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 
 const ChatDetails = () => {
   const dispatch = useDispatch();
 
-  const { isOpen: isChatDetailOpen } = useSelector((state) =>
-    chatDetailSelector(state)
-  );
+  const { isOpen: isChatDetailOpen } = useSelector((state) => chatDetailSelector(state));
 
   return (
     <div
@@ -22,8 +17,8 @@ const ChatDetails = () => {
         isChatDetailOpen && "w-80 px-2"
       )}
     >
-      <div className="flex items-center justify-between my-4">
-        <h3 className="text-xl my-4">Chat Details</h3>
+      <div className="my-4 flex items-center justify-between">
+        <h3 className="my-4 text-xl">Chat Details</h3>
         <Button
           className="p-2"
           variant="ghost"
@@ -35,7 +30,7 @@ const ChatDetails = () => {
         </Button>
       </div>
 
-      <div className="flex items-center justify-between my-4">
+      <div className="my-4 flex items-center justify-between">
         <h4>Photos and Videos</h4>
         <Button variant="ghost" size="sm">
           See all
@@ -44,25 +39,21 @@ const ChatDetails = () => {
 
       <div className="grid grid-cols-2 gap-2">
         {new Array(4).fill(0).map((_, index) => (
-          <div key={index} className="w-full h-28 overflow-hidden rounded-lg">
+          <div key={index} className="h-28 w-full overflow-hidden rounded-lg">
             <img
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOncwcdfdMqq42OOJp3l7u5qBLrlZFGYjJ8j8FIo_uU-PYB7fOBL6FyXk&s"
               alt="media"
-              className="w-full h-full object-cover"
+              className="h-full w-full object-cover"
             />
           </div>
         ))}
       </div>
 
       <div>
-        <div className="flex items-center justify-between my-4">
+        <div className="my-4 flex items-center justify-between">
           <h4>Shared Link</h4>
 
-          <CommonSheet
-            position="bottom"
-            name="See all"
-            content={<AllLinks />}
-          />
+          <CommonSheet position="bottom" name="See all" content={<AllLinks />} />
         </div>
 
         <div className="flex items-center space-x-2">
@@ -72,9 +63,9 @@ const ChatDetails = () => {
                 <img
                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOncwcdfdMqq42OOJp3l7u5qBLrlZFGYjJ8j8FIo_uU-PYB7fOBL6FyXk&s"
                   alt="member"
-                  className="w-8 h-8 rounded-xl"
+                  className="h-8 w-8 rounded-xl"
                 />
-                <a href="#" className="text-blue-500 text-sm">
+                <a href="#" className="text-sm text-blue-500">
                   https://www.example.com
                 </a>
               </li>
@@ -91,15 +82,15 @@ export default ChatDetails;
 const AllLinks = () => {
   return (
     <>
-      <ul className="scrollbar overflow-y-scroll space-y-4 max-h-[80vh]">
+      <ul className="scrollbar max-h-[80vh] space-y-4 overflow-y-scroll">
         {new Array(100).fill(0).map((_, index) => (
           <li key={index} className="flex items-center space-x-2">
             <img
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOncwcdfdMqq42OOJp3l7u5qBLrlZFGYjJ8j8FIo_uU-PYB7fOBL6FyXk&s"
               alt="member"
-              className="w-10 h-10 rounded-xl"
+              className="h-10 w-10 rounded-xl"
             />
-            <a href="#" className="text-blue-500 text-sm">
+            <a href="#" className="text-sm text-blue-500">
               https://www.example.com
             </a>
           </li>

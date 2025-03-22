@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
 
-const useDebounce = ({
-  query,
-  debounceTime,
-}: {
-  query: string;
-  debounceTime: number;
-}) => {
+const useDebounce = ({ query, debounceTime }: { query: string; debounceTime: number }) => {
   const [debouncedQuery, setDebouncedQuery] = useState(query);
 
   useEffect(() => {

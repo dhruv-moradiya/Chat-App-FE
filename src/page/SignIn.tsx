@@ -87,7 +87,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center gap-2">
+    <div className="flex h-screen w-screen flex-col items-center justify-center gap-2">
       {/* <Squares
         speed={0.5}
         squareSize={40}
@@ -95,21 +95,17 @@ const SignIn = () => {
         borderColor="#2b2b2b"
         hoverFillColor="#222"
       /> */}
-      <div className="absolute flex flex-col gap-6 items-center justify-center p-4 rounded-xl shadow-lg">
+      <div className="absolute flex flex-col items-center justify-center gap-6 rounded-xl p-4 shadow-lg">
         <div className="flex flex-col items-center gap-1">
-          <h2 className="text-2xl font-bold my-2 text-center">
-            💬 Welcome to DM ChatZone! 🚀
-          </h2>
-          <p className="text-sm text-gray-400 flex flex-col gap-1 text-center">
+          <h2 className="my-2 text-center text-2xl font-bold">💬 Welcome to DM ChatZone! 🚀</h2>
+          <p className="flex flex-col gap-1 text-center text-sm text-gray-400">
             <span>👋 Hey, ready to jump back into the conversation?</span>
-            <span>
-              Enter your details to start chatting with your friends! 🗨️✨
-            </span>
+            <span>Enter your details to start chatting with your friends! 🗨️✨</span>
           </p>
         </div>
 
         <form
-          className="min-w-52 sm:min-w-72 md:min-w-96 flex flex-col items-center gap-6"
+          className="flex min-w-52 flex-col items-center gap-6 sm:min-w-72 md:min-w-96"
           onSubmit={handleSubmit}
         >
           <Input
@@ -140,21 +136,17 @@ const SignIn = () => {
             error={formError?.password}
           />
 
-          <div className="w-full flex flex-col gap-4">
+          <div className="flex w-full flex-col gap-4">
             <Button
-              className="rounded-xl active:scale-95 transition-transform duration-150"
+              className="rounded-xl transition-transform duration-150 active:scale-95"
               type="submit"
               disabled={isLoading}
             >
-              {isLoading ? (
-                <Loader className="animate-spin" size={20} />
-              ) : (
-                "Sign In"
-              )}
+              {isLoading ? <Loader className="animate-spin" size={20} /> : "Sign In"}
             </Button>
             <p className="text-center">OR</p>
             <Button
-              className="rounded-xl active:scale-95 transition-transform duration-150"
+              className="rounded-xl transition-transform duration-150 active:scale-95"
               type="button"
               onClick={() => navigate("/signup")}
             >

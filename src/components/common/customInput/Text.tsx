@@ -59,10 +59,7 @@ const DynamicPositionComponent: React.FC<DynamicPositionComponentProps> = ({
       referenceElement.current.addEventListener("click", toggleVisibility);
 
       return () => {
-        referenceElement.current?.removeEventListener(
-          "click",
-          toggleVisibility
-        );
+        referenceElement.current?.removeEventListener("click", toggleVisibility);
       };
     }
   }, [referenceElement]);

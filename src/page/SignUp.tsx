@@ -99,18 +99,18 @@ const SignUp = () => {
   };
 
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center gap-2">
-      <div className="absolute flex flex-col gap-6 items-center justify-center p-4 rounded-xl shadow-lg">
+    <div className="flex h-screen w-screen flex-col items-center justify-center gap-2">
+      <div className="absolute flex flex-col items-center justify-center gap-6 rounded-xl p-4 shadow-lg">
         <div className="flex flex-col items-center gap-1">
-          <h2 className="text-2xl font-bold my-2">🌟 Join ChatZone! 💬</h2>
-          <p className="text-sm text-gray-400 flex flex-col gap-1 text-center">
+          <h2 className="my-2 text-2xl font-bold">🌟 Join ChatZone! 💬</h2>
+          <p className="flex flex-col gap-1 text-center text-sm text-gray-400">
             <span>🎉 Ready to start amazing conversations?</span>
             <span>Sign up now and connect with friends instantly! 🚀</span>
           </p>
         </div>
 
         <form
-          className="min-w-52 sm:min-w-72 md:min-w-96 flex flex-col items-center gap-6"
+          className="flex min-w-52 flex-col items-center gap-6 sm:min-w-72 md:min-w-96"
           onSubmit={handleSubmit}
         >
           <Input
@@ -151,23 +151,19 @@ const SignUp = () => {
             error={formError.confirmPassword}
           />
 
-          <div className="w-full flex flex-col gap-4">
+          <div className="flex w-full flex-col gap-4">
             <Button
-              className="w-full rounded-xl active:scale-95 transition-transform duration-150"
+              className="w-full rounded-xl transition-transform duration-150 active:scale-95"
               type="submit"
               disabled={isLoading}
             >
-              {isLoading ? (
-                <Loader className="animate-spin" size={20} />
-              ) : (
-                "Sign Up"
-              )}
+              {isLoading ? <Loader className="animate-spin" size={20} /> : "Sign Up"}
             </Button>
 
             <p className="w-full text-center">OR</p>
 
             <Button
-              className="w-full rounded-xl active:scale-95 transition-transform duration-150"
+              className="w-full rounded-xl transition-transform duration-150 active:scale-95"
               type="button"
               onClick={() => navigate("/signin")}
             >

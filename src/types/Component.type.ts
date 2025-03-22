@@ -11,9 +11,7 @@ interface MessageContainerProps {
   isCheckBoxForDelete: boolean;
   toggleCheckBox: (id: string, content: string) => void;
   selectedMessage: SelectedMessagesForInteraction | null;
-  setSelectedMessage: React.Dispatch<
-    React.SetStateAction<SelectedMessagesForInteraction | null>
-  >;
+  setSelectedMessage: React.Dispatch<React.SetStateAction<SelectedMessagesForInteraction | null>>;
   isCurrentChatIsGroupChat: boolean;
 }
 

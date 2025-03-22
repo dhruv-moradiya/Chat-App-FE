@@ -15,10 +15,12 @@ const ChatScreenMobile = () => {
   const dispatch = useAppDispatch();
   const chatList = useAppSelector((state) => state.myChats.myChats);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
-  const [selectedMessage, setSelectedMessage] =
-    useState<SelectedMessagesForInteraction | null>(null);
-  const { activeChatId, activeChatDetails, isLoading, isLoadingOldMessages } =
-    useAppSelector((state) => state.activeChat);
+  const [selectedMessage, setSelectedMessage] = useState<SelectedMessagesForInteraction | null>(
+    null
+  );
+  const { activeChatId, activeChatDetails, isLoading, isLoadingOldMessages } = useAppSelector(
+    (state) => state.activeChat
+  );
   const isCurrentChatIsGroupChat =
     chatList.find((chat) => chat._id === activeChatId)?.isGroup ?? false;
 
@@ -41,13 +43,8 @@ const ChatScreenMobile = () => {
   }, [chatId]);
 
   useEffect(() => {
-    if (
-      !isLoadingOldMessages &&
-      chatContainerRef.current &&
-      activeChatDetails?.currentPage === 1
-    ) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
+    if (!isLoadingOldMessages && chatContainerRef.current && activeChatDetails?.currentPage === 1) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [activeChatDetails, isLoadingOldMessages]);
 
@@ -57,7 +54,7 @@ const ChatScreenMobile = () => {
     <>
       <div
         ref={chatContainerRef}
-        className="scrollbar w-full h-full overflow-y-auto flex flex-col gap-1 px-2"
+        className="scrollbar flex h-full w-full flex-col gap-1 overflow-y-auto px-2"
       >
         {messages.map((message, index) => {
           const prevMessage = messages[index - 1];
@@ -77,9 +74,7 @@ const ChatScreenMobile = () => {
               showNewDate={showNewDate}
               isSender={isSender}
               isPrevMessageFromSameUser={isPrevMessageFromSameUser}
-              isCurrentMessageSelectedForDelete={
-                isCurrentMessageSelectedForDelete ?? false
-              }
+              isCurrentMessageSelectedForDelete={isCurrentMessageSelectedForDelete ?? false}
               isCheckBoxForDelete={false}
               selectedMessage={selectedMessage}
               toggleCheckBox={() => {}}

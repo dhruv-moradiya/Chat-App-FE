@@ -7,11 +7,11 @@ const UserIcon = () => {
 
   return (
     <Tooltip text={currentUser.username} position="bottom">
-      <div className="w-10 h-10 ml-auto rounded-full overflow-hidden">
+      <div className="ml-auto h-10 w-10 overflow-hidden rounded-full">
         <img
           src={currentUser.profilePicture}
           alt={currentUser.username}
-          className="w-full h-full object-cover"
+          className="h-full w-full object-cover"
         />
       </div>
     </Tooltip>

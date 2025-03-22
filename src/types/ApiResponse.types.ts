@@ -79,10 +79,7 @@ type ChatDetails = (GroupChatDetails | DirectChatDetails) & {
   _id: string;
   createdAt: string;
   updatedAt: string;
-  participants: Omit<
-    UserProfile,
-    "friends" | "mutedChats" | "createdAt" | "updatedAt"
-  >[];
+  participants: Omit<UserProfile, "friends" | "mutedChats" | "createdAt" | "updatedAt">[];
   unreadMessagesCounts: {
     [key: string]: number;
   };
@@ -93,19 +90,13 @@ interface ChatDetailResponse extends ApiResponseBase {
 }
 
 interface AcceptFriendRequest {
-  acceptorDetails: Omit<
-    UserProfile,
-    "friends" | "mutedChats" | "createdAt" | "updatedAt"
-  >;
+  acceptorDetails: Omit<UserProfile, "friends" | "mutedChats" | "createdAt" | "updatedAt">;
   chatDetails: ChatDetails;
 }
 
 interface AcceptFriendRequestResponse extends ApiResponseBase {
   data: {
-    acceptorDetails: Omit<
-      UserProfile,
-      "friends" | "mutedChats" | "createdAt" | "updatedAt"
-    >;
+    acceptorDetails: Omit<UserProfile, "friends" | "mutedChats" | "createdAt" | "updatedAt">;
     chatDetails: ChatDetails;
   };
 }
@@ -152,10 +143,7 @@ interface MessageResponse extends ApiResponseBase {
 
 interface MyFriendsList extends ApiResponseBase {
   data: {
-    friends: Omit<
-      UserProfile,
-      "friends" | "mutedChats" | "createdAt" | "updatedAt"
-    >[];
+    friends: Omit<UserProfile, "friends" | "mutedChats" | "createdAt" | "updatedAt">[];
   };
 }
 

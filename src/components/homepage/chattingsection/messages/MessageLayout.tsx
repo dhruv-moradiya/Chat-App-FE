@@ -31,18 +31,8 @@ interface MessageBoxProps {
 
 const DecorativeShape = ({ isSender }: { isSender: boolean }) => {
   return (
-    <div
-      className={cn(
-        "absolute w-4 h-4",
-        isSender ? "top-0 -right-2" : "top-0 -left-2"
-      )}
-    >
-      <svg
-        width="100%"
-        height="100%"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+    <div className={cn("absolute h-4 w-4", isSender ? "-right-2 top-0" : "-left-2 top-0")}>
+      <svg width="100%" height="100%" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path
           d={isSender ? "M0,0 L24,0 L0,24 Z" : "M24,0 L24,24 L0,0 Z"}
           fill={isSender ? "#34406B" : "#21232A"}
@@ -53,29 +43,15 @@ const DecorativeShape = ({ isSender }: { isSender: boolean }) => {
 };
 
 // Sub-Components
-const SenderAvatar = ({
-  sender,
-}: {
-  sender: { profilePicture: string; username: string };
-}) => (
-  <div className="w-6 h-6 rounded-lg overflow-hidden translate-y-3">
-    <img
-      src={sender.profilePicture}
-      alt={sender.username}
-      className="w-full h-full object-cover"
-    />
+const SenderAvatar = ({ sender }: { sender: { profilePicture: string; username: string } }) => (
+  <div className="h-6 w-6 translate-y-3 overflow-hidden rounded-lg">
+    <img src={sender.profilePicture} alt={sender.username} className="h-full w-full object-cover" />
   </div>
 );
 
-const ReplyMessage = ({
-  replyTo,
-  senderName,
-}: {
-  replyTo: string;
-  senderName: string;
-}) => (
-  <div className="bg-primary-foreground/30 p-2 rounded-lg text-sm border-l-4 border-primary">
-    <p className="text-primary font-bold">{senderName}</p>
+const ReplyMessage = ({ replyTo, senderName }: { replyTo: string; senderName: string }) => (
+  <div className="rounded-lg border-l-4 border-primary bg-primary-foreground/30 p-2 text-sm">
+    <p className="font-bold text-primary">{senderName}</p>
     <p>{replyTo}</p>
   </div>
 );
@@ -98,30 +74,24 @@ const MessageContent = ({
       : `${capitalizeFirstLetter(sender.username)} deleted this message`;
 
   return (
-    <div className="flex items-start gap-3 px-2 pr-10 min-w-20">
+    <div className="flex min-w-20 items-start gap-3 px-2 pr-10">
       <p
-        className="text-sm break-words whitespace-normal flex items-center flex-wrap gap-1"
+        className="flex flex-wrap items-center gap-1 whitespace-normal break-words text-sm"
         style={{ wordBreak: "break-word" }}
         dangerouslySetInnerHTML={{
           __html: isDeleted ? deletedMessageText : inputValue,
         }}
       />
 
-      <div className="absolute bottom-0 right-2 flex items-center justify-between w-[60px] text-justify hyphens-auto">
+      <div className="absolute bottom-0 right-2 flex w-[60px] items-center justify-between hyphens-auto text-justify">
         <span
-          className={cn(
-            "w-full text-[10px] text-muted-foreground",
-            isSender ? "text-white" : ""
-          )}
+          className={cn("w-full text-[10px] text-muted-foreground", isSender ? "text-white" : "")}
         >
           {moment(createdAt).format("hh:mm A")}
         </span>
         <Check size={12} />
       </div>
-      <MessageDropdown
-        isSender={isSender}
-        onClick={messageDropdownOnClickFunction}
-      />
+      <MessageDropdown isSender={isSender} onClick={messageDropdownOnClickFunction} />
     </div>
   );
 };
@@ -130,7 +100,7 @@ const AttachmentLoader = ({ isSender }: { isSender: boolean }) => (
   <div
     className={cn(
       "animate-pulse rounded-lg bg-primary/10 p-10",
-      isSender ? "self-end ml-auto" : "self-start mr-auto"
+      isSender ? "ml-auto self-end" : "mr-auto self-start"
     )}
   ></div>
 );
@@ -151,23 +121,19 @@ const MessageBox = ({
   return (
     <div
       className={cn(
-        "relative w-fit max-w-sm px-1 py-2 pb-4 rounded-[10px] shadow-md group space-y-1",
+        "group relative w-fit max-w-sm space-y-1 rounded-[10px] px-1 py-2 pb-4 shadow-md",
         isSender
-          ? "bg-primary/40 text-white rounded-tr-none"
-          : "bg-muted-foreground/10 rounded-tl-none",
+          ? "rounded-tr-none bg-primary/40 text-white"
+          : "rounded-tl-none bg-muted-foreground/10",
         deletedBy.length > 0 && deletedBy.includes(userId) && "bg-slate-600/90"
       )}
     >
       {!isPrevMessageFromSameUser && <DecorativeShape isSender={isSender} />}
-      {replyTo && (
-        <ReplyMessage replyTo={replyTo} senderName={sender.username!} />
-      )}
+      {replyTo && <ReplyMessage replyTo={replyTo} senderName={sender.username!} />}
 
       {isCurrentChatIsGroupChat && (
-        <p className="text-[12px] px-2 font-bold">
-          {capitalizeFirstLetter(
-            sender.username === username ? "you" : sender.username
-          )}
+        <p className="px-2 text-[12px] font-bold">
+          {capitalizeFirstLetter(sender.username === username ? "you" : sender.username)}
         </p>
       )}
 

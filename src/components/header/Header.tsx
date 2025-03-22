@@ -14,9 +14,7 @@ import Notifications from "@/components/header/Notifications";
 
 const Header = () => {
   const dispatch = useAppDispatch();
-  const isChatListSideBarOpen = useAppSelector(
-    (state) => state.chatDetail.isChatListSideBarOpen
-  );
+  const isChatListSideBarOpen = useAppSelector((state) => state.chatDetail.isChatListSideBarOpen);
 
   return (
     <div className="flex items-center justify-between md:justify-end md:gap-6">
@@ -30,46 +28,28 @@ const Header = () => {
         />
       )}
 
-      <Tooltip
-        text="Create Group Chat"
-        position="bottom"
-        className="hidden md:block"
-      >
+      <Tooltip text="Create Group Chat" position="bottom" className="hidden md:block">
         <Button
-          className="hidden md:block bg-transparent border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
-          onClick={() =>
-            dispatch(openModal({ type: ModalType.CREATE_GROUP_CHAT_MODEL }))
-          }
+          className="hidden rounded-xl border-[1px] bg-transparent transition-all duration-150 hover:bg-primary/10 active:scale-95 md:block"
+          onClick={() => dispatch(openModal({ type: ModalType.CREATE_GROUP_CHAT_MODEL }))}
         >
           <User className="text-white" />
         </Button>
       </Tooltip>
 
-      <Tooltip
-        text="Search Users"
-        position="bottom"
-        className="hidden md:block"
-      >
+      <Tooltip text="Search Users" position="bottom" className="hidden md:block">
         <Button
-          className="bg-transparent border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
-          onClick={() =>
-            dispatch(openModal({ type: ModalType.SEARCH_USERS_MODEL }))
-          }
+          className="rounded-xl border-[1px] bg-transparent transition-all duration-150 hover:bg-primary/10 active:scale-95"
+          onClick={() => dispatch(openModal({ type: ModalType.SEARCH_USERS_MODEL }))}
         >
           <Search className="text-white" />
         </Button>
       </Tooltip>
 
-      <Tooltip
-        text="Check Friend Requests"
-        position="bottom"
-        className="hidden md:block"
-      >
+      <Tooltip text="Check Friend Requests" position="bottom" className="hidden md:block">
         <Button
-          className="bg-transparent border-[1px] hover:bg-primary/10 active:scale-95 transition-all duration-150 rounded-xl"
-          onClick={() =>
-            dispatch(openModal({ type: ModalType.CHECK_FRIEND_REQUEST_MODEL }))
-          }
+          className="rounded-xl border-[1px] bg-transparent transition-all duration-150 hover:bg-primary/10 active:scale-95"
+          onClick={() => dispatch(openModal({ type: ModalType.CHECK_FRIEND_REQUEST_MODEL }))}
         >
           <UserPlus className="text-white" />
         </Button>

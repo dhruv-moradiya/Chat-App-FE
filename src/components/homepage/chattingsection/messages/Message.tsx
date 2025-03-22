@@ -1,10 +1,7 @@
 import { cn } from "@/lib/utils";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { ChatMessage } from "@/types/ApiResponse.types";
-import {
-  MessageUserInteractionType,
-  SelectedMessagesForInteraction,
-} from "@/types/Common.types";
+import { MessageUserInteractionType, SelectedMessagesForInteraction } from "@/types/Common.types";
 import { useState } from "react";
 import { AttachmentLoader, MessageBox, SenderAvatar } from "./MessageLayout";
 
@@ -17,9 +14,7 @@ interface MessageProps extends ChatMessage {
   isSender: boolean;
   isPrevMessageFromSameUser: boolean;
   selectedMessage: SelectedMessagesForInteraction | null;
-  setSelectedMessage: React.Dispatch<
-    React.SetStateAction<SelectedMessagesForInteraction | null>
-  >;
+  setSelectedMessage: React.Dispatch<React.SetStateAction<SelectedMessagesForInteraction | null>>;
   isCurrentChatIsGroupChat: boolean;
   isCheckBoxForDelete: boolean;
 }
@@ -49,13 +44,9 @@ const Message = ({
   const [inputValue, setInputValue] = useState(content);
 
   const { activeChatDetails } = useAppSelector((state) => state.activeChat);
-  const messageDetails = activeChatDetails?.messages.find(
-    (message) => message._id === replyTo
-  );
+  const messageDetails = activeChatDetails?.messages.find((message) => message._id === replyTo);
 
-  const messageDropdownOnClickFunction = (
-    value: MessageUserInteractionType
-  ) => {
+  const messageDropdownOnClickFunction = (value: MessageUserInteractionType) => {
     switch (value) {
       case "Reply":
         setSelectedMessage({
@@ -91,18 +82,14 @@ const Message = ({
   return (
     <div
       className={cn(
-        "w-fit space-y-1.5 flex gap-2",
-        isSender
-          ? "self-end ml-auto flex-row-reverse"
-          : "self-start flex-row mr-auto",
+        "flex w-fit gap-2 space-y-1.5",
+        isSender ? "ml-auto flex-row-reverse self-end" : "mr-auto flex-row self-start",
         reactions.length ? "mb-3" : ""
       )}
     >
-      {isCurrentChatIsGroupChat && !isSender && (
-        <SenderAvatar sender={sender} />
-      )}
+      {isCurrentChatIsGroupChat && !isSender && <SenderAvatar sender={sender} />}
 
-      <div className="space-y-1.5 relative">
+      <div className="relative space-y-1.5">
         {isAttachment && <AttachmentLoader isSender={isSender} />}
         {attachments.length > 0 && (
           <RenderAttachments attachments={attachments} isSender={isSender} />
@@ -120,16 +107,14 @@ const Message = ({
           isCurrentChatIsGroupChat={isCurrentChatIsGroupChat}
         />
         {reactions.length ? (
-          <div className="w-fit absolute -bottom-[24px] right-4 bg-zinc-800 rounded-full p-[1px] flex items-center gap-[1px] cursor-pointer">
+          <div className="absolute -bottom-[24px] right-4 flex w-fit cursor-pointer items-center gap-[1px] rounded-full bg-zinc-800 p-[1px]">
             {reactions.map((reaction, index) => (
               <div
                 key={index}
-                className="rounded-full bg-primary-foreground flex items-center justify-center"
+                className="flex items-center justify-center rounded-full bg-primary-foreground"
               >
                 <p className="text-[18px]">
-                  {String.fromCodePoint(
-                    parseInt(reaction.emoji.replace("U+", ""), 16)
-                  )}
+                  {String.fromCodePoint(parseInt(reaction.emoji.replace("U+", ""), 16))}
                 </p>
               </div>
             ))}

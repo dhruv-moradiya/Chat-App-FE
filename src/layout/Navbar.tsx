@@ -1,13 +1,7 @@
 import { logout } from "@/store/auth/AuthSlice";
 import { useAppDispatch } from "@/store/store";
 import Cookies from "js-cookie";
-import {
-  BriefcaseBusiness,
-  HandMetal,
-  LogOut,
-  MessageCircle,
-  Settings,
-} from "lucide-react";
+import { BriefcaseBusiness, HandMetal, LogOut, MessageCircle, Settings } from "lucide-react";
 
 const NavItem = ({
   icon,
@@ -18,12 +12,9 @@ const NavItem = ({
   label: string;
   onClick?: () => void;
 }) => (
-  <li
-    className="flex flex-col items-center gap-2 cursor-pointer"
-    onClick={onClick}
-  >
+  <li className="flex cursor-pointer flex-col items-center gap-2" onClick={onClick}>
     {icon}
-    <p className="text-[12px] md:text-md">{label}</p>
+    <p className="md:text-md text-[12px]">{label}</p>
   </li>
 );
 
@@ -58,10 +49,10 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="h-full w-14 md:w-20 flex flex-col items-center py-4">
-      <h2 className="text-2xl md:text-3xl mb-10">DM</h2>
+    <nav className="flex h-full w-14 flex-col items-center py-4 md:w-20">
+      <h2 className="mb-10 text-2xl md:text-3xl">DM</h2>
 
-      <ul className="flex-1 flex flex-col gap-6">
+      <ul className="flex flex-1 flex-col gap-6">
         {navList.map((item) => (
           <NavItem key={item.label} icon={item.icon} label={item.label} />
         ))}
@@ -69,11 +60,7 @@ const Navbar = () => {
 
       <div className="flex flex-col items-center gap-4">
         <NavItem icon={<Settings size={14} />} label="Settings" />
-        <NavItem
-          icon={<LogOut size={14} />}
-          label="Logout"
-          onClick={handleLogOut}
-        />
+        <NavItem icon={<LogOut size={14} />} label="Logout" onClick={handleLogOut} />
       </div>
     </nav>
   );

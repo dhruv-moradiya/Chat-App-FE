@@ -14,10 +14,7 @@ interface RenderAttachmentProps {
   isSender: boolean;
 }
 
-const RenderAttachments = ({
-  attachments,
-  isSender,
-}: RenderAttachmentProps) => {
+const RenderAttachments = ({ attachments, isSender }: RenderAttachmentProps) => {
   const MAX_VISIBLE_ATTACHMENTS = 3;
 
   const visibleAttachments =
@@ -26,7 +23,7 @@ const RenderAttachments = ({
       : attachments;
 
   const renderDialogContent = () => (
-    <DialogContent className="w-[70vw] h-[600px] flex flex-col gap-4">
+    <DialogContent className="flex h-[600px] w-[70vw] flex-col gap-4">
       <DialogTitle>Preview</DialogTitle>
       <DialogDescription className="hidden">
         Make changes to your profile here. Click save when you're done.
@@ -35,12 +32,12 @@ const RenderAttachments = ({
         {attachments.map((attachment, index) => (
           <div
             key={`attachment-full-${index}`}
-            className="w-full !h-[400px] rounded-3xl overflow-hidden cursor-pointer my-6"
+            className="my-6 !h-[400px] w-full cursor-pointer overflow-hidden rounded-3xl"
           >
             <img
               src={attachment.url}
               alt={`attachment-${index + 1}`}
-              className="w-full h-full object-contain rounded-3xl"
+              className="h-full w-full rounded-3xl object-contain"
             />
           </div>
         ))}
@@ -51,11 +48,11 @@ const RenderAttachments = ({
   const attachmentElements = visibleAttachments.map((attachment, index) => (
     <Dialog key={index}>
       <DialogTrigger>
-        <div className="w-20 h-20 overflow-hidden rounded-lg flex items-center gap-2 cursor-pointer">
+        <div className="flex h-20 w-20 cursor-pointer items-center gap-2 overflow-hidden rounded-lg">
           <img
             src={attachment.url}
             alt={`attachment-thumbnail-${index + 1}`}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
         </div>
       </DialogTrigger>
@@ -67,7 +64,7 @@ const RenderAttachments = ({
     attachmentElements.push(
       <Dialog key="extra-attachments">
         <DialogTrigger>
-          <div className="w-20 h-20 overflow-hidden rounded-lg flex items-center justify-center bg-primary text-white cursor-pointer">
+          <div className="flex h-20 w-20 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary text-white">
             +{attachments.length - MAX_VISIBLE_ATTACHMENTS}
           </div>
         </DialogTrigger>
@@ -79,7 +76,7 @@ const RenderAttachments = ({
   return (
     <div
       className={cn(
-        "grid  gap-2",
+        "grid gap-2",
         attachments.length >= 2 ? "grid-cols-2" : "grid-cols-1",
         isSender ? "ml-auto place-items-end" : "mr-auto place-items-start"
       )}

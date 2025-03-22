@@ -24,14 +24,12 @@ const SearchUsers = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setQuery(e.target.value);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value);
 
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response: UserProfile[] =
-        await getUsersExcludingFriendsBasedOnQuery(debouncedQuery);
+      const response: UserProfile[] = await getUsersExcludingFriendsBasedOnQuery(debouncedQuery);
       setUsers(response);
     } catch (error) {
       handleError(error);
@@ -51,17 +49,11 @@ const SearchUsers = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="text-xl font-bold mb-4">Search Users</h2>
-      <Input
-        className="w-full mb-4"
-        label="Search"
-        value={query}
-        onChange={handleChange}
-      />
+      <h2 className="mb-4 text-xl font-bold">Search Users</h2>
+      <Input className="mb-4 w-full" label="Search" value={query} onChange={handleChange} />
       {!debouncedQuery && (
-        <p className="text-gray-500 text-center">
-          👋 Start searching for friends! Type a name to find and connect with
-          new people. 🔍✨
+        <p className="text-center text-gray-500">
+          👋 Start searching for friends! Type a name to find and connect with new people. 🔍✨
         </p>
       )}
 
@@ -82,7 +74,7 @@ const UserList = ({
 }) => {
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-20 text-gray-500">
+      <div className="flex min-h-20 items-center justify-center text-gray-500">
         <Loader className="animate-spin" size={18} />
         <p className="ml-2 text-sm">Loading...</p>
       </div>
@@ -90,7 +82,7 @@ const UserList = ({
   }
 
   return (
-    <div className="w-full mt-4 flex flex-col gap-4">
+    <div className="mt-4 flex w-full flex-col gap-4">
       {users.map((user) => (
         <SearchedUser
           key={user._id}
@@ -130,42 +122,33 @@ const SearchedUser = ({ imgSrc, name, _id }: SearchedUserProps) => {
   };
 
   return (
-    <div className="w-full flex items-center justify-between gap-2 md:gap-4">
+    <div className="flex w-full items-center justify-between gap-2 md:gap-4">
       {/* Profile Image */}
-      <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg overflow-hidden flex-shrink-0">
+      <div className="h-8 w-8 flex-shrink-0 overflow-hidden rounded-lg md:h-10 md:w-10">
         <img src={imgSrc} alt={name} />
       </div>
 
       {/* Username */}
-      <p className="flex-1 md:min-w-40 text-[13.5px] md:text-base">
-        {capitalizeFirstLetter(name)}
-      </p>
+      <p className="flex-1 text-[13.5px] md:min-w-40 md:text-base">{capitalizeFirstLetter(name)}</p>
 
       {/* Friend Request Button */}
       {requestSent ? (
         <Button
           disabled
           variant="outline"
-          className="p-0 px-3 md:px-4 text-gray-500 border-gray-400 cursor-not-allowed rounded-lg"
+          className="cursor-not-allowed rounded-lg border-gray-400 p-0 px-3 text-gray-500 md:px-4"
         >
-          <Check size={18} />{" "}
-          <span className="hidden md:block">Request Sent</span>
+          <Check size={18} /> <span className="hidden md:block">Request Sent</span>
         </Button>
       ) : (
         <Button
           variant="outline"
-          className="p-0 px-3 md:px-4 flex items-center gap-2 text-green-600 border-[1px] hover:text-green-700 rounded-lg transition-all duration-150 active:scale-90"
+          className="flex items-center gap-2 rounded-lg border-[1px] p-0 px-3 text-green-600 transition-all duration-150 hover:text-green-700 active:scale-90 md:px-4"
           onClick={sendFriendRequestFun}
           disabled={loading}
         >
-          {loading ? (
-            <Loader size={18} className="animate-spin" />
-          ) : (
-            <UserPlus size={18} />
-          )}
-          <p className="hidden md:block">
-            {loading ? "Sending..." : "Send Request"}
-          </p>
+          {loading ? <Loader size={18} className="animate-spin" /> : <UserPlus size={18} />}
+          <p className="hidden md:block">{loading ? "Sending..." : "Send Request"}</p>
         </Button>
       )}
     </div>

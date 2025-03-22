@@ -8,9 +8,7 @@ import { SelectedMessagesForInteraction } from "@/types/Common.types";
 
 interface DeleteMessageModalForSelectedParticipantsProps {
   selectedMessage: string[];
-  setSelectedMessage: React.Dispatch<
-    React.SetStateAction<SelectedMessagesForInteraction | null>
-  >;
+  setSelectedMessage: React.Dispatch<React.SetStateAction<SelectedMessagesForInteraction | null>>;
   isSelectedAllMessageFromCurrentUserSide: boolean;
 }
 
@@ -44,11 +42,11 @@ const DeleteMessageModalForSelectedParticipants = ({
   };
 
   return (
-    <div className="flex flex-col gap-4 min-w-96">
+    <div className="flex min-w-96 flex-col gap-4">
       <p className="text-md mb-4">Delete Message?</p>
       <div
         className={cn(
-          "w-full self-end flex gap-4 items-end justify-end",
+          "flex w-full items-end justify-end gap-4 self-end",
           isSelectedAllMessageFromCurrentUserSide ? "flex-col" : "flex-row"
         )}
       >
