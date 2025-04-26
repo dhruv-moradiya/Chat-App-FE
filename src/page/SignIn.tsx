@@ -9,13 +9,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type FormData = {
-  username: string;
   email: string;
   password: string;
 };
 
 type FromError = {
-  username: string;
   email: string;
   password: string;
 };
@@ -26,13 +24,11 @@ const SignIn = () => {
   const { isLoading } = useAppSelector((state) => state.auth);
 
   const [formData, setFormData] = useState<FormData>({
-    username: "",
     email: "",
     password: "",
   });
 
   const [formError, setFormError] = useState<FromError>({
-    username: "",
     email: "",
     password: "",
   });
@@ -55,11 +51,6 @@ const SignIn = () => {
 
     let isValid = true;
 
-    if (!formData.username) {
-      errors.username = "Username is required";
-      isValid = false;
-    }
-
     if (!formData.email) {
       errors.email = "Email is required";
       isValid = false;
@@ -81,7 +72,7 @@ const SignIn = () => {
       return;
     }
 
-    const { username, ...dataToSubmit } = formData;
+    const { ...dataToSubmit } = formData;
 
     dispatch(loginUserThunk(dataToSubmit));
   };
@@ -108,15 +99,6 @@ const SignIn = () => {
           className="flex min-w-52 flex-col items-center gap-6 sm:min-w-72 md:min-w-96"
           onSubmit={handleSubmit}
         >
-          <Input
-            icon={User}
-            name="username"
-            label="Username"
-            onChange={handleChange}
-            value={formData.username}
-            error={formError?.username}
-          />
-
           <Input
             type="email"
             icon={Mail}

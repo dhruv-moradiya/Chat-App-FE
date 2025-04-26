@@ -137,7 +137,7 @@ const socketMiddleware: Middleware = (storeAPI) => {
           socket.on(ChatEventEnum.NOTIFICATION_EVENT, (data) => {
             console.log("NOTIFICATION_EVENT :>> ", data);
             showInfoToast(data.content);
-            // playNotificationSound();
+            playNotificationSound();
           });
 
           // Listen for socket disconnection
