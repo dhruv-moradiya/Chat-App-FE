@@ -7,6 +7,7 @@ import {
   FriendRequestResponse,
   MessageResponse,
   MyFriendsList,
+  NotificationResponse,
   SendMessageResponse,
   SentFriendRequestResponse,
 } from "@/types/ApiResponse.types";
@@ -275,6 +276,15 @@ const deleteMessageForSelectedParticipantsApi = async (
   }
 };
 
+const fetchNotifications = async () => {
+  try {
+    const response: AxiosResponse<NotificationResponse> = await apiClient.get("/notifications");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export {
   getCurrentUser,
   acceptFriendRequest,
@@ -290,4 +300,5 @@ export {
   fetchMyFriendsList,
   createGroupChat,
   deleteMessageForSelectedParticipantsApi,
+  fetchNotifications,
 };

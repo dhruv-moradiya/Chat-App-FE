@@ -8,6 +8,7 @@ import socketMiddleware from "./socket/SocketMiddleware";
 import { myChatsReducer } from "./myChats/ChatSlice";
 import { activeChatReducer } from "./activeChat/ActiveChatSlice";
 import { emojiReducer } from "./emoji/EmojiSlice";
+import { notificationReducer } from "./notifications/NotificationSlice";
 
 const customMiddleware: Middleware = (storeAPI) => (next) => (action) => {
   // console.log("Dispatching action:", action);
@@ -25,6 +26,7 @@ const store = configureStore({
     myChats: myChatsReducer,
     activeChat: activeChatReducer,
     emoji: emojiReducer,
+    notifications: notificationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(customMiddleware).concat(socketMiddleware),

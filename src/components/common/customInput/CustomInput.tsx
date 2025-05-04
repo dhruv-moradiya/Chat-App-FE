@@ -286,8 +286,6 @@ function CustomInput({
     };
   }, [showPopup, selectedIndex, users]);
 
-  const buttonRef = useRef(null);
-
   return (
     <div className="relative grid w-full grid-flow-row bg-primary-foreground">
       <div

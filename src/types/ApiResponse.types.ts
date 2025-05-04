@@ -155,6 +155,26 @@ interface DeleteMessageForSelectedParticipantsResponse extends ApiResponseBase {
   data: {};
 }
 
+interface Notification {
+  content: string;
+  createdAt: string;
+  isRead: boolean;
+  message: {
+    _id: string;
+    attachments: Attachment[];
+    content: string;
+  };
+  notificationType: string;
+  receivers: string;
+  sender: Omit<UserPreview, "email">;
+  updatedAt: string;
+  _id: string;
+}
+
+interface NotificationResponse extends ApiResponseBase {
+  data: Notification[];
+}
+
 export type {
   ApiResponseBase,
   UserProfile,
@@ -176,4 +196,6 @@ export type {
   MyFriendsList,
   CreateGroupChatResponse,
   DeleteMessageForSelectedParticipantsResponse,
+  Notification,
+  NotificationResponse,
 };

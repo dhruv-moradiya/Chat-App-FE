@@ -8,6 +8,7 @@ import { createConnection, disconnected } from "@/store/socket/SocketSlice";
 import { fetchActiveChatMessages } from "@/store/activeChat/ActiveChatThunk";
 import Sidebar from "@/components/homepage/Sidebar";
 import ChattingSection from "@/components/homepage/chattingsection/ChattingSection";
+import { fetchAllNotifications } from "@/store/notifications/NotificationSlice";
 
 const HomePage = () => {
   const dispatch = useAppDispatch();
@@ -17,6 +18,8 @@ const HomePage = () => {
 
   useEffect(() => {
     dispatch(createConnection());
+
+    dispatch(fetchAllNotifications());
 
     // emojiCategories.forEach((category) => {
     //   dispatch(fetchEmojisByCategory(category));

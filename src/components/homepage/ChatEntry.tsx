@@ -52,7 +52,7 @@ const ChatEntry = ({ chat }: ChatEntryProps) => {
 
       {/* Chat Text */}
       <div className="flex-1 overflow-hidden">
-        <h3 className="mb-1 text-[14px] md:text-base">
+        <h3 className="md:text-[14px mb-1 text-[14.5px]">
           {chat.isGroup ? chat.chatName : capitalizeFirstLetter(friend?.username as string)}
         </h3>
         <p className="overflow-hidden text-ellipsis whitespace-nowrap text-[12px] text-muted-foreground">

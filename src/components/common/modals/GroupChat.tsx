@@ -49,14 +49,14 @@ const GroupChat = () => {
 
   if (loading) {
     return (
-      <div className="flex min-w-[450px] items-center justify-center">
+      <div className="flex min-w-[500px] items-center justify-center">
         <Loader className="animate-spin" size={18} />
       </div>
     );
   }
 
   return (
-    <div className="flex w-full flex-col gap-2">
+    <div className="flex w-[500px] flex-col gap-2">
       <h2 className="mb-4 text-xl font-bold">Group Chat</h2>
       {directChats.length < 2 ? (
         <p className="flex flex-col text-center text-gray-500">
@@ -67,17 +67,14 @@ const GroupChat = () => {
         <>
           {tab === 0 ? (
             <>
-              {selectedFriends.length ? (
-                <SelectedFriendsList
-                  showRemoveBtn
-                  friendsList={selectedFriends}
-                  handleRemove={handleRemove}
-                />
-              ) : null}
-
               {selectedFriends.length ? <hr className="mt-2 border-gray-900/50" /> : null}
 
-              <FriendList friendsList={friendsList} handleSelect={handleSelect} />
+              <FriendList
+                friendsList={friendsList}
+                selectedFriends={selectedFriends}
+                handleSelect={handleSelect}
+                handleRemove={handleRemove}
+              />
 
               <Button
                 className="group relative flex w-fit items-center justify-center rounded-lg border border-primary/50 bg-transparent p-0 px-6 text-white transition-all duration-200 hover:bg-primary/10 active:scale-95"
@@ -111,79 +108,47 @@ const GroupChat = () => {
 
 // ---------------------------------- Friend List ----------------------------------
 type FriendListProps = {
+  selectedFriends: UserPreview[];
   friendsList: UserPreview[] | null;
   handleSelect: (friend: UserPreview) => void;
-};
-
-const FriendList: React.FC<FriendListProps> = ({ friendsList, handleSelect }) => {
-  return (
-    <div className="grid w-full grid-cols-3 gap-4 md:grid-cols-6">
-      {friendsList?.map((friend) => (
-        <div
-          key={friend._id}
-          className="flex cursor-pointer flex-col items-center gap-2 rounded-lg px-3 py-3 transition-all duration-150 hover:bg-gray-900/10 hover:shadow-md md:flex-row md:gap-4"
-          onClick={() => handleSelect(friend)}
-        >
-          <div className="h-10 w-10 overflow-hidden rounded-lg">
-            <img
-              className="h-full w-full object-cover"
-              src={friend.profilePicture}
-              alt={friend.username}
-            />
-          </div>
-          <p className="text-[13.5px] text-gray-300 md:text-base">
-            {capitalizeFirstLetter(friend.username)}
-          </p>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-// ---------------------------------- Selected Friends List ----------------------------------
-const SelectedFriendsList = ({
-  friendsList,
-  handleRemove,
-  showRemoveBtn,
-}: {
-  friendsList: UserPreview[];
   handleRemove: (id: string) => void;
-  showRemoveBtn?: boolean;
+};
+
+const FriendList: React.FC<FriendListProps> = ({
+  friendsList,
+  selectedFriends,
+  handleSelect,
+  handleRemove,
 }) => {
+  console.log("selectedFriends :>> ", selectedFriends);
   return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 md:gap-4">
-      {friendsList?.map((friend) => (
-        <div
-          key={friend._id}
-          className="flex animate-pop-up cursor-pointer items-center justify-between gap-2 rounded-lg border-2 border-primary/10 px-1 py-3 transition-all duration-150 md:px-3"
-        >
-          <div className="flex gap-3">
-            <div className="h-6 w-6 overflow-hidden rounded-lg">
+    <div className="grid min-w-96 grid-cols-[repeat(auto-fit,_minmax(150px,_1fr))] gap-4">
+      {friendsList?.map((friend) => {
+        const isSelected = selectedFriends.find((selected) => selected._id === friend._id);
+        return (
+          <div
+            key={friend._id}
+            className={cn(
+              "flex w-full cursor-pointer flex-col items-center gap-2 rounded-xl border-2 px-4 py-3 transition-all duration-300 ease-in-out md:flex-row md:gap-4",
+              isSelected
+                ? "border-primary bg-primary/10 shadow-[0_0_0_3px] shadow-primary/20"
+                : "border-zinc-200 hover:border-primary/50 hover:bg-zinc-100 hover:shadow-md dark:border-zinc-700 dark:hover:border-primary/30 dark:hover:bg-zinc-800/40"
+            )}
+            onClick={() => (isSelected ? handleRemove(friend._id) : handleSelect(friend))}
+          >
+            <div className="h-10 w-10 overflow-hidden rounded-lg">
               <img
                 className="h-full w-full object-cover"
                 src={friend.profilePicture}
                 alt={friend.username}
               />
             </div>
-            <p className="max-w-7 truncate text-[13.5px] text-base">
+            <p className="text-[13.5px] text-gray-300 md:text-base">
               {capitalizeFirstLetter(friend.username)}
             </p>
           </div>
-
-          {showRemoveBtn && (
-            <button
-              type="button"
-              className="rounded-full bg-white p-[0.5px] text-red-600 transition-all hover:bg-gray-200 md:p-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRemove(friend._id);
-              }}
-            >
-              <X size={14} />
-            </button>
-          )}
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
@@ -246,7 +211,7 @@ const GroupChatForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col items-center gap-6">
+    <form onSubmit={handleSubmit} className="flex w-full flex-col items-center gap-6">
       {/* Image Upload Section */}
       <label htmlFor="group-image" className="relative cursor-pointer">
         <input
@@ -293,12 +258,31 @@ const GroupChatForm = ({
         // error="Group name is required"
       />
 
-      {/* Selected Friends */}
-      <SelectedFriendsList
-        friendsList={selectedFriends}
-        handleRemove={() => {}}
-        showRemoveBtn={false}
-      />
+      <div className="flex w-full flex-wrap items-center justify-center gap-2">
+        {selectedFriends.length > 0 &&
+          selectedFriends.map((friend) => (
+            <div
+              key={friend._id}
+              className="rounded-lgp-2 flex w-24 flex-col items-center justify-between gap-2 text-center shadow-sm transition-all duration-200"
+            >
+              <div className="size-14 overflow-hidden rounded-lg">
+                <img
+                  src={friend.profilePicture}
+                  alt={friend.username}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <p className="w-full truncate text-sm font-medium text-zinc-200">{friend.username}</p>
+            </div>
+          ))}
+      </div>
+
+      <div>
+        <p className="text-sm text-gray-500">
+          You can add more friends to the group later.{" "}
+          <span className="font-semibold">Max: 10 members</span>
+        </p>
+      </div>
 
       <div className="flex gap-4">
         <Button
