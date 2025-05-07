@@ -22,7 +22,7 @@ const initialState: ActiveChatState = {
   isLoadingOldMessages: false,
 };
 
-interface newMessageActionType {
+interface NewMessageActionType {
   chatId: string;
   content: string;
   replyTo?: string;
@@ -51,7 +51,7 @@ const activeChatSlice = createSlice({
   name: "activeChat",
   initialState,
   reducers: {
-    sendMessage: (state, action: PayloadAction<newMessageActionType>) => {
+    sendMessage: (state, action: PayloadAction<NewMessageActionType>) => {
       console.log("➡ Sending a new message.");
     },
 

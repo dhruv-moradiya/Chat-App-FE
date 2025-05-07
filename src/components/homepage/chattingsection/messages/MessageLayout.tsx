@@ -50,7 +50,7 @@ const SenderAvatar = ({ sender }: { sender: { profilePicture: string; username: 
 );
 
 const ReplyMessage = ({ replyTo, senderName }: { replyTo: string; senderName: string }) => (
-  <div className="rounded-lg border-l-4 border-primary bg-primary-foreground/30 p-2 text-sm">
+  <div className="rounded-lg border-l-4 border-primary bg-neutral-700/25 p-2 text-sm">
     <p className="font-bold text-primary">{senderName}</p>
     <p>{replyTo}</p>
   </div>

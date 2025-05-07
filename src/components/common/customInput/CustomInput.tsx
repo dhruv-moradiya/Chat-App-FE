@@ -9,6 +9,9 @@ import { UserPreview } from "@/types/ApiResponse.types";
 import { SelectedMessagesForInteraction } from "@/types/Common.types";
 import { Mic, Pin, Send, X } from "lucide-react";
 import { showWarnToast } from "../ToastProvider";
+import { useMediaQuery } from "react-responsive";
+import { Button } from "@/components/ui/button";
+import SelectAttachments, { ImageContainer } from "./SelectAttachments";
 
 function CustomInput({
   selectedMessage,
@@ -50,7 +53,7 @@ function CustomInput({
   const [selectedIndex, setSelectedIndex] = useState(-1); // Selected user index in popup
   const [listOfMentionedUsers, setListOfMentionedUsers] = useState<string[]>([]);
   const [isUserTyping, setIsUserTyping] = useState(false);
-  const [fileInputValue, setFileInputValue] = useState<File[] | null>(null);
+  const [fileInputValue, setFileInputValue] = useState<File[]>([]);
 
   useEffect(() => {
     const chat = myChats.find(
@@ -187,45 +190,20 @@ function CustomInput({
     }
   };
 
-  const lastMessageId = useMemo(() => {
-    return activeChatDetails?.messages?.[activeChatDetails.messages.length - 1]?._id;
-  }, [activeChatDetails?.messages]);
-
-  useEffect(() => {
-    if (!lastMessageId) return;
-
-    if (fileInputValue && fileInputValue.length > 0) {
-      sendAttachments({
-        attachments: fileInputValue,
-        chatId: isMobileScreen ? (mobileParamValue as string) : (paramValue as string),
-        messageId: lastMessageId,
-      })
-        .then(() => {
-          setFileInputValue(null);
-        })
-        .catch((error) => {
-          if (error instanceof AxiosError) {
-            console.log("error.response?.data :>> ", error.response?.data.message);
-          } else {
-            console.log("error :>> ", error);
-          }
-        });
-    }
-  }, [lastMessageId]);
-
-  const sendMessageHandler = () => {
+  const sendMessageHandler = async () => {
     if (showPopup) return;
 
     const payload: {
       chatId: string;
       content: string;
       replyTo?: string;
-      isAttachment?: boolean;
+      attachments: string[];
       mentionedUsers?: string[];
     } = {
       chatId: isMobileScreen ? (mobileParamValue as string) : (paramValue as string),
       content: divRef.current?.innerHTML as string,
       mentionedUsers: listOfMentionedUsers,
+      attachments: [],
     };
 
     if (selectedMessage && selectedMessage.type === "Reply") {
@@ -233,7 +211,20 @@ function CustomInput({
     }
 
     if (fileInputValue && fileInputValue.length > 0) {
-      payload.isAttachment = true;
+      // payload.isAttachment = true;
+      payload.attachments = await Promise.all(
+        fileInputValue.map(
+          (file) =>
+            new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result as string);
+              reader.onerror = reject;
+              reader.readAsDataURL(file);
+            })
+        )
+      );
+    } else {
+      payload.attachments = [];
     }
 
     dispatch(sendMessage(payload));
@@ -241,7 +232,7 @@ function CustomInput({
     divRef.current!.textContent = "";
     setSelectedMessage(null);
     setListOfMentionedUsers([]);
-    setFileInputValue(null);
+    setFileInputValue([]);
   };
 
   const handleSentMessage = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -256,7 +247,7 @@ function CustomInput({
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (fileInputValue && fileInputValue.length >= 2) {
+    if (fileInputValue.length >= 2) {
       showWarnToast("Only 2 files can be send at a time");
       return;
     }
@@ -287,49 +278,40 @@ function CustomInput({
   }, [showPopup, selectedIndex, users]);
 
   return (
-    <div className="relative grid w-full grid-flow-row bg-primary-foreground">
+    <div className="relative grid w-full grid-flow-row bg-zinc-800/50">
       <div
         className={cn(
-          "flex w-full transform items-center overflow-hidden transition-all duration-150",
+          "flex w-full transform items-center gap-2 overflow-hidden transition-all duration-150",
           selectedMessage && selectedMessage.type === "Reply"
             ? "h-auto p-2 pb-0 opacity-100"
             : "h-0 p-0 opacity-0"
         )}
       >
-        <div className="flex min-w-[50px] items-center justify-center">1</div>
-        <div className="flex h-full flex-1 flex-col justify-center gap-[0.5px] rounded-lg border-l-4 border-primary bg-black px-3 py-2 text-sm">
+        <div className="flex min-w-[50px] items-center justify-center" />
+        <div className="flex h-full flex-1 -translate-x-5 flex-col justify-center gap-[0.5px] rounded-lg border-l-4 border-primary bg-neutral-800/90 px-3 py-2 text-sm shadow-sm">
           <p className="text-primary">{capitalizeFirstLetter(senderName)}</p>
-          <p>{messageDetails?.content}</p>
+          <p dangerouslySetInnerHTML={{ __html: messageDetails?.content || "" }} />
         </div>
-        <div className="flex min-w-[50px] items-center justify-center">
-          <X onClick={() => setSelectedMessage(null)} />
-        </div>
+        <Button
+          className="rounded-xl border-[1px] bg-transparent transition-all duration-150 hover:bg-primary/10 active:scale-95"
+          onClick={() => setSelectedMessage(null)}
+        >
+          <X size={20} className="text-white" onClick={() => setSelectedMessage(null)} />
+        </Button>
       </div>
 
-      {fileInputValue && (
-        <div className="absolute -top-full left-0 grid grid-cols-2 gap-2">
-          {fileInputValue.map((file, index) => (
-            <div
-              key={index}
-              className="h-16 w-16 overflow-hidden rounded-lg"
-              onClick={() => removeSelectedFile(index)}
-            >
-              <img
-                src={URL.createObjectURL(file)}
-                alt="Image"
-                className="h-full w-full object-cover"
-              />
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="flex items-center gap-4">
+        {fileInputValue.map((file, index) => (
+          <ImageContainer key={index} media={file} onRemove={() => removeSelectedFile(index)} />
+        ))}
+      </div>
 
       <div className="flex w-full items-center gap-3 p-2">
-        {/* <button ref={buttonRef}>
-          <Smile />
-        </button> */}
-        <button onClick={handleFileButtonClick}>
-          <Pin />
+        <Button
+          className="rounded-xl border-[1px] bg-transparent transition-all duration-150 hover:bg-primary/10 active:scale-95"
+          onClick={handleFileButtonClick}
+        >
+          <Pin size={20} className="text-white" onClick={() => setSelectedMessage(null)} />
           <input
             type="file"
             ref={fileInputRef}
@@ -337,7 +319,7 @@ function CustomInput({
             onChange={handleFileChange}
             accept="image/*"
           />
-        </button>
+        </Button>
 
         <div
           className="scrollbar max-h-20 min-h-12 flex-1 overflow-auto rounded-lg bg-slate-800 p-3 text-white"
@@ -347,7 +329,7 @@ function CustomInput({
           onMouseUp={handleCursorChange}
           onKeyUp={handleCursorChange}
           onKeyDown={handleSentMessage}
-        ></div>
+        />
 
         <Button
           onClick={sendMessageHandler}
@@ -355,7 +337,7 @@ function CustomInput({
         >
           <Send className="text-white" />
         </Button>
-        <AudioRecorder />
+
         {showPopup && (
           <div
             ref={popupRef}
@@ -394,88 +376,4 @@ function CustomInput({
   );
 }
 
-// -------------------------- AudioRecorder.tsx --------------------------
-import { LiveAudioVisualizer } from "react-audio-visualize";
-import { Button } from "@/components/ui/button";
-import { useMediaQuery } from "react-responsive";
-
-const AudioRecorder = () => {
-  const [isRecording, setIsRecording] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder>();
-
-  const handleStartRecording = async () => {
-    console.log("START RECORDING");
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-
-      setMediaRecorder(mediaRecorder);
-      mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = [];
-
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
-        }
-      };
-
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(audioChunksRef.current, { type: "audio/mp3" });
-        const url = URL.createObjectURL(blob);
-        setAudioBlob(blob);
-        setAudioUrl(url);
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-    } catch (error) {
-      console.error("Error accessing microphone:", error);
-    }
-  };
-
-  const handleStopRecording = () => {
-    console.log("STOP RECORDING");
-    if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-    }
-  };
-
-  return (
-    <div className="audio-recorder">
-      <div className="controls">
-        {isRecording ? (
-          <button onClick={handleStopRecording} className="stop-button">
-            Stop Recording
-          </button>
-        ) : (
-          <button onClick={handleStartRecording} className="start-button">
-            <Mic />
-          </button>
-        )}
-      </div>
-
-      {audioBlob && (
-        <LiveAudioVisualizer
-          mediaRecorder={mediaRecorder!}
-          width={500}
-          height={75}
-          backgroundColor="#000"
-          barColor="#fff"
-          gap={3}
-        />
-      )}
-
-      {audioUrl && (
-        <div className="playback">
-          <audio controls src={audioUrl} />
-        </div>
-      )}
-    </div>
-  );
-};
 export default memo(CustomInput);
