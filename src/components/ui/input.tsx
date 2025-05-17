@@ -27,7 +27,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={type}
             id={uniqueId}
             autoComplete="off"
-            className="peer flex-1 rounded-lg bg-transparent text-sm text-white outline-none"
+            className="peer flex-1 rounded-lg bg-transparent px-1 text-sm text-white outline-none"
           />
           <label
             htmlFor={uniqueId}
@@ -37,7 +37,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               props.value
                 ? "-top-2.5 bg-secondary text-sm text-white"
                 : "top-3.5 text-sm text-gray-400",
-              Icon ? "left-10" : "left-5"
+              Icon ? "left-11" : "left-5"
             )}
           >
             {label}

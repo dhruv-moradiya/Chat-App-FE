@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check, CheckCheck } from "lucide-react";
 import { UserPreview } from "@/types/ApiResponse.types";
 import { capitalizeFirstLetter, cn } from "@/lib/utils";
 import { MessageUserInteractionType } from "@/types/Common.types";
@@ -35,7 +35,7 @@ const DecorativeShape = ({ isSender }: { isSender: boolean }) => {
       <svg width="100%" height="100%" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path
           d={isSender ? "M0,0 L24,0 L0,24 Z" : "M24,0 L24,24 L0,0 Z"}
-          fill={isSender ? "#34406B" : "#21232A"}
+          fill={isSender ? "#381D67" : "#222329"}
         />
       </svg>
     </div>
@@ -52,7 +52,7 @@ const SenderAvatar = ({ sender }: { sender: { profilePicture: string; username: 
 const ReplyMessage = ({ replyTo, senderName }: { replyTo: string; senderName: string }) => (
   <div className="rounded-lg border-l-4 border-primary bg-neutral-700/25 p-2 text-sm">
     <p className="font-bold text-primary">{senderName}</p>
-    <p>{replyTo}</p>
+    <p dangerouslySetInnerHTML={{ __html: replyTo }} />
   </div>
 );
 
@@ -89,7 +89,7 @@ const MessageContent = ({
         >
           {moment(createdAt).format("hh:mm A")}
         </span>
-        <Check size={12} />
+        <Check size={14} />
       </div>
       <MessageDropdown isSender={isSender} onClick={messageDropdownOnClickFunction} />
     </div>

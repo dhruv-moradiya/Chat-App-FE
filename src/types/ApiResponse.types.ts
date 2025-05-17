@@ -159,14 +159,16 @@ interface Notification {
   content: string;
   createdAt: string;
   isRead: boolean;
-  message: {
-    _id: string;
-    attachments: Attachment[];
-    content: string;
-  };
-  notificationType: string;
   receivers: string;
   sender: Omit<UserPreview, "email">;
+  subContent: {
+    attachments: Attachment[];
+    chat: string;
+    text: string;
+    _id: string;
+  };
+  subContentModel: string;
+  type: string;
   updatedAt: string;
   _id: string;
 }

@@ -8,7 +8,7 @@ const Layout = () => {
   //   chatDetailSelector(state)
   // );
   return (
-    <div className="flex h-screen w-screen gap-2 overflow-hidden">
+    <div className="flex h-screen w-screen gap-2 overflow-hidden bg-secondary">
       <Navbar />
       <div className="flex-1 overflow-hidden rounded-2xl bg-[#14151b] py-4">
         <Header />

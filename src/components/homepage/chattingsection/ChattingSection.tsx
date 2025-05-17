@@ -160,7 +160,7 @@ const ChattingSection = () => {
 
       <div
         className={cn(
-          "absolute bottom-0 flex h-0 w-full items-center justify-between gap-4 overflow-hidden bg-primary-foreground transition-all duration-200",
+          "absolute bottom-0 flex h-0 w-full items-center justify-between gap-4 overflow-hidden bg-secondary transition-all duration-200",
           isCheckBoxForDelete ? "h-auto px-4 py-5 opacity-100" : "opacity-0"
         )}
       >

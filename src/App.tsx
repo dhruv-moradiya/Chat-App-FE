@@ -20,6 +20,7 @@ import MobileLayout from "@/layout/mobile-layout/MobileLayout";
 import HomeScreenMobile from "@/page/mobile/HomeScreenMobile";
 import ChatScreenMobile from "@/page/mobile/ChatScreenMobile";
 import { createConnection, disconnected } from "@/store/socket/SocketSlice";
+import Animations from "./page/Animations";
 
 const ProtectedRoute = ({
   children,
@@ -146,6 +147,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/test" element={<Text />} />
+          <Route path="/animations" element={<Animations />} />
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
       )}

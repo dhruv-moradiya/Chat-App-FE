@@ -25,17 +25,17 @@ const Navbar = () => {
     {
       label: "All Chats",
       path: "/",
-      icon: <MessageCircle fill="white" size={14} />,
+      icon: <MessageCircle size={20} />,
     },
     {
       label: "Work",
       path: "/",
-      icon: <BriefcaseBusiness fill="white" size={14} />,
+      icon: <BriefcaseBusiness size={20} />,
     },
     {
       label: "Friends",
       path: "/",
-      icon: <HandMetal fill="white" size={14} />,
+      icon: <HandMetal size={20} />,
     },
   ];
 
@@ -49,7 +49,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="flex h-full w-14 flex-col items-center py-4 md:w-20">
+    <nav className="flex h-full w-14 flex-col items-center bg-secondary py-4 md:w-20">
       <h2 className="mb-10 text-2xl md:text-3xl">DM</h2>
 
       <ul className="flex flex-1 flex-col gap-6">
@@ -59,8 +59,8 @@ const Navbar = () => {
       </ul>
 
       <div className="flex flex-col items-center gap-4">
-        <NavItem icon={<Settings size={14} />} label="Settings" />
-        <NavItem icon={<LogOut size={14} />} label="Logout" onClick={handleLogOut} />
+        <NavItem icon={<Settings size={20} />} label="Settings" />
+        <NavItem icon={<LogOut size={20} />} label="Logout" onClick={handleLogOut} />
       </div>
     </nav>
   );
