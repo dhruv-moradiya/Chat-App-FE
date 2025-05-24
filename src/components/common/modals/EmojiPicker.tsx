@@ -1,11 +1,13 @@
 import useDebounce from "@/hooks/useDebounce";
-import { emojiCategories } from "@/lib/constants";
+import { EmojiGroupEnum } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { addReaction } from "@/store/activeChat/ActiveChatSlice";
 import { closeModal } from "@/store/chatDetailSidebar/ChatDetailSlice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+
+const emojiGroups: EmojiGroupEnum[] = Object.values(EmojiGroupEnum);
 
 const EmojiPicker = ({
   selectedMessage,
@@ -17,24 +19,17 @@ const EmojiPicker = ({
   const paramValue = searchParams.get("chatId");
   const elementContainerRef = useRef<HTMLDivElement>(null);
   const elementsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const [currentSelectedElement, setCurrentSelectedElement] = useState(-1);
 
   const emojis = useAppSelector((state) => state.emoji.categories);
-  const [activeEmojiSet, setActiveEmojiSet] = useState(emojiCategories[0]);
+
   const [searchValue, setSearchValue] = useState("");
-  const debouncedValue = useDebounce({ query: searchValue, debounceTime: 500 });
-
-  console.log("activeEmojiSet :>> ", activeEmojiSet);
-
-  const filteredEmojis = useMemo(() => {
-    if (!debouncedValue) return emojis[activeEmojiSet].emojis || [];
-    return emojis[activeEmojiSet].emojis.filter((emoji) =>
-      emoji.name.toLowerCase().includes(debouncedValue.toLowerCase())
-    );
-  }, [debouncedValue, activeEmojiSet, emojis]);
+  const [activeEmojiSet, setActiveEmojiSet] = useState<EmojiGroupEnum>(emojiGroups[0]);
+  const [currentSelectedElement, setCurrentSelectedElement] = useState(-1);
+  // const debouncedValue = useDebounce({ query: searchValue, debounceTime: 500 });
 
   useEffect(() => {
     const imageClickHandler = (e: MouseEvent) => {
+      console.log("clicked");
       const targetPera = (e.target as HTMLElement).closest("p") as HTMLParagraphElement | null;
 
       if (!targetPera) return;
@@ -44,7 +39,7 @@ const EmojiPicker = ({
 
       setCurrentSelectedElement(index);
 
-      const path = filteredEmojis[index].unicode[0];
+      const path = emojis[activeEmojiSet].emojis[index].emoji;
       const messageId = (selectedMessage && selectedMessage[0]._id) || "";
 
       dispatch(addReaction({ messageId, emoji: path, chatId: paramValue as string }));
@@ -57,7 +52,7 @@ const EmojiPicker = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       setCurrentSelectedElement((prev) => {
         let next = prev;
-        const totalEmoji = filteredEmojis.length;
+        const totalEmoji = emojis[activeEmojiSet].emojis.length;
 
         switch (e.key) {
           case "ArrowLeft":
@@ -110,7 +105,7 @@ const EmojiPicker = ({
 
       {/* Emoji Categories */}
       <div className="flex gap-4">
-        {emojiCategories.map((category) => (
+        {emojiGroups.map((category) => (
           <p
             key={category}
             onClick={() => setActiveEmojiSet(category)}
@@ -127,7 +122,7 @@ const EmojiPicker = ({
         ref={elementContainerRef}
         tabIndex={0}
       >
-        {filteredEmojis.map((emoji, index) => (
+        {emojis[activeEmojiSet].emojis.map((emoji, index) => (
           <p
             key={index}
             ref={(el) => {
@@ -138,7 +133,8 @@ const EmojiPicker = ({
               currentSelectedElement === index ? "border-2 border-primary" : ""
             )}
           >
-            {String.fromCodePoint(parseInt(emoji.unicode[0].replace("U+", ""), 16))}
+            {/* {String.fromCodePoint(parseInt(emoji.unicode[0].replace("U+", ""), 16))} */}
+            {emoji.emoji}
           </p>
         ))}
       </div>

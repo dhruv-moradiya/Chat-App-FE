@@ -5,6 +5,7 @@ import {
   DeleteMessageForSelectedParticipantsResponse,
   ExcludedFriendsUsersResponse,
   FriendRequestResponse,
+  IEmojiResponse,
   MessageResponse,
   MyFriendsList,
   NotificationResponse,
@@ -285,6 +286,15 @@ const fetchNotifications = async () => {
   }
 };
 
+const fetchEmojis = async (query: string) => {
+  try {
+    const response: AxiosResponse<IEmojiResponse> = await apiClient.get(`/emoji?${query}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export {
   getCurrentUser,
   acceptFriendRequest,
@@ -301,4 +311,5 @@ export {
   createGroupChat,
   deleteMessageForSelectedParticipantsApi,
   fetchNotifications,
+  fetchEmojis,
 };

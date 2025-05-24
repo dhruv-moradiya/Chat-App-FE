@@ -1,58 +1,26 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchEmojisByCategory } from "./EmojiThunk";
+import { IEmoji, IEmojiCategory } from "@/types/ApiResponse.types";
+import { EmojiGroupEnum } from "@/lib/constants";
 
-interface Emoji {
-  name: string;
-  category: string;
-  group: string;
-  htmlCode: string[];
-  unicode: string[];
-}
-
-interface EmojiCategory {
-  emojis: Emoji[];
+interface IEmojiState {
+  categories: Record<EmojiGroupEnum, IEmojiCategory>;
   loading: boolean;
+  error: string | null;
 }
 
-interface EmojiState {
-  categories: Record<string, EmojiCategory>;
-}
-
-const initialState: EmojiState = {
+const initialState: IEmojiState = {
   categories: {
-    "smileys-and-people": {
-      emojis: [],
-      loading: false,
-    },
-    "animals-and-nature": {
-      emojis: [],
-      loading: false,
-    },
-    "food-and-drink": {
-      emojis: [],
-      loading: false,
-    },
-    "travel-and-places": {
-      emojis: [],
-      loading: false,
-    },
-    activities: {
-      emojis: [],
-      loading: false,
-    },
-    objects: {
-      emojis: [],
-      loading: false,
-    },
-    symbols: {
-      emojis: [],
-      loading: false,
-    },
-    flags: {
-      emojis: [],
-      loading: false,
-    },
+    [EmojiGroupEnum.SMILEYS_EMOTION]: { emojis: [] },
+    [EmojiGroupEnum.FOOD_DRINK]: { emojis: [] },
+    [EmojiGroupEnum.ACTIVITIES]: { emojis: [] },
+    [EmojiGroupEnum.PEOPLE_BODY]: { emojis: [] },
+    [EmojiGroupEnum.OBJECTS]: { emojis: [] },
+    [EmojiGroupEnum.SYMBOLS]: { emojis: [] },
+    [EmojiGroupEnum.COMPONENT]: { emojis: [] },
   },
+  loading: false,
+  error: null,
 };
 
 const emojiSlice = createSlice({
@@ -61,29 +29,26 @@ const emojiSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchEmojisByCategory.pending, (state, action) => {
-        const category = action.meta.arg;
-        if (state.categories[category]) {
-          state.categories[category].loading = true;
-        }
+      .addCase(fetchEmojisByCategory.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
-      .addCase(
-        fetchEmojisByCategory.fulfilled,
-        (state, action: PayloadAction<{ category: string; emojis: Emoji[] }>) => {
-          const { category, emojis } = action.payload;
-          if (state.categories[category]) {
-            state.categories[category].emojis = emojis;
-            state.categories[category].loading = false;
+      .addCase(fetchEmojisByCategory.fulfilled, (state, action: PayloadAction<IEmoji[]>) => {
+        state.loading = false;
+        const emojis = action.payload;
+        emojis.forEach((emoji) => {
+          const category = state.categories[emoji.group as EmojiGroupEnum];
+          if (category) {
+            category.emojis.push(emoji);
           }
-        }
-      )
+        });
+      })
       .addCase(fetchEmojisByCategory.rejected, (state, action) => {
-        const category = action.meta.arg;
-        if (state.categories[category]) {
-          state.categories[category].loading = false;
-        }
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
 
 export const emojiReducer = emojiSlice.reducer;
+export const { actions: emojiActions } = emojiSlice;

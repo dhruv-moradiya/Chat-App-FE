@@ -8,6 +8,7 @@ import { AttachmentLoader, MessageBox, SenderAvatar } from "./MessageLayout";
 import { ModalType } from "@/lib/constants";
 import { openModal } from "@/store/chatDetailSidebar/ChatDetailSlice";
 import RenderAttachments from "./RenderAttachments";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface MessageProps extends ChatMessage {
   isSeen: boolean;
@@ -108,16 +109,20 @@ const Message = ({
         />
         {reactions.length ? (
           <div className="absolute -bottom-[24px] right-4 flex w-fit cursor-pointer items-center gap-[1px] rounded-full bg-zinc-800 p-[1px]">
-            {reactions.map((reaction, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-center rounded-full bg-primary-foreground"
-              >
-                <p className="text-[18px]">
-                  {String.fromCodePoint(parseInt(reaction.emoji.replace("U+", ""), 16))}
-                </p>
-              </div>
-            ))}
+            <AnimatePresence initial={false}>
+              {reactions.map((reaction, index) => (
+                <motion.div
+                  key={reaction.id || reaction.emoji + index}
+                  initial={{ scale: 0, opacity: 0, y: 10 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0, opacity: 0, y: 10 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="flex items-center justify-center rounded-full bg-primary-foreground"
+                >
+                  <p className="text-[18px]">{reaction.emoji}</p>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         ) : null}
       </div>

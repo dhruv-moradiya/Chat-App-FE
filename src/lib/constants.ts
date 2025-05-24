@@ -92,4 +92,14 @@ const ModalType = Object.freeze({
   SETTING_MODEL: "setting",
 });
 
-export { ChatEventEnum, ActionType, emojiCategories, ModalType };
+enum EmojiGroupEnum {
+  SMILEYS_EMOTION = "smileys-emotion",
+  PEOPLE_BODY = "people-body",
+  COMPONENT = "component",
+  FOOD_DRINK = "food-drink",
+  ACTIVITIES = "activities",
+  OBJECTS = "objects",
+  SYMBOLS = "symbols",
+}
+
+export { ChatEventEnum, ActionType, emojiCategories, ModalType, EmojiGroupEnum };

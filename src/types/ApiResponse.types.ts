@@ -177,6 +177,24 @@ interface NotificationResponse extends ApiResponseBase {
   data: Notification[];
 }
 
+interface IEmoji {
+  _id: string;
+  emoji: string;
+  group: string;
+  subGroup: string;
+  tags: string[];
+  order: number;
+  shortcodes: string[];
+}
+
+interface IEmojiResponse extends ApiResponseBase {
+  data: IEmoji[];
+}
+
+interface IEmojiCategory {
+  emojis: IEmoji[];
+}
+
 export type {
   ApiResponseBase,
   UserProfile,
@@ -200,4 +218,7 @@ export type {
   DeleteMessageForSelectedParticipantsResponse,
   Notification,
   NotificationResponse,
+  IEmoji,
+  IEmojiResponse,
+  IEmojiCategory,
 };

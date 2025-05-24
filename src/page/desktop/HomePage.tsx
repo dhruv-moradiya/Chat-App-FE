@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useAppDispatch, useAppSelector } from "@/store/store";
-import { emojiCategories } from "@/lib/constants";
+import { useAppDispatch } from "@/store/store";
 import { useSearchParams } from "react-router-dom";
 import { fetchEmojisByCategory } from "@/store/emoji/EmojiThunk";
 import { setActiveChat } from "@/store/activeChat/ActiveChatSlice";
@@ -21,9 +20,7 @@ const HomePage = () => {
 
     dispatch(fetchAllNotifications());
 
-    // emojiCategories.forEach((category) => {
-    //   dispatch(fetchEmojisByCategory(category));
-    // });
+    dispatch(fetchEmojisByCategory(""));
 
     return () => {
       dispatch(disconnected());

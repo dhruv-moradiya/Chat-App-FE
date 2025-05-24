@@ -92,7 +92,7 @@ const ReactMessageModal = ({
     <div className="flex min-w-96 flex-col gap-4">
       <p className="text-md mb-4">React Message?</p>
 
-      <div className="grid grid-cols-10 gap-2 outline-none" ref={elementContainerRef} tabIndex={0}>
+      {/* <div className="grid grid-cols-10 gap-2 outline-none" ref={elementContainerRef} tabIndex={0}>
         {emojiData.map((_, index) => (
           <div
             key={index}
@@ -123,7 +123,7 @@ const ReactMessageModal = ({
           <p>{emojiData[currentSelectedElement].display_name}</p>
           <p className="text-sm text-gray-400">:{emojiData[currentSelectedElement].slug}</p>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

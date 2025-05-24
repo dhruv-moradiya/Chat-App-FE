@@ -1,25 +1,19 @@
+import { fetchEmojis } from "@/api";
+import { IEmojiResponse } from "@/types/ApiResponse.types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-
-interface Emoji {
-  name: string;
-  category: string;
-  group: string;
-  htmlCode: string[];
-  unicode: string[];
-}
 
 export const fetchEmojisByCategory = createAsyncThunk(
   "emoji/fetchEmojisByCategory",
-  async (category: string, { rejectWithValue }) => {
+  async (query: string, { rejectWithValue }) => {
     try {
-      const response = await fetch(`https://emojihub.yurace.pro/api/all/category/${category}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch emojis");
+      const response: IEmojiResponse = await fetchEmojis(query);
+
+      return response.data;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
       }
-      const data: Emoji[] = await response.json();
-      return { category, emojis: data };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+      return rejectWithValue("An unknown error occurred");
     }
   }
 );
