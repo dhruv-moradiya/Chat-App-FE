@@ -5,6 +5,8 @@ type User = {
   username: string;
   email: string;
   profilePicture: string;
+  blockedUsers: string[];
+  pinnedChats: string[];
   createdAt: string;
   updatedAt: string;
   refreshToken?: string;

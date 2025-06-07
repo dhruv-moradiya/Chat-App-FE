@@ -19,6 +19,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         dot_for_notification:
           "ml-auto rounded-full outline-none ring-offset-2 ring-offset-background transition duration-150 ease-in-out hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary active:scale-95 flex items-center justify-center",
+        icon: "bg-primary text-primary-foreground rounded-full !p-1 bg-transparent hover:bg-primary/30 w-fit !h-fit m-0",
       },
       size: {
         default: "h-9 px-4 py-2",

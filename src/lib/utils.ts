@@ -1,8 +1,9 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { AxiosResponse } from "axios";
 import moment from "moment";
+import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from "clsx";
+import { AxiosError, AxiosResponse } from "axios";
 import { ChatMessage } from "@/types/ApiResponse.types";
+import { showErrorToast } from "@/components/common/ToastProvider";
 
 type ChatAppResponse = {
   statusCode: number;
@@ -14,6 +15,28 @@ type ChatAppResponse = {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+const errorLogger = (error: unknown, doToast?: boolean) => {
+  if (error instanceof AxiosError) {
+    console.error("Axios error:", {
+      message: error.message,
+      code: error.code,
+      url: error.config?.url,
+      response: error.response?.data,
+    });
+    showErrorToast(error.response?.data?.message);
+  } else if (error instanceof Error) {
+    console.error("General error:", {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+    });
+    doToast && showErrorToast(error.message);
+  } else {
+    console.error("Unknown error type:", error);
+    doToast && showErrorToast("Something went wrong");
+  }
+};
 
 const requestHandler = async (
   api: () => Promise<AxiosResponse<ChatAppResponse, any>>,
@@ -71,4 +94,4 @@ const isNewDate = (messages: ChatMessage[], index: number) => {
   return currentDate !== prevDate;
 };
 
-export { requestHandler, capitalizeFirstLetter, playNotificationSound, isNewDate };
+export { errorLogger, requestHandler, capitalizeFirstLetter, playNotificationSound, isNewDate };

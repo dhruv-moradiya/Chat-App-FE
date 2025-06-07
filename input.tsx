@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Quill from "quill";
 import { Mention, MentionBlot } from "quill-mention";
 import "quill-mention/dist/quill.mention.css";
 import "quill/dist/quill.snow.css";
-import { useEffect, useRef } from "react";
 
 // Register Mention module and blot
 Quill.register({ "blots/mention": MentionBlot, "modules/mention": Mention });

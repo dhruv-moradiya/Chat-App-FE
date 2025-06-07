@@ -1,3 +1,6 @@
+import { errorLogger } from "@/lib/utils";
+import axios, { AxiosResponse } from "axios";
+import { LoginUserResponse, RegisterUserResponse } from "@/types/Auth.types";
 import {
   AcceptFriendRequestResponse,
   ChatDetailResponse,
@@ -6,14 +9,13 @@ import {
   ExcludedFriendsUsersResponse,
   FriendRequestResponse,
   IEmojiResponse,
+  IPinSelectedChatResponse,
   MessageResponse,
   MyFriendsList,
   NotificationResponse,
   SendMessageResponse,
   SentFriendRequestResponse,
 } from "@/types/ApiResponse.types";
-import axios, { AxiosResponse } from "axios";
-import { LoginUserResponse, RegisterUserResponse } from "@/types/Auth.types";
 
 // Create an instance of axios with a base URL, credentials, and timeout.
 export const apiClient = axios.create({
@@ -61,6 +63,7 @@ const registerUser = async (data: { username: string; email: string; password: s
     );
     return response.data.data.user;
   } catch (error) {
+    errorLogger(error);
     throw error;
   }
 };
@@ -74,6 +77,7 @@ const loginUser = async (data: { email: string; password: string }) => {
     );
     return response.data.data.user;
   } catch (error) {
+    errorLogger(error);
     throw error;
   }
 };
@@ -84,6 +88,7 @@ const getCurrentUser = async () => {
     const response = await apiClient.get("/user/current-user");
     return response.data.data.user;
   } catch (error) {
+    errorLogger(error);
     throw error;
   }
 };
@@ -97,6 +102,7 @@ const getUsersExcludingFriendsBasedOnQuery = async (query: string) => {
 
     return response.data.data.users;
   } catch (error) {
+    errorLogger(error);
     throw error;
   }
 };
@@ -112,6 +118,7 @@ const sendFriendRequest = async (_id: string) => {
     );
     return response.data.data;
   } catch (error) {
+    errorLogger(error);
     throw error;
   }
 };
@@ -124,6 +131,7 @@ const getAllFriendRequests = async () => {
     );
     return response.data;
   } catch (error) {
+    errorLogger(error);
     throw error;
   }
 };
@@ -139,6 +147,7 @@ const acceptFriendRequest = async (_id: string) => {
     );
     return response.data.data;
   } catch (error) {
+    errorLogger(error);
     throw error;
   }
 };
@@ -149,6 +158,7 @@ const getAllChats = async () => {
 
     return response.data.data;
   } catch (error) {
+    errorLogger(error);
     throw error;
   }
 };
@@ -185,6 +195,7 @@ const sendMessage = async (data: {
     );
     return response.data;
   } catch (error) {
+    errorLogger(error);
     throw error;
   }
 };
@@ -208,6 +219,7 @@ const sendAttachments = async (data: {
 
     return response.data;
   } catch (error) {
+    errorLogger(error);
     throw error;
   }
 };
@@ -219,6 +231,7 @@ const getChatMessagesBasedOnChatId = async (chatId: string, page: number, limit:
     );
     return response.data;
   } catch (error) {
+    errorLogger(error);
     throw error;
   }
 };
@@ -231,6 +244,7 @@ const fetchMyFriendsList = async () => {
 
     return response.data;
   } catch (error) {
+    errorLogger(error);
     throw error;
   }
 };
@@ -240,23 +254,28 @@ const createGroupChat = async (data: {
   participantIds: string[];
   coverImage: File;
 }) => {
-  const formData = new FormData();
-  formData.append("chatName", data.chatName);
-  formData.append("coverImage", data.coverImage);
-  for (let i = 0; i < data.participantIds.length; i++) {
-    formData.append("participantIds", data.participantIds[i]);
-  }
-
-  const response: AxiosResponse<CreateGroupChatResponse> = await apiClient.post(
-    "/chat/create-group-chat",
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+  try {
+    const formData = new FormData();
+    formData.append("chatName", data.chatName);
+    formData.append("coverImage", data.coverImage);
+    for (let i = 0; i < data.participantIds.length; i++) {
+      formData.append("participantIds", data.participantIds[i]);
     }
-  );
-  return response.data;
+
+    const response: AxiosResponse<CreateGroupChatResponse> = await apiClient.post(
+      "/chat/create-group-chat",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    errorLogger(error);
+    throw error;
+  }
 };
 
 const deleteMessageForSelectedParticipantsApi = async (
@@ -273,6 +292,7 @@ const deleteMessageForSelectedParticipantsApi = async (
       await apiClient.patch("/message/delete-for-selected", data);
     return response.data;
   } catch (error) {
+    errorLogger(error);
     throw error;
   }
 };
@@ -282,6 +302,7 @@ const fetchNotifications = async () => {
     const response: AxiosResponse<NotificationResponse> = await apiClient.get("/notifications");
     return response.data;
   } catch (error) {
+    errorLogger(error);
     throw error;
   }
 };
@@ -291,6 +312,20 @@ const fetchEmojis = async (query: string) => {
     const response: AxiosResponse<IEmojiResponse> = await apiClient.get(`/emoji?${query}`);
     return response.data;
   } catch (error) {
+    errorLogger(error);
+    throw error;
+  }
+};
+
+const pinSelectedChat = async (chatId: string) => {
+  try {
+    const response: AxiosResponse<IPinSelectedChatResponse> = await apiClient.patch(
+      `/chat/pin-chat`,
+      { chatId }
+    );
+    return response.data;
+  } catch (error: unknown) {
+    errorLogger(error, true);
     throw error;
   }
 };
@@ -312,4 +347,5 @@ export {
   deleteMessageForSelectedParticipantsApi,
   fetchNotifications,
   fetchEmojis,
+  pinSelectedChat,
 };

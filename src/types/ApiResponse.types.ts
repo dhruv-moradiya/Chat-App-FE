@@ -13,6 +13,8 @@ interface UserProfile {
   profilePicture: string;
   friends: string[];
   mutedChats: string[];
+  blockedUsers: string[];
+  pinnedChats: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -195,6 +197,10 @@ interface IEmojiCategory {
   emojis: IEmoji[];
 }
 
+interface IPinSelectedChatResponse extends ApiResponseBase {
+  data: {};
+}
+
 export type {
   ApiResponseBase,
   UserProfile,
@@ -221,4 +227,5 @@ export type {
   IEmoji,
   IEmojiResponse,
   IEmojiCategory,
+  IPinSelectedChatResponse,
 };

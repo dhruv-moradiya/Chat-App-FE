@@ -49,14 +49,14 @@ const GroupChat = () => {
 
   if (loading) {
     return (
-      <div className="flex min-w-[500px] items-center justify-center">
+      <div className="min-w-1/2 flex items-center justify-center">
         <Loader className="animate-spin" size={18} />
       </div>
     );
   }
 
   return (
-    <div className="flex w-[500px] flex-col gap-2">
+    <div className="flex w-full flex-col gap-2">
       <h2 className="mb-4 text-xl font-bold">Group Chat</h2>
       {directChats.length < 2 ? (
         <p className="flex flex-col text-center text-gray-500">

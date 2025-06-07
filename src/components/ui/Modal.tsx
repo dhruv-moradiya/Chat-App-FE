@@ -1,6 +1,9 @@
 import React, { ReactNode } from "react";
 import { useAppDispatch } from "@/store/store";
 import { closeModal } from "@/store/chatDetailSidebar/ChatDetailSlice";
+import { Button } from "./button";
+import { X } from "lucide-react";
+import Tooltip from "./tooltip";
 
 interface ModalProps {
   isOpen: boolean;
@@ -36,6 +39,18 @@ const Modal: React.FC<ModalProps> = ({
         }`}
       >
         {children}
+
+        <div className="absolute right-4 top-4">
+          <Tooltip text="Close" position="bottom">
+            <Button
+              className="rounded-full p-2"
+              variant="ghost"
+              onClick={() => dispatch(closeModal())}
+            >
+              <X />
+            </Button>
+          </Tooltip>
+        </div>
       </div>
     </div>
   );

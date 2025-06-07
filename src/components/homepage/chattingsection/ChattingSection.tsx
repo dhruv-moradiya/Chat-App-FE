@@ -13,6 +13,7 @@ import MessageContainer from "./messages/MessageContainer";
 import CustomInput from "@/components/common/customInput/CustomInput";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import { ChatMessagesSummary } from "@/types/ApiResponse.types";
+import CustomInput2 from "./CustomInput2";
 
 const ChattingSection = () => {
   const dispatch = useAppDispatch();
@@ -157,7 +158,6 @@ const ChattingSection = () => {
         {renderMessages()}
       </div>
       <CustomInput selectedMessage={selectedMessage} setSelectedMessage={setSelectedMessage} />
-
       <div
         className={cn(
           "absolute bottom-0 flex h-0 w-full items-center justify-between gap-4 overflow-hidden bg-secondary transition-all duration-200",

@@ -7,7 +7,7 @@ import { sendMessage } from "@/store/activeChat/ActiveChatSlice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { UserPreview } from "@/types/ApiResponse.types";
 import { SelectedMessagesForInteraction } from "@/types/Common.types";
-import { Mic, Pin, Send, X } from "lucide-react";
+import { Mic, Paperclip, Pin, Send, X } from "lucide-react";
 import { showWarnToast } from "../ToastProvider";
 import { useMediaQuery } from "react-responsive";
 import { Button } from "@/components/ui/button";
@@ -311,7 +311,7 @@ function CustomInput({
           className="rounded-xl border-[1px] bg-transparent transition-all duration-150 hover:bg-primary/10 active:scale-95"
           onClick={handleFileButtonClick}
         >
-          <Pin size={20} className="text-white" onClick={() => setSelectedMessage(null)} />
+          <Paperclip size={20} className="text-white" onClick={() => setSelectedMessage(null)} />
           <input
             type="file"
             ref={fileInputRef}

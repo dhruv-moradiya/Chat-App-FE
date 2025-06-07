@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { fetchMyChats } from "@/store/myChats/ChatSlice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -35,7 +34,7 @@ const Sidebar = () => {
       className={cn(
         "fixed left-14 top-12 z-10 h-full flex-col gap-1 transition-all duration-150 md:static md:flex md:w-96",
         isChatListSideBarOpen
-          ? "w-60 w-full translate-x-0 bg-primary-foreground"
+          ? "w-full translate-x-0 bg-primary-foreground"
           : "translate-x-[-150%]",
         "md:translate-x-0"
       )}
